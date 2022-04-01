@@ -48,8 +48,10 @@ namespace ExpenseReconciliation
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

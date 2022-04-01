@@ -7,7 +7,7 @@ namespace ExpenseReconciliation.Domain.Repositories
 {
     public interface IDashboardRepository
     {
-        Task<IEnumerable<Dashboard>> ListAsync();
+        Task<IEnumerable<Split>> ListAsync();
         Task<string> AmountAsync();
     }
 }

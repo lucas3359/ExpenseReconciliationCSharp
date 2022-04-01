@@ -21,7 +21,7 @@ namespace ExpenseReconciliation.Services
             return _dashboardRepository.AmountAsync();
         }
 
-        public Task<IEnumerable<Dashboard>> ListAsync()
+        public Task<IEnumerable<Split>> ListAsync()
         {
             return _dashboardRepository.ListAsync();
         }

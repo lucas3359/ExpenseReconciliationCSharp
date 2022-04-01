@@ -17,7 +17,7 @@ namespace ExpenseReconciliation.Controllers
         }
 
         [HttpGet("GetAllAsync")]
-        public async Task<IEnumerable<Dashboard>> GetAllAsync()
+        public async Task<IEnumerable<Split>> GetAllAsync()
         {
             return await _dashboardService.ListAsync();
 

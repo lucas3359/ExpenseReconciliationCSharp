@@ -20,9 +20,9 @@ namespace ExpenseReconciliation.Repository
         public DashboardRepository(AppDbContext appDbContext): base(appDbContext) 
         {
         }
-        public async Task<IEnumerable<Dashboard>> ListAsync()
+        public async Task<IEnumerable<Split>> ListAsync()
         {
-            return await _context.Dashboards.ToListAsync();
+            return await _context.Splits.ToListAsync();
         }
         public async Task<string> AmountAsync()
         {
@@ -30,8 +30,8 @@ namespace ExpenseReconciliation.Repository
             var records = await ListAsync();
             var amount = 0.0;
 
-            var results = records.GroupBy(x => x.user_id)
-                .Select(g => new { user = g.Key, amount = g.Sum(x => x.amount) });
+            var results = records.GroupBy(x => x.UserId)
+                .Select(g => new { user = g.Key, amount = g.Sum(x => x.Amount) });
             
             foreach (var result in results)
             {
