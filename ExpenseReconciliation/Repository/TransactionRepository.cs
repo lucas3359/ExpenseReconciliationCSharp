@@ -19,10 +19,15 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
     }
     public async Task<IEnumerable<Transaction>> ListAsync()
     {
-        var transactionSplit = new TransactionSplit();
 
         var transactions =  await _context.Transactions.Include(p=>p.splits).ToListAsync();
         
         return transactions;
+    }
+
+    public async Task Add(List<Transaction> transactionList)
+    {
+        _context.Transactions.AddRange(transactionList);
+        await _context.SaveChangesAsync();
     }
 }

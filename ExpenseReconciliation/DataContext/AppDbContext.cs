@@ -4,11 +4,16 @@ using Microsoft.EntityFrameworkCore;
 namespace ExpenseReconciliation.DataContext 
 {  
     public class AppDbContext : DbContext  
-    {  
+    {
+        public object account;
         public DbSet<User> Users { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-
+        
         public DbSet<Split> Splits { get; set; }
+        
+        public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<ImportRecord> ImportRecords { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -23,6 +28,7 @@ namespace ExpenseReconciliation.DataContext
             //builder.Entity<Category>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
             //builder.Entity<Category>().Property(p => p.Name).IsRequired().HasMaxLength(30);
             //builder.Entity<Category>().HasMany(p => p.Products).WithOne(p => p.Category).HasForeignKey(p => p.CategoryId);
+
             builder.Entity<Split>().ToTable("split");
             builder.Entity<Split>().HasKey(split => split.Id);
             //builder.Entity<Split>().Property<int>("transaction_id");
@@ -33,7 +39,12 @@ namespace ExpenseReconciliation.DataContext
             
 
             builder.Entity<Transaction>().ToTable("transaction");
-            builder.Entity<Transaction>().HasKey(p=> p.id);
+            builder.Entity<Transaction>().HasKey(p=> p.Id);
+            
+            builder.Entity<Account>().ToTable("account");
+            builder.Entity<Account>().HasKey(account => account.id);
+            
+            builder.Entity<ImportRecord>().ToTable("bank_import");
             /*builder.Entity<Transaction>().HasMany(transaction => transaction.splits)
                 .WithOne();*/
         }
