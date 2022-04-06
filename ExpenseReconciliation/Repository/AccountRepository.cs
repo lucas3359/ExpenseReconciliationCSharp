@@ -18,9 +18,8 @@ public class AccountRepository:   RepositoryBase, IAccountRepository
     }
     
     
-    public async Task<Account> Add(Account account)
+    public async Task<Account> AddAsync(Account account)
     {
-
         var savedAccount = await _context.Accounts.AddAsync(account);
         return savedAccount.Entity;
     }

@@ -6,8 +6,6 @@ namespace ExpenseReconciliation.Domain.Models;
 public class Split
 {
     public int Id { get; set; }
-    
-    //public int TransactionId { get; set; }
     public int TransactionId { get; set; }
     public int UserId { get; set; }
     

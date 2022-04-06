@@ -25,7 +25,7 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         return transactions;
     }
 
-    public async Task Add(List<Transaction> transactionList)
+    public async Task AddAsync(List<Transaction> transactionList)
     {
         _context.Transactions.AddRange(transactionList);
         await _context.SaveChangesAsync();

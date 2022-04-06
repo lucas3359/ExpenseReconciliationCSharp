@@ -35,10 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
     
     const body = parseOfxBody(req.body);
-    
-    console.log('Body:')
-    console.log(body)
-    
+        
     const response = await fetch("https://localhost:5001/api/importTransaction/Import", {
       method: 'POST',
       headers: new Headers({
@@ -48,7 +45,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
       
     // const body = importTransactionService.parseOfxBody(req.body)
-
     // await importTransactionService.importTransactions(body)
 
     res.status(201).json({ result: 'Imported' })

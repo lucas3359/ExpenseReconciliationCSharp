@@ -4,9 +4,6 @@ using System.IO;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
-using Newtonsoft.Json.Linq;
-using OfxNet;
-using OFXParser;
 
 namespace ExpenseReconciliation.Services 
 {
@@ -35,14 +32,14 @@ namespace ExpenseReconciliation.Services
                var transaction = new Transaction();
                transaction.Amount =  double.Parse(line.Amount)*100;
                transaction.Date = DateTime.ParseExact(line.Date, "yyyyMMdd", CultureInfo.InvariantCulture);
-               transaction.Details = line.Name +" " + line.Memo;
+               transaction.Details = string.Join(" ",line.Name.Trim(), line.Memo.Trim()) ;
                transaction.BankId = line.BankId; 
                transaction.AccountId = accountId;
                transaction.ImportId = importId;
                transactionList.Add(transaction);
            }
 
-           await _transactionRepository.Add(transactionList);
+           await _transactionRepository.AddAsync(transactionList);
         }
     }
 
