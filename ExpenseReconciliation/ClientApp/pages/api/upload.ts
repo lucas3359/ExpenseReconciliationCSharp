@@ -39,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     //  console.log('Body:')
     // console.log(body)
     
-    const response = await fetch("https://localhost:5001/api/importTransaction/Import", {
+    const response = await fetch("http://localhost:5000/api/transaction/Import", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json',

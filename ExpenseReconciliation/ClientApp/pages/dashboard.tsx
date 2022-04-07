@@ -6,8 +6,8 @@ import User from '../model/user'
 import Total from "../model/total";
 
 export default function Dashboard() {
-  const { data: totalsData, error: totalsError } = useSWR<Total[], any>('https://localhost:5001/api/dashboard/GetAmountAsync')
-  const { data: userData, error: userError } = useSWR<User[], any>('https://localhost:5001/api/user')
+  const { data: totalsData, error: totalsError } = useSWR<Total[], any>('http://localhost:5000/api/dashboard/GetAmountAsync')
+  const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
 
   const [session, loading] = useSession()
 
