@@ -29,13 +29,17 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
 
     public async Task Add(List<Transaction> transactionList)
     {
-
-
         var uniqueRecord = transactionList.Where(newTrans => !_context.Transactions.Any(tranInDb => tranInDb.BankId == newTrans.BankId));
         _context.Transactions.AddRange(uniqueRecord);
         
         _logger.LogInformation("Adding {uniqueRecord.Count} unique transactions to database", uniqueRecord.Count());
         await _context.SaveChangesAsync();
-
     }
+
+    public async Task<Transaction> GetById(int id)
+    {
+        return await _context.Transactions.FindAsync(id);
+    }
+
+
 }

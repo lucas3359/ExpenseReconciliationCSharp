@@ -4,6 +4,7 @@ using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,13 +50,12 @@ namespace ExpenseReconciliation
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ITransactionService, TransactionService>();
-            services.AddScoped<IImportTransactionService, ImportTransactionService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IImportRecordService, ImportRecordService>();
             
             
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<ISplitRepository, SplitRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
@@ -73,13 +73,8 @@ namespace ExpenseReconciliation
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
-            app.UseHttpLogging();
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            //app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             app.UseRouting();
 
@@ -88,17 +83,6 @@ namespace ExpenseReconciliation
                 endpoints.MapControllerRoute(
                     "default",
                     "{controller}/{action=Index}/{id?}");
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    // spa.UseReactDevelopmentServer("dev");
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-                }
             });
         }
     }

@@ -20,5 +20,22 @@ public class TransactionController : Controller
         return await _transactionService.ListAsync();
 
     }
+    
+    [HttpGet("GetById")]
+    public async Task<Transaction> GetById(int id)
+    {
+        return await _transactionService.GetById(id);
 
+    }
+    [HttpPost("Import")]
+    public async Task GetAllAsync([FromBody] BankTransactionRequest bankTransactionRequest)
+    {
+        await _transactionService.Import(bankTransactionRequest);
+    }
+    
+    [HttpPost("UpdateSplit")]
+    public async Task Split([FromBody] SplitRequest splitRequest)
+    {
+        await _transactionService.Split(splitRequest);
+    }
 }
