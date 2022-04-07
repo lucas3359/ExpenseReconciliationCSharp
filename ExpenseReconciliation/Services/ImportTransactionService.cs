@@ -16,11 +16,14 @@ namespace ExpenseReconciliation.Services
         private readonly IAccountService _accountService;
         private readonly IImportRecordService _importRecordService;
         private readonly ITransactionRepository _transactionRepository;
-        public ImportTransactionService(IAccountService accountService, IImportRecordService importRecordService, ITransactionRepository transactionRepository)
+        private readonly ILogger _logger;
+        public ImportTransactionService(IAccountService accountService, IImportRecordService importRecordService,
+            ITransactionRepository transactionRepository, ILogger<ImportTransactionService> logger)
         {
             _accountService = accountService;
             _importRecordService = importRecordService;
             _transactionRepository = transactionRepository;
+            _logger = logger;
         }
 
         public async Task Import(BankTransactionRequest bankTransactionRequest)
@@ -41,8 +44,8 @@ namespace ExpenseReconciliation.Services
                transaction.ImportId = importId;
                transactionList.Add(transaction);
            }
-
            await _transactionRepository.Add(transactionList);
+           _logger.LogInformation("Parsed {transactionList.Count} transactions records from the file", transactionList.Count());
         }
     }
 

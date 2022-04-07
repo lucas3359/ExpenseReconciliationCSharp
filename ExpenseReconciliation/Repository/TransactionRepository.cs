@@ -13,9 +13,11 @@ public class TransactionSplit
 
 public class TransactionRepository: RepositoryBase, ITransactionRepository
 {
-    public TransactionRepository(AppDbContext appDbContext): base(appDbContext) 
+    private readonly ILogger _logger;
+    public TransactionRepository(AppDbContext appDbContext, ILogger<TransactionRepository> logger): base(appDbContext) 
     {
         Console.WriteLine(appDbContext.Model.ToDebugString());
+        _logger = logger;
     }
     public async Task<IEnumerable<Transaction>> ListAsync()
     {
@@ -27,7 +29,13 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
 
     public async Task Add(List<Transaction> transactionList)
     {
-        _context.Transactions.AddRange(transactionList);
+
+
+        var uniqueRecord = transactionList.Where(newTrans => !_context.Transactions.Any(tranInDb => tranInDb.BankId == newTrans.BankId));
+        _context.Transactions.AddRange(uniqueRecord);
+        
+        _logger.LogInformation("Adding {uniqueRecord.Count} unique transactions to database", uniqueRecord.Count());
         await _context.SaveChangesAsync();
+
     }
 }

@@ -36,8 +36,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     
     const body = parseOfxBody(req.body);
     
-    console.log('Body:')
-    console.log(body)
+    //  console.log('Body:')
+    // console.log(body)
     
     const response = await fetch("https://localhost:5001/api/importTransaction/Import", {
       method: 'POST',
