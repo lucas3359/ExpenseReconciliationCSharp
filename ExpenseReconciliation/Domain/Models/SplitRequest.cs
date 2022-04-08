@@ -11,7 +11,6 @@ public class SplitRequest
 
 public class SplitLine
 {
-
     [JsonPropertyName("userId")]
     public int UserId { get; set; }
     [JsonPropertyName("amount")]
