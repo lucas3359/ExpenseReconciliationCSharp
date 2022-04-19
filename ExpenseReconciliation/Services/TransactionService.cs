@@ -29,12 +29,12 @@ public class TransactionService : ITransactionService
         return await _transactionRepository.ListAsync();
     }
 
-    public async Task<Transaction> GetById(int id)
+    public async Task<Transaction> GetByIdAsync(int id)
     {
         return await _transactionRepository.GetById(id);
     }
 
-    public async Task Import(BankTransactionRequest bankTransactionRequest)
+    public async Task ImportAsync(BankTransactionRequest bankTransactionRequest)
     {
         var accountId= await _accountService.FindOrCreateId(bankTransactionRequest.AccountNumber);
         var importId = await _importRecordService.CreateNewImport(bankTransactionRequest, accountId);
@@ -56,11 +56,11 @@ public class TransactionService : ITransactionService
         _logger.LogInformation("Parsed {transactionList.Count} transactions records from the file", transactionList.Count());
     }
 
-    public async Task Split(SplitRequest splitRequest)
+    public async Task AddSplitAsync(SplitRequest splitRequest)
     {
 
-        var splitDb = await _splitRepository.GetById(splitRequest.TransactionId);
-        if (splitDb.IsNotNull())
+        var splitDb = await _splitRepository.GetByIdAsync(splitRequest.TransactionId);
+        if (splitDb.IsNull())
         {
             
         }
@@ -72,9 +72,19 @@ public class TransactionService : ITransactionService
                 split.Amount = record.Amount;
                 split.TransactionId = splitRequest.TransactionId;
                 split.UserId = record.UserId;
-                await _splitRepository.Add(split);
+                await _splitRepository.AddSplitAsync(split);
             }
         }
     }
     
+    public async Task<IEnumerable<Split>> GetSplitByIdAsync(int transactionId)
+    {
+        return await _splitRepository.GetByIdAsync(transactionId);
+    }
+
+    public async Task DeleteSplitAsync(int transactionId)
+    {
+        await _splitRepository.DeleteSplitAsync(transactionId);
+    }
+
 }

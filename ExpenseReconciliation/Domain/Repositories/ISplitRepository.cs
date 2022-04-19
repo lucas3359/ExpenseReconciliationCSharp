@@ -8,7 +8,8 @@ namespace ExpenseReconciliation.Domain.Repositories
     public interface ISplitRepository
     {
         Task<IEnumerable<Split>> ListAsync();
-        Task<Split> GetById(int transactionId);
-        Task Add(Split split);
+        Task<IEnumerable<Split>> GetByIdAsync(int transactionId);
+        Task AddSplitAsync(Split split);
+        Task DeleteSplitAsync(int transactionId);
     }
 }

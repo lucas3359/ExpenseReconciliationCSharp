@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import Split from '../model/split'
 import SplitImport from '../model/updateSplit'
 import User from '../model/user'
@@ -8,12 +8,15 @@ const TransactionSplit = ({
   amount,
   transaction_id,
   users,
+  changeSplitStatus,
 }: {
   data: any
   amount: number
   transaction_id: number
   users: User[]
+  changeSplitStatus(status:boolean): void
 }) => {
+  const [splitted, setSplitted] = useState(data.length !== 0)
   const splitAmounts = (value: number, account_id: number): number[] => {
     const userCount = users.length
     const newAmounts = amounts ? amounts : []
@@ -60,7 +63,8 @@ const TransactionSplit = ({
     setPercent(percentage)
     setAmount(percentage * amount, users[0].id)
   }
-
+  
+////parseSplit
   const parseSplit = async () => {
     const splits: Split[] = []
 
@@ -73,7 +77,7 @@ const TransactionSplit = ({
         reviewed: false,
       }
       sum += roundedAmount
-      splits.push(split)
+      await splits.push(split)
     })
 
     if (sum !== amount) {
@@ -94,8 +98,11 @@ const TransactionSplit = ({
       method: 'POST',
       body: JSON.stringify(body),
     })
-
+ 
     if (response.status == 201) {
+      changeSplitStatus(true);
+      setSplitted(true);
+      console.log(splitted);
       // Updated, refresh the row
     } else if (response.status == 204) {
       // Amounts don't add up
@@ -103,7 +110,8 @@ const TransactionSplit = ({
       // Error
     }
   }
-
+////parseSplit
+  
   const renderCurrency = (amount: number): string => {
     return (amount / 100).toFixed(2)
   }
@@ -128,7 +136,8 @@ const TransactionSplit = ({
   }
 
   const renderAlreadySplit = (splits: Split[]) => {
-    return splits.map((split: Split) => {
+    return(
+        splits.map((split: Split) => {
       return (
         <span key={`span-${transaction_id}-${split.id}`} className='text-center'>
           <span className='font-normal'>{users?.find((user) => user.id == split.userId)?.name}: </span>
@@ -136,43 +145,114 @@ const TransactionSplit = ({
         </span>
       )
     })
+    )
   }
 
-  if (data.length !== 0) {
+  const renderSplitOptions = splitOptions.map((option) => {
     return (
-      <td className='p-2' colSpan={4}>
-        Already split: {renderAlreadySplit(data)}
-      </td>
-    )
-  } else {
-    const renderSplitOptions = splitOptions.map((option) => {
-      return (
         <option key={`option-${transaction_id}-${option.value}`} value={option.value}>
           {option.description}
         </option>
-      )
-    })
-    return (
-      <>
-        <td className='p-2' colSpan={3} key={`${transaction_id}-split-td`}>
-          <div>
-            <select className='mr-2' value={percent} onChange={splitAmount}>
-              {renderSplitOptions}
-            </select>
-            {renderUserDropdown()}
-          </div>
-        </td>
-        <td className='p-2'>
-          {' '}
-          <button
-            className='p-1 bg-green-300 w-16 border-green-300 hover:bg-green-100 focus:border-green-300'
-            onClick={parseSplit}>
-            Split
-          </button>
-        </td>
-      </>
     )
+  })
+  
+  const deleteSplit = async ()=> {
+    console.log('Delete');
+    await fetch("http://localhost:5000/api/transaction/DeleteSplit", {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(transaction_id)
+    });
+    setSplitted(false);
+    changeSplitStatus(false);
+    console.log('Changed split status');
   }
+
+  // useEffect(()=>{
+  //   const splitData = async()=>{
+  //     await fetch('http://localhost:5000/api/transaction/GetSplitById?transactionId='+ encodeURIComponent(transaction_id), {
+  //       method: 'GET',
+  //       headers: new Headers({
+  //         'Content-Type': 'application/json',
+  //       })
+  //     })
+  //   }
+  //   data = splitData();
+  //   console.log(data);
+  // },[splitted])
+  
+  // const splttedUi = ()=>{
+  //   return(
+  //       <>
+  //         <td className='p-2' colSpan={3}>
+  //           Already split: {renderAlreadySplit(data)}
+  //         </td>
+  //         <td>
+  //           <button
+  //               className='p-1 w-16' onClick={()=>deleteSplit}>
+  //             Delete
+  //           </button>
+  //         </td>
+  //       </>
+  //   )
+  // }
+  //
+  // const unsplittedUi = ()=>{
+  //   return (
+  //       <>
+  //         <td className='p-2' colSpan={3} key={`${transaction_id}-split-td`}>
+  //           <div>
+  //             <select className='mr-2' value={percent} onChange={splitAmount}>
+  //               {renderSplitOptions}
+  //             </select>
+  //             {renderUserDropdown()}
+  //           </div>
+  //         </td>
+  //         <td className='p-2'>
+  //           {' '}
+  //           <button
+  //               className='p-1 w-16'
+  //               onClick={parseSplit}>
+  //             Split
+  //           </button>
+  //         </td>
+  //       </>
+  //   )
+  // }
+  return (
+      splitted
+          ?<>
+            <td className='p-2' colSpan={3}>
+              Already split: {renderAlreadySplit(data)}
+            </td>
+            <td>
+              <button
+                  className='p-1 w-16' onClick={deleteSplit}>
+                Delete
+              </button>
+            </td>
+          </>
+          :<>
+            <td className='p-2' colSpan={3} key={`${transaction_id}-split-td`}>
+              <div>
+                <select className='mr-2' value={percent} onChange={splitAmount}>
+                  {renderSplitOptions}
+                </select>
+                {renderUserDropdown()}
+              </div>
+            </td>
+            <td className='p-2'>
+              {' '}
+              <button
+                  className='p-1 w-16'
+                  onClick={parseSplit}>
+                Split
+              </button>
+            </td>
+          </>
+  )//splitted ? splttedUi() : unsplittedUi()
 }
 
 export default TransactionSplit

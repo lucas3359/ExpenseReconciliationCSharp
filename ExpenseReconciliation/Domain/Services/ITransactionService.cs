@@ -5,8 +5,10 @@ namespace ExpenseReconciliation.Domain.Services;
 public interface ITransactionService
 {
     Task<IEnumerable<Transaction>> ListAsync();
-    Task<Transaction> GetById(int id);
-    Task Import(BankTransactionRequest bankTransactionRequest);
-    Task Split(SplitRequest splitRequest);
+    Task<Transaction> GetByIdAsync(int id);
+    Task ImportAsync(BankTransactionRequest bankTransactionRequest);
+    Task AddSplitAsync(SplitRequest splitRequest);
+    Task DeleteSplitAsync(int transactionId);
+    Task<IEnumerable<Split>> GetSplitByIdAsync(int transactionId);
 
 }

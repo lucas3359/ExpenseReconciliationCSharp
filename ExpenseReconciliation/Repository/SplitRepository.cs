@@ -25,15 +25,21 @@ namespace ExpenseReconciliation.Repository
             return await _context.Splits.ToListAsync();
         }
 
-        public async Task<Split> GetById(int transactionId)
+        public async Task<IEnumerable<Split>> GetByIdAsync(int transactionId)
         {
-            return await _context.Splits.Where(split => split.TransactionId == transactionId).FirstOrDefaultAsync();
+            return await _context.Splits.Where(split => split.TransactionId == transactionId).ToListAsync();
         }
 
-        public async Task Add(Split split)
+        public async Task AddSplitAsync(Split split)
         {
             _context.Splits.AddRange(split);
             await _context.SaveChangesAsync();
+        }
+        
+        public async Task DeleteSplitAsync(int transactionId)
+        {
+             _context.Splits.RemoveRange(_context.Splits.Where(split => split.TransactionId == transactionId).ToList());
+             await _context.SaveChangesAsync();
         }
 
     }

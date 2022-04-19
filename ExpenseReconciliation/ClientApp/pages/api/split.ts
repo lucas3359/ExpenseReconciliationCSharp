@@ -51,7 +51,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       //const split = await splitService.updateSplit(body)
 
-      //res.status(201).json(split)
+      res.status(201).json(split)
     }
   } else {
     res.status(401)
