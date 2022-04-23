@@ -4,73 +4,67 @@ import SplitImport from '../model/updateSplit'
 import User from '../model/user'
 
 const TransactionSplit = ({
-  data,
-  amount,
-  transaction_id,
-  users,
-  changeSplitStatus,
-}: {
+                            data,
+                            amount,
+                            transaction_id,
+                            users,
+                            changeSplitStatus,
+                          }: {
   data: any
   amount: number
   transaction_id: number
   users: User[]
   changeSplitStatus(status:boolean): void
 }) => {
+  amount=Math.round((amount/100)*100)/100;
   const [splitted, setSplitted] = useState(data.length !== 0)
-  const splitAmounts = (value: number, account_id: number): number[] => {
-    const userCount = users.length
-    const newAmounts = amounts ? amounts : []
-    newAmounts[account_id] = value
-
-    users.map((user) => {
-      if (user.id !== account_id) {
-        const unroundedAmount = (amount - value) / Math.min(userCount - 1, 1)
-        newAmounts[user.id] = Math.round(unroundedAmount)
-      }
-    })
-
-    return newAmounts
-  }
-
+    
   const [percent, setPercent] = useState(0.7)
-  const [amounts, setAmounts] = useState(() => {
-    return splitAmounts(percent * amount, users[0].id)
-  })
+  const [splitAmounts, setSplitSplitAmounts] = useState( {
+        1:Math.round(amount*percent*100)/100,
+        2:Math.round(amount*(1-percent)*100)/100
+      })
+
 
   const splitOptions = [
     { value: 0, description: '0' },
     { value: 0.3, description: '30%' },
+    { value: 0.4, description: '40%' },
     { value: 0.5, description: '50%' },
+    { value: 0.6, description: '60%' },
     { value: 0.7, description: '70%' },
     { value: 1, description: '100%' },
     { value: -1, description: 'Custom' },
   ]
-
-  const setAmountChange = (event: React.ChangeEvent<HTMLInputElement>, account_id: number) => {
+    
+  const customAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(event.target.value)
-    setAmount(value, account_id)
+    setSplitSplitAmounts(
+        {
+          1:value,
+          2:Math.round((amount-value)*100)/100
+        })
     setPercent(-1)
   }
 
-  const setAmount = (value: number, account_id: number) => {
-    const newAmounts = splitAmounts(value, account_id)
-
-    setAmounts(newAmounts)
-  }
-
-  const splitAmount = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const splitAmountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     var percentage = Number(event.target.value)
     setPercent(percentage)
-    setAmount(percentage * amount, users[0].id)
+    setSplitSplitAmounts(
+        {
+          1:Math.round((percentage * amount)*100)/100,
+          2:Math.round((amount-percentage * amount)*100)/100
+        }
+    )
   }
-  
+
 ////parseSplit
   const parseSplit = async () => {
     const splits: Split[] = []
-
+    amount  = amount*100;
     let sum = 0
     users.map(async (user) => {
-      const roundedAmount = Math.round(amounts[user.id])
+      const roundedAmount = Math.round(splitAmounts[user.id]*100)
       const split: Split = {
         userId: user.id,
         amount: roundedAmount,
@@ -79,7 +73,7 @@ const TransactionSplit = ({
       sum += roundedAmount
       await splits.push(split)
     })
-
+      
     if (sum !== amount) {
       const remainder = amount - sum
       console.log(`Amount ${amount} - Sum ${sum} has a remainder of ${remainder}`)
@@ -88,7 +82,7 @@ const TransactionSplit = ({
         splits[0].amount += remainder
       }
     }
-
+    
     const body: SplitImport = {
       transactionId: transaction_id,
       splits: splits,
@@ -98,7 +92,7 @@ const TransactionSplit = ({
       method: 'POST',
       body: JSON.stringify(body),
     })
- 
+
     if (response.status == 201) {
       changeSplitStatus(true);
       setSplitted(true);
@@ -111,24 +105,23 @@ const TransactionSplit = ({
     }
   }
 ////parseSplit
-  
-  const renderCurrency = (amount: number): string => {
-    return (amount / 100).toFixed(2)
-  }
 
-  const renderUserDropdown = () => {
+
+
+  const renderUser = () => {
     return users.map((user) => {
       return (
-        <span key={`${transaction_id}-split-${user.id}-input`}>
+          <span key={`${transaction_id}-split-${user.id}-input`}>
           <label className='italic'>{user.name}</label>
           <input
-            className='w-16 text-center'
-            type='text'
-            placeholder='Amount'
-            value={renderCurrency(amounts[user.id])}
-            onChange={(e) => {
-              setAmountChange(e, user.id)
-            }}
+              className='w-16 text-center'
+              type='text'
+              placeholder='Amount'
+              onChange={(e) => {
+                customAmount(e);
+              }}
+              value={splitAmounts[user.id]}
+
           />
         </span>
       )
@@ -138,24 +131,24 @@ const TransactionSplit = ({
   const renderAlreadySplit = (splits: Split[]) => {
     return(
         splits.map((split: Split) => {
-      return (
-        <span key={`span-${transaction_id}-${split.id}`} className='text-center'>
+          return (
+              <span key={`span-${transaction_id}-${split.id}`} className='text-center'>
           <span className='font-normal'>{users?.find((user) => user.id == split.userId)?.name}: </span>
-          <em>{renderCurrency(split.amount)}</em>&nbsp;
+          <em>{(split.amount/100).toFixed(2)}</em>&nbsp;
         </span>
-      )
-    })
+          )
+        })
     )
   }
 
-  const renderSplitOptions = splitOptions.map((option) => {
+  const renderOptions = splitOptions.map((option) => {
     return (
         <option key={`option-${transaction_id}-${option.value}`} value={option.value}>
           {option.description}
         </option>
     )
   })
-  
+
   const deleteSplit = async ()=> {
     console.log('Delete');
     await fetch("http://localhost:5000/api/transaction/DeleteSplit", {
@@ -169,58 +162,7 @@ const TransactionSplit = ({
     changeSplitStatus(false);
     console.log('Changed split status');
   }
-
-  // useEffect(()=>{
-  //   const splitData = async()=>{
-  //     await fetch('http://localhost:5000/api/transaction/GetSplitById?transactionId='+ encodeURIComponent(transaction_id), {
-  //       method: 'GET',
-  //       headers: new Headers({
-  //         'Content-Type': 'application/json',
-  //       })
-  //     })
-  //   }
-  //   data = splitData();
-  //   console.log(data);
-  // },[splitted])
   
-  // const splttedUi = ()=>{
-  //   return(
-  //       <>
-  //         <td className='p-2' colSpan={3}>
-  //           Already split: {renderAlreadySplit(data)}
-  //         </td>
-  //         <td>
-  //           <button
-  //               className='p-1 w-16' onClick={()=>deleteSplit}>
-  //             Delete
-  //           </button>
-  //         </td>
-  //       </>
-  //   )
-  // }
-  //
-  // const unsplittedUi = ()=>{
-  //   return (
-  //       <>
-  //         <td className='p-2' colSpan={3} key={`${transaction_id}-split-td`}>
-  //           <div>
-  //             <select className='mr-2' value={percent} onChange={splitAmount}>
-  //               {renderSplitOptions}
-  //             </select>
-  //             {renderUserDropdown()}
-  //           </div>
-  //         </td>
-  //         <td className='p-2'>
-  //           {' '}
-  //           <button
-  //               className='p-1 w-16'
-  //               onClick={parseSplit}>
-  //             Split
-  //           </button>
-  //         </td>
-  //       </>
-  //   )
-  // }
   return (
       splitted
           ?<>
@@ -237,10 +179,10 @@ const TransactionSplit = ({
           :<>
             <td className='p-2' colSpan={3} key={`${transaction_id}-split-td`}>
               <div>
-                <select className='mr-2' value={percent} onChange={splitAmount}>
-                  {renderSplitOptions}
+                <select className='mr-2' value={percent} onChange={splitAmountChange}>
+                  {renderOptions}
                 </select>
-                {renderUserDropdown()}
+                {renderUser()}
               </div>
             </td>
             <td className='p-2'>
@@ -252,7 +194,7 @@ const TransactionSplit = ({
               </button>
             </td>
           </>
-  )//splitted ? splttedUi() : unsplittedUi()
+  )
 }
 
 export default TransactionSplit
