@@ -7,7 +7,7 @@ import Transaction from '../model/transaction'
 import User from '../model/user'
 
 export default function List() {
-  const { data: transactionData, error: transactionError } = useSWR<Transaction[], any>('/api/transactions')
+  const { data: transactionData, error: transactionError } = useSWR<Transaction[], any>('https://localhost:5001/api/transaction/GetAllAsync')
   const { data: userData, error: userError } = useSWR<User[], any>('/api/user')
 
   const [session, loading] = useSession()

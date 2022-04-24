@@ -1,13 +1,13 @@
-import { User } from 'next-auth'
 import { useSession } from 'next-auth/client'
 import React from 'react'
 import useSWR from 'swr'
 import Layout from '../components/Layout'
-import Totals from '../model/totals'
+import User from '../model/user'
+import Total from "../model/total";
 
 export default function Dashboard() {
-  const { data: totalsData, error: totalsError } = useSWR<Totals, any>('https://localhost:5001/api/dashboard/GetAmountAsync')
-  const { data: userData, error: userError } = useSWR<User[], any>('/api/user')
+  const { data: totalsData, error: totalsError } = useSWR<Total[], any>('https://localhost:5001/api/dashboard/GetAmountAsync')
+  const { data: userData, error: userError } = useSWR<User[], any>('https://localhost:5001/api/user')
 
   const [session, loading] = useSession()
 
@@ -31,7 +31,7 @@ export default function Dashboard() {
   }
 
   const getTotals = () => {
-    return totalsData.totals?.map((total) => {
+    return totalsData.map((total) => {
       return (
         <div>
           <span>

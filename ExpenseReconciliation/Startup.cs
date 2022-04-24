@@ -48,8 +48,18 @@ namespace ExpenseReconciliation
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IImportTransactionService, ImportTransactionService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IImportRecordService, ImportRecordService>();
+            
+            
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,11 +76,11 @@ namespace ExpenseReconciliation
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseHttpLogging();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
