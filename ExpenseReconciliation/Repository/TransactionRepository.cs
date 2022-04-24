@@ -27,7 +27,7 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         return transactions;
     }
 
-    public async Task Add(List<Transaction> transactionList)
+    public async Task AddAsync(List<Transaction> transactionList)
     {
         var uniqueRecord = transactionList.Where(newTrans => !_context.Transactions.Any(tranInDb => tranInDb.BankId == newTrans.BankId));
         _context.Transactions.AddRange(uniqueRecord);

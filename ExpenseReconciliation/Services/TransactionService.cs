@@ -52,7 +52,7 @@ public class TransactionService : ITransactionService
             transaction.ImportId = importId;
             transactionList.Add(transaction);
         }
-        await _transactionRepository.Add(transactionList);
+        await _transactionRepository.AddAsync(transactionList);
         _logger.LogInformation("Parsed {transactionList.Count} transactions records from the file", transactionList.Count());
     }
 

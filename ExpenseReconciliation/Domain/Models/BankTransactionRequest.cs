@@ -28,11 +28,5 @@ public class TransactionLine
     public string Name { get; set; }
     [JsonPropertyName("MEMO")]
     public string Memo { get; set; }
-
-// "TRNTYPE": "FEE",
-// "DTPOSTED": "20220331",
-// "TRNAMT": "-12.50",
-// "FITID": "202203310",
-// "NAME": "Monthly A C Fee",
-// "MEMO": "Bank Fee"
+    
 }

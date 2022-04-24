@@ -4,7 +4,7 @@ using ExpenseReconciliation.Domain.Repositories;
 
 namespace ExpenseReconciliation.Repository;
 
-public class ImportRecordRepository :   RepositoryBase, IImportRecordRepository
+public class ImportRecordRepository : RepositoryBase, IImportRecordRepository
 {
     private readonly ImportRecord _importRecord;
     

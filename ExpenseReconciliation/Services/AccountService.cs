@@ -24,7 +24,7 @@ public class AccountService : IAccountService
         }
         else
         {
-             account = await _accountRepository.Add(tempAccount);
+             account = await _accountRepository.AddAsync(tempAccount);
              return account.id;
         }
 
