@@ -5,9 +5,11 @@ using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Domain.Repositories
 {
-    public interface IDashboardRepository
+    public interface ISplitRepository
     {
         Task<IEnumerable<Split>> ListAsync();
-        Task<string> AmountAsync();
+        Task<IEnumerable<Split>> GetByIdAsync(int transactionId);
+        Task AddSplitAsync(Split split);
+        Task DeleteSplitAsync(int transactionId);
     }
 }

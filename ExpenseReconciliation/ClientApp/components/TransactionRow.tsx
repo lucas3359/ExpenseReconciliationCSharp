@@ -5,7 +5,7 @@ import Icon from './Icon'
 import Split from '../model/split'
 import TransactionSplit from './TransactionSplit'
 
-const TransactionRow = ({ row, users }: { row: Transaction; users: User[] }) => {
+const TransactionRow = ({ row, users ,ChangeSplitStatus}: { row: Transaction; users: User[] ; ChangeSplitStatus(status:boolean): void}) => {
   const [showSplit, setShowSplit] = useState(false)
 
   const splits: Split[] = row.splits
@@ -21,6 +21,7 @@ const TransactionRow = ({ row, users }: { row: Transaction; users: User[] }) => 
           amount={Number(row.amount)}
           transaction_id={row.id}
           users={users}
+          changeSplitStatus= {(status:boolean)=>ChangeSplitStatus(status)}
         />
       </tr>
     )
