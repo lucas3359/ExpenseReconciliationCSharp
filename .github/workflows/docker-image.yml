@@ -1,0 +1,20 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Back End Docker image
+      run: docker build ./ExpenseReconciliation --file Dockerfile --tag getting-started
+    - name: Build the Front End Docker image
+      run: docker build ./ExpenseReconciliation/ClientApp --file Dockerfile --tag expense-frontend
