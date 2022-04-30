@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseReconciliation.Controllers
@@ -15,13 +16,15 @@ namespace ExpenseReconciliation.Controllers
         {
             this._dashboardService = dashboardService;
         }
-
+        [EnableCors]
         [HttpGet("GetAllAsync")]
         public async Task<IEnumerable<Split>> GetAllAsync()
         {
             return await _dashboardService.ListAsync();
 
         }
+        
+        [EnableCors]
         [HttpGet("GetAmountAsync")]
         public async Task<string> GetAmountAsync()
         {

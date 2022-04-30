@@ -15,6 +15,7 @@ namespace ExpenseReconciliation
 {
     public class Startup
     {
+        string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,8 +31,15 @@ namespace ExpenseReconciliation
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
 
-            services.AddDbContext<DataContext.AppDbContext>(options => options.UseNpgsql(
-                Configuration.GetConnectionString("defaultConnection"))
+            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = Configuration.GetConnectionString("defaultConnection");
+            }
+
+            services.AddDbContext<DataContext.AppDbContext>(
+                options => options
+                .UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention()
                 .EnableSensitiveDataLogging() // TODO: Dev only
             );
@@ -45,8 +53,16 @@ namespace ExpenseReconciliation
                         .AllowAnyMethod()
                         .Build();
                 });
+                
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:3000");
+                    });
+                
             });
 
+            
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ITransactionService, TransactionService>();
@@ -59,7 +75,7 @@ namespace ExpenseReconciliation
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +93,7 @@ namespace ExpenseReconciliation
             //app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             app.UseRouting();
-
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseReconciliation.Controllers
@@ -17,7 +18,7 @@ namespace ExpenseReconciliation.Controllers
             {
                 _userService = userService;
             }
-
+            [EnableCors]
             [HttpGet]
             public async Task<IEnumerable<User>> GetAllAsync()
             {

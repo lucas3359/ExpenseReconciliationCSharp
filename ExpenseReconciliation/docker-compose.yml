@@ -1,0 +1,23 @@
+version: '3'
+      
+
+services:
+  frontend:
+    image: expense-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      GOOGLE_ID: ${GOOGLE_ID}
+      GOOGLE_SECRET: ${GOOGLE_SECRET}
+    ports:
+      - "3000:3000"
+  backend:
+    image: getting-started
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      CONNECTION_STRING: ${CONNECTION_STRING}
+    ports:
+      - "5000:80"
