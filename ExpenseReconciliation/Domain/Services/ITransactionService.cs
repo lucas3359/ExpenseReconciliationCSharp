@@ -10,5 +10,6 @@ public interface ITransactionService
     Task AddSplitAsync(SplitRequest splitRequest);
     Task DeleteSplitAsync(int transactionId);
     Task<IEnumerable<Split>> GetSplitByIdAsync(int transactionId);
+    Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate);
 
 }

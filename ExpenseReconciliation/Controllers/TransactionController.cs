@@ -21,6 +21,15 @@ public class TransactionController : Controller
         return await _transactionService.ListAsync();
 
     }
+    
+    [EnableCors]
+    [HttpGet("GetByDateAsync")]
+    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _transactionService.GetByDateAsync(startDate,endDate);
+
+    }
+    
     [EnableCors]
     [HttpGet("GetById")]
     public async Task<Transaction> GetById(int id)

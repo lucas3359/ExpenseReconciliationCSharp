@@ -29,6 +29,11 @@ public class TransactionService : ITransactionService
         return await _transactionRepository.ListAsync();
     }
 
+    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _transactionRepository.GetByDateAsync(startDate,endDate);
+    }
+    
     public async Task<Transaction> GetByIdAsync(int id)
     {
         return await _transactionRepository.GetById(id);
