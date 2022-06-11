@@ -44,6 +44,8 @@ namespace ExpenseReconciliation
                 .EnableSensitiveDataLogging() // TODO: Dev only
             );
 
+            services.AddMemoryCache();
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("Dev", builder =>
