@@ -1,4 +1,4 @@
-import useSWR from 'swr'
+import useSWR, {useSWRInfinite} from 'swr'
 import { useSession } from 'next-auth/client'
 import React, {useState} from 'react'
 import Layout from '../components/Layout'
@@ -9,6 +9,7 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import {DateRangePicker } from 'react-date-range';
 import { addDays } from 'date-fns';
+import listPagination from "../components/listPagination";
 
 export default function List() {
   
@@ -19,11 +20,47 @@ export default function List() {
         key: 'selection'
       }
   );
+  
+  
+  
+////////////////////////////////////////
+  const listPagination = (path)=>{
 
-  const { data: transactionData, error: transactionError, mutate } = useSWR<Transaction[], any>(()=> {
-    const url = 'http://localhost:5000/api/transaction/GetByDateAsync?startDate=' + encodeURIComponent(dateRange.startDate.toISOString()) +'&endDate=' + encodeURIComponent(dateRange.endDate.toISOString());
-    return url
-  })
+    if (!path) {
+      throw new Error("Path is required")
+    }
+    const baseUrl = 'http://localhost:5000/api/transaction/GetByDateAsync'
+    const url = baseUrl + path
+    console.log(url)
+    const PAGE_LIMIT = 5
+    const { data, error: transactionError, size, setSize,mutate } = useSWRInfinite(
+        index => `${url}?_page=${index + 1}&_limit=${PAGE_LIMIT}`
+    )
+
+    const transactionData = data ? [].concat(...data) : []
+    const isLoadingInitialData = !data && !transactionError
+    const isLoadingMore =
+        isLoadingInitialData ||
+        (size > 0 && data && typeof data[size - 1] === "undefined")
+    const isEmpty = data?.[0]?.length === 0
+    const isReachingEnd =
+        isEmpty || (data && data[data.length - 1]?.length < PAGE_LIMIT)
+
+    return { posts: transactionData, error: transactionError, isLoadingMore, size, setSize, isReachingEnd }
+  }
+  ////////////////////////////////////////
+  
+  
+
+  //const url = 'http://localhost:5000/api/transaction/GetByDateAsync?startDate=' + encodeURIComponent(dateRange.startDate.toISOString()) +'&endDate=' + encodeURIComponent(dateRange.endDate.toISOString());
+  const url = '?startDate=' + encodeURIComponent(dateRange.startDate.toISOString()) +'&endDate=' + encodeURIComponent(dateRange.endDate.toISOString());
+  //const { data: transactionData, error: transactionError, mutate } = useSWR<Transaction[], any>(url  )
+
+  const { posts: transactionData, error: transactionError,isLoadingMore,size, isReachingEnd } = listPagination(
+      `/${url}`
+  )
+  
+  console.log(transactionData);
   
   const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
 
@@ -37,7 +74,7 @@ export default function List() {
     console.log(`handle split change: ${status}`);
     mutate();
   }
-  console.log(dateRange.startDate.toISOString());
+  //console.log(dateRange.startDate.toISOString());
   
   const onChange=(item)=>{
     setDateRange(item.selection)

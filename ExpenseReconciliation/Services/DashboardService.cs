@@ -10,6 +10,10 @@ namespace ExpenseReconciliation.Services
 {
     public class DashboardService : IDashboardService
     {
+        public class Dshhh
+        {
+        }
+
         private readonly ISplitRepository _splitRepository;
         
         public DashboardService(ISplitRepository splitRepository )
