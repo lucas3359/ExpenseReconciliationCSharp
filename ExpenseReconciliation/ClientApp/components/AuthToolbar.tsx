@@ -1,9 +1,9 @@
-import { signIn, signOut, useSession } from 'next-auth/client'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import React, { useRef, MouseEventHandler, useEffect, useState } from 'react'
 import Icon from './Icon'
 
 const AuthToolbar = ({ rootRef }) => {
-  const [session, loading] = useSession()
+  const {data: session } = useSession()
   const [showDropdown, setShowDropdown] = useState(false)
 
   const authRef = useRef(null)

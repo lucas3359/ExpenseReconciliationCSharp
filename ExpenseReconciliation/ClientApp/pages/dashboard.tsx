@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import React from 'react'
 import useSWR from 'swr'
 import Layout from '../components/Layout'
@@ -9,7 +9,7 @@ export default function Dashboard() {
   const { data: totalsData, error: totalsError } = useSWR<Total[], any>('http://localhost:5000/api/dashboard/GetAmountAsync')
   const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
 
-  const [session, loading] = useSession()
+  const {data: session } = useSession()
 
   if (totalsError || userError) return <div>Failed to load</div>
   if (!totalsData || !userData) return <div>loading...</div>

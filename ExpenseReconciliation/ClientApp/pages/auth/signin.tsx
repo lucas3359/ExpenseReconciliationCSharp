@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ClientSafeProvider, getProviders, signIn } from 'next-auth/client'
+import { ClientSafeProvider, getProviders, signIn } from 'next-auth/react'
 import Layout from '../../components/Layout'
 import Card from '../../components/Card'
 

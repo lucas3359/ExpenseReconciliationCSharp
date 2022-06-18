@@ -26,6 +26,13 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         
         return transactions;
     }
+    
+    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate)
+    {
+        var transactions =  await _context.Transactions.Include(p=>p.splits).Where(txn=>txn.Date >= startDate && txn.Date <= endDate).ToListAsync();
+        return transactions;
+    }
+    
 
     public async Task AddAsync(List<Transaction> transactionList)
     {
