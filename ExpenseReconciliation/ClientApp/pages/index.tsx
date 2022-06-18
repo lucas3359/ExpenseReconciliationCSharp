@@ -1,12 +1,12 @@
 import Head from 'next/head'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import UploadFile from '../components/uploadFile'
 import Card from '../components/Card'
 import Layout from '../components/Layout'
 import Icon from '../components/Icon'
 
 export default function Home({}) {
-  const [session, loading] = useSession()
+  const {data: session } = useSession()
 
   const header = (
     <Head>

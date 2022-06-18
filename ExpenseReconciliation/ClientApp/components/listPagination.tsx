@@ -1,4 +1,5 @@
-import useSWR, {useSWRInfinite} from 'swr'
+import useSWR from 'swr'
+import useSWRInfinite from 'swr/infinite'
 
 const listPagination = (path)=>{
     

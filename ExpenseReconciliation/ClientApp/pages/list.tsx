@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import React, {useEffect, useState} from 'react'
 import Layout from '../components/Layout'
 import TransactionRow from '../components/TransactionRow'
@@ -28,7 +28,7 @@ export default function List() {
   
   const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
 
-  const [session, loading] = useSession()
+  const {data: session } = useSession()
   const [splitted, setSplitted] = useState(  0)
   const itemsPerPage = 4;
   const [currentItems, setCurrentItems] = useState([]);

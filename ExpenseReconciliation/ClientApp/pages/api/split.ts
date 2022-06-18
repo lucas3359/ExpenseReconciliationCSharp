@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import SplitImport from '../../model/updateSplit'
-import { getSession } from 'next-auth/client'
+import { getSession } from 'next-auth/react'
 import Transaction from "../../model/transaction";
 import {createWriteStream} from "fs";
 
