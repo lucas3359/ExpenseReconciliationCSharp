@@ -12,7 +12,7 @@ import { addDays } from 'date-fns';
 import ReactPaginate from "react-paginate";
 
 export default function List() {
-
+  
   const [dateRange, setDateRange] = useState(
       {
         startDate: new Date(),
@@ -25,7 +25,7 @@ export default function List() {
     const url = 'http://localhost:5000/api/transaction/GetByDateAsync?startDate=' + encodeURIComponent(dateRange.startDate.toISOString()) +'&endDate=' + encodeURIComponent(dateRange.endDate.toISOString());
     return url
   })
-
+  
   const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
 
   const [session, loading] = useSession()
@@ -56,7 +56,7 @@ export default function List() {
     mutate();
   }
   console.log(dateRange.startDate.toISOString());
-
+  
   const onChange=(item)=>{
     setDateRange(item.selection)
     mutate();
@@ -80,25 +80,25 @@ export default function List() {
   }
   if (!session) {
     return (
-        <Layout>
-          <div>Not signed in</div>
-        </Layout>
+      <Layout>
+        <div>Not signed in</div>
+      </Layout>
     )
   } else {
     return (
-        <Layout>
-          <div className = "list heading">
-            <DateRangePicker
-                onChange={onChange}
-                showSelectionPreview={true}
-                moveRangeOnFirstSelection={false}
-                months={2}
-                ranges={[dateRange]}
-                direction="horizontal"
-            />
-          </div>
-          <table id='table' className='w-full table-auto'>
-            <thead>
+      <Layout>
+        <div className = "list heading">
+          <DateRangePicker
+              onChange={onChange}
+              showSelectionPreview={true}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              ranges={[dateRange]}
+              direction="horizontal"
+          />
+        </div>
+        <table id='table' className='w-full table-auto'>
+          <thead>
             <tr className='bg-gray-100'>
               <th className='py-3'>Date</th>
               <th className='py-3'>Description</th>
