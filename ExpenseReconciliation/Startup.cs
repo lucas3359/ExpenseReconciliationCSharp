@@ -92,7 +92,7 @@ namespace ExpenseReconciliation
             {
                 app.UseExceptionHandler("/Error");
             }
-            //app.UseHttpLogging();
+            app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);

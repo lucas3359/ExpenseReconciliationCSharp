@@ -21,15 +21,14 @@ export default function List() {
       }
   );
 
+  const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
   const { data: transactionData, error: transactionError, mutate } = useSWR<Transaction[], any>(()=> {
     const url = 'http://localhost:5000/api/transaction/GetByDateAsync?startDate=' + encodeURIComponent(dateRange.startDate.toISOString()) +'&endDate=' + encodeURIComponent(dateRange.endDate.toISOString());
     return url
   })
   
-  const { data: userData, error: userError } = useSWR<User[], any>('http://localhost:5000/api/user')
 
   const {data: session } = useSession()
-  const [splitted, setSplitted] = useState(  0)
   const itemsPerPage = 4;
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
