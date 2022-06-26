@@ -1,5 +1,4 @@
 import useSWR from 'swr'
-import { useSession } from 'next-auth/react'
 import React, {useEffect, useState} from 'react'
 import Layout from '../components/Layout'
 import TransactionRow from '../components/TransactionRow'
@@ -26,9 +25,8 @@ export default function List() {
     const url = 'http://localhost:5000/api/transaction/GetByDateAsync?startDate=' + encodeURIComponent(dateRange.startDate.toISOString()) +'&endDate=' + encodeURIComponent(dateRange.endDate.toISOString());
     return url
   })
-  
 
-  const {data: session } = useSession()
+  const session = true;
   const itemsPerPage = 4;
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);

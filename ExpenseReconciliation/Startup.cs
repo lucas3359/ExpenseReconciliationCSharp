@@ -1,9 +1,13 @@
+using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
@@ -39,10 +43,20 @@ namespace ExpenseReconciliation
 
             services.AddDbContext<DataContext.AppDbContext>(
                 options => options
-                .UseNpgsql(connectionString)
-                .UseSnakeCaseNamingConvention()
-                .EnableSensitiveDataLogging() // TODO: Dev only
+                    .UseNpgsql(connectionString)
+                    .UseSnakeCaseNamingConvention()
+                    .EnableSensitiveDataLogging() // TODO: Dev only
             );
+
+            services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext.AppDbContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.UseGoogle(
+                        clientId: Configuration["clientId"],
+                        hostedDomain: Configuration["clientId"]);
+                });
 
             services.AddMemoryCache();
             
@@ -61,10 +75,8 @@ namespace ExpenseReconciliation
                     {
                         policy.WithOrigins("http://localhost:3000");
                     });
-                
             });
 
-            
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ITransactionService, TransactionService>();
@@ -95,6 +107,8 @@ namespace ExpenseReconciliation
             app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseCors(MyAllowSpecificOrigins);
             app.UseEndpoints(endpoints =>
             {
