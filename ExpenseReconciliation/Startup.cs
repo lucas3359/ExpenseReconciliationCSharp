@@ -1,20 +1,13 @@
+using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace ExpenseReconciliation
 {
@@ -42,14 +35,14 @@ namespace ExpenseReconciliation
                 connectionString = Configuration.GetConnectionString("defaultConnection");
             }
 
-            services.AddDbContext<DataContext.AppDbContext>(
+            services.AddDbContext<AppDbContext>(
                 options => options
                     .UseNpgsql(connectionString)
                     .UseSnakeCaseNamingConvention()
                     .EnableSensitiveDataLogging() // TODO: Dev only
             );
 
-            services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext.AppDbContext>();
+            services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -58,13 +51,13 @@ namespace ExpenseReconciliation
                         clientId: Configuration["clientId"],
                         hostedDomain: Configuration["clientId"]);
                 });
-            /*services.AddAuthorization(options =>
+            services.AddAuthorization(options =>
             {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                options.AddPolicy("API", new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .Build();
-            });*/
+                    .Build());
+            });
 
             services.AddMemoryCache();
             
