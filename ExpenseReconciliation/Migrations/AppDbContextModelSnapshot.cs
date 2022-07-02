@@ -150,12 +150,12 @@ namespace ExpenseReconciliation.Migrations
 
             modelBuilder.Entity("ExpenseReconciliation.Domain.Models.User", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
@@ -172,10 +172,6 @@ namespace ExpenseReconciliation.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("integer")
-                        .HasColumnName("id1");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
@@ -217,17 +213,7 @@ namespace ExpenseReconciliation.Migrations
                         .HasColumnType("text")
                         .HasColumnName("user_name");
 
-                    b.Property<string>("email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("email1");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("id")
+                    b.HasKey("Id")
                         .HasName("pk_user");
 
                     b.ToTable("user", (string)null);

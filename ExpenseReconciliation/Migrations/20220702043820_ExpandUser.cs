@@ -9,6 +9,10 @@ namespace ExpenseReconciliation.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "name",
+                table: "user");
+
             migrationBuilder.AlterColumn<string>(
                 name: "email",
                 table: "user",
@@ -30,26 +34,12 @@ namespace ExpenseReconciliation.Migrations
                 type: "text",
                 nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "email1",
-                table: "user",
-                type: "text",
-                nullable: false,
-                defaultValue: "");
-
             migrationBuilder.AddColumn<bool>(
                 name: "email_confirmed",
                 table: "user",
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
-
-            migrationBuilder.AddColumn<int>(
-                name: "id1",
-                table: "user",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
 
             migrationBuilder.AddColumn<bool>(
                 name: "lockout_enabled",
@@ -126,15 +116,7 @@ namespace ExpenseReconciliation.Migrations
                 table: "user");
 
             migrationBuilder.DropColumn(
-                name: "email1",
-                table: "user");
-
-            migrationBuilder.DropColumn(
                 name: "email_confirmed",
-                table: "user");
-
-            migrationBuilder.DropColumn(
-                name: "id1",
                 table: "user");
 
             migrationBuilder.DropColumn(
@@ -186,6 +168,13 @@ namespace ExpenseReconciliation.Migrations
                 oldClrType: typeof(string),
                 oldType: "text",
                 oldNullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "name",
+                table: "user",
+                type: "text",
+                nullable: false,
+                defaultValue: "");
         }
     }
 }

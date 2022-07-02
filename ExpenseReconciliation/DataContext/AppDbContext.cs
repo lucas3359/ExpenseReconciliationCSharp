@@ -23,7 +23,7 @@ namespace ExpenseReconciliation.DataContext
             base.OnModelCreating(builder);
             
             builder.Entity<User>().ToTable("user");
-            builder.Entity<User>().HasKey(p => p.id);
+            builder.Entity<User>().HasKey(p => p.Id);
 
             builder.Entity<Split>().ToTable("split");
             builder.Entity<Split>().HasKey(split => split.Id);
