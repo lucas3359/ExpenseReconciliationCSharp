@@ -58,13 +58,13 @@ namespace ExpenseReconciliation
                         clientId: Configuration["clientId"],
                         hostedDomain: Configuration["clientId"]);
                 });
-            services.AddAuthorization(options =>
+            /*services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                     .Build();
-            });
+            });*/
 
             services.AddMemoryCache();
             
@@ -90,8 +90,7 @@ namespace ExpenseReconciliation
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IImportRecordService, ImportRecordService>();
-            
-            
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISplitRepository, SplitRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -114,6 +113,8 @@ namespace ExpenseReconciliation
             }
             app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            app.UseSpaStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -123,6 +124,16 @@ namespace ExpenseReconciliation
                 endpoints.MapControllerRoute(
                     "default",
                     "{controller}/{action=Index}/{id?}");
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer("start");
+                }
             });
         }
     }
