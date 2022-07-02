@@ -48,8 +48,8 @@ namespace ExpenseReconciliation
                 .AddJwtBearer(options =>
                 {
                     options.UseGoogle(
-                        clientId: Configuration["clientId"],
-                        hostedDomain: Configuration["clientId"]);
+                        clientId: Configuration["clientId"]
+                        );
                 });
             services.AddAuthorization(options =>
             {

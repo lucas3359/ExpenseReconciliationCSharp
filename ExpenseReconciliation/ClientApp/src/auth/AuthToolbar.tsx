@@ -6,10 +6,15 @@ const AuthToolbar = () => {
     <div className="flex-initial relative">
       <GoogleLogin
         onSuccess={(credentialResponse) => {
-          console.log(credentialResponse);
+          if (credentialResponse.credential) {
+            localStorage.setItem('token', credentialResponse.credential);
+            console.log('Set credential');
+          } else {
+            console.error('No credential was found');
+          }
         }}
         onError={() => {
-          console.log('Login failed');
+          console.error('Login failed');
         }}
       />
     </div>

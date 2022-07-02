@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
+import { baseUrl, getCurrentToken } from '../services/auth';
 
 const TransactionSplit = ({
   data,
@@ -86,6 +87,7 @@ const TransactionSplit = ({
       splits: splits,
     };
 
+    // TODO: Local service
     const response = await fetch('/api/split', {
       method: 'POST',
       body: JSON.stringify(body),
@@ -152,9 +154,10 @@ const TransactionSplit = ({
 
   const deleteSplit = async () => {
     console.log('Delete');
-    await fetch('http://localhost:5000/api/transaction/DeleteSplit', {
+    await fetch(`${baseUrl}/api/transaction/DeleteSplit`, {
       method: 'POST',
       headers: new Headers({
+        Authorization: `Bearer ${getCurrentToken()}`,
         'Content-Type': 'application/json',
       }),
       body: JSON.stringify(transaction_id),

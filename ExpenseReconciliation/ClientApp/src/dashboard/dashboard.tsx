@@ -5,20 +5,14 @@ import Total from '../model/total';
 
 export default function Dashboard() {
   const { data: totalsData, error: totalsError } = useSWR<Total[], any>(
-    'http://localhost:5000/api/dashboard/GetAmountAsync',
+    '/api/dashboard/GetAmountAsync',
   );
-  const { data: userData, error: userError } = useSWR<User[], any>(
-    'http://localhost:5000/api/user',
-  );
-
-  const session = true;
+  const { data: userData, error: userError } = useSWR<User[], any>('/api/user');
 
   if (totalsError || userError) return <div>Failed to load</div>;
   if (!totalsData || !userData) return <div>loading...</div>;
-
-  if (!session) {
-    return <h1>Not signed in</h1>;
-  }
+  console.log('TotalsData');
+  console.log(totalsData);
 
   const getUser = (userId: number): string | undefined => {
     return userData.find((user) => user.id === userId)?.name;

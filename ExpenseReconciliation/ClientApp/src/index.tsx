@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { SWRConfig } from 'swr';
+import { fetcher } from './services/auth';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -17,10 +18,8 @@ root.render(
       <link rel="icon" href="/favicon.ico" />
     </head>
 
-    <GoogleOAuthProvider clientId="">
-      <SWRConfig
-        value={{ fetcher: (url) => fetch(url).then((res) => res.json()) }}
-      >
+    <GoogleOAuthProvider clientId="TODO: Configurable">
+      <SWRConfig value={{ fetcher: fetcher }}>
         <App />
       </SWRConfig>
     </GoogleOAuthProvider>

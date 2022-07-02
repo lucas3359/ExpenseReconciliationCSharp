@@ -4,7 +4,7 @@ const listPagination = (path) => {
   if (!path) {
     throw new Error('Path is required');
   }
-  const baseUrl = 'http://localhost:5000/api/transaction/GetByDateAsync';
+  const baseUrl = '/api/transaction/GetByDateAsync';
   const url = baseUrl + path;
   const PAGE_LIMIT = 5;
   const {
