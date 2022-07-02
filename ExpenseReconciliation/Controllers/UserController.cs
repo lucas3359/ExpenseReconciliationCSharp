@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +18,6 @@ namespace ExpenseReconciliation.Controllers
                 _userService = userService;
             }
             
-            [Authorize]
             [EnableCors]
             [HttpGet]
             public async Task<IEnumerable<User>> GetAllAsync()

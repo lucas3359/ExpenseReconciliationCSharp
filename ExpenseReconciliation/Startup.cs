@@ -5,6 +5,7 @@ using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,13 @@ namespace ExpenseReconciliation
                         clientId: Configuration["clientId"],
                         hostedDomain: Configuration["clientId"]);
                 });
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .Build();
+            });
 
             services.AddMemoryCache();
             
