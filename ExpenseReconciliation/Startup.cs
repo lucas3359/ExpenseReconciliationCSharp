@@ -1,15 +1,13 @@
+using ExpenseReconciliation.DataContext;
+using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace ExpenseReconciliation
 {
@@ -37,12 +35,29 @@ namespace ExpenseReconciliation
                 connectionString = Configuration.GetConnectionString("defaultConnection");
             }
 
-            services.AddDbContext<DataContext.AppDbContext>(
+            services.AddDbContext<AppDbContext>(
                 options => options
-                .UseNpgsql(connectionString)
-                .UseSnakeCaseNamingConvention()
-                .EnableSensitiveDataLogging() // TODO: Dev only
+                    .UseNpgsql(connectionString)
+                    .UseSnakeCaseNamingConvention()
+                    .EnableSensitiveDataLogging() // TODO: Dev only
             );
+
+            services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.UseGoogle(
+                        clientId: Configuration["clientId"]
+                        );
+                });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("API", new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .Build());
+            });
 
             services.AddMemoryCache();
             
@@ -61,17 +76,14 @@ namespace ExpenseReconciliation
                     {
                         policy.WithOrigins("http://localhost:3000");
                     });
-                
             });
 
-            
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IImportRecordService, ImportRecordService>();
-            
-            
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISplitRepository, SplitRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -94,13 +106,27 @@ namespace ExpenseReconciliation
             }
             app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            app.UseSpaStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseCors(MyAllowSpecificOrigins);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     "default",
                     "{controller}/{action=Index}/{id?}");
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer("start");
+                }
             });
         }
     }
