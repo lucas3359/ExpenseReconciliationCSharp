@@ -8,11 +8,11 @@ export const getCurrentToken = (): string | null => {
 
 export const fetcher = (url: string, token: string) => {
   const apiUrl = `${baseUrl}${url}`;
-
+  
   console.debug(`Making a fetch to ${apiUrl}${url} with token ${token?.length}`);
-
-  if (!token || token.length < 5)
-    throw Error('Tried to send request with no token');
+  if (!token || token.length < 5) {
+    return Promise.reject('Made request with no token');
+  }
 
   return fetch(apiUrl, {
     headers: new Headers({
