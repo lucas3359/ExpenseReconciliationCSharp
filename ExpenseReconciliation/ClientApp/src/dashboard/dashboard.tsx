@@ -2,13 +2,22 @@ import React from 'react';
 import useSWR from 'swr';
 import User from '../model/user';
 import Total from '../model/total';
+import useAuth from '../hooks/useAuth';
+import { fetcher } from '../services/auth';
 
 export default function Dashboard() {
+  const { getSession } = useAuth();
+  const token = getSession().token;
   const { data: totalsData, error: totalsError } = useSWR<Total[], any>(
-    '/api/dashboard/GetAmountAsync',
+    ['/api/dashboard/GetAmountAsync', token],
+    fetcher,
   );
-  const { data: userData, error: userError } = useSWR<User[], any>('/api/user');
+  const { data: userData, error: userError } = useSWR<User[], any>(
+    ['/api/user', token],
+    fetcher,
+  );
 
+  if (!getSession().loggedIn) return <div>Unauthenticated</div>;
   if (totalsError || userError) return <div>Failed to load</div>;
   if (!totalsData || !userData) return <div>loading...</div>;
   console.log('TotalsData');
