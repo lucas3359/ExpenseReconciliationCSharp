@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
@@ -17,6 +14,11 @@ namespace ExpenseReconciliation.Repository
         public async Task<IEnumerable<User>> ListAsync()
         {
             return await _context.Users.ToListAsync();
+        }
+
+        public async Task<User?> FindByEmail(string email)
+        {
+            return await _context.Users.Where(user => user.Email == email).FirstAsync();
         }
     }
 }

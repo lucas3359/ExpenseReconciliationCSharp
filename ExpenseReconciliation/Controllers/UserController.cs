@@ -1,8 +1,6 @@
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseReconciliation.Controllers
@@ -12,10 +10,13 @@ namespace ExpenseReconciliation.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ILogger _logger;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService,
+                              ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
         
         [HttpGet]
@@ -23,6 +24,17 @@ namespace ExpenseReconciliation.Controllers
         {
             var user = await _userService.ListAsync();
             return user;
+        }
+
+        [HttpGet("/api/user/me")]
+        public async Task<User?> GetCurrentUser()
+        {
+            _logger.LogInformation("Attempting to find current user");
+            var email = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            
+            if (string.IsNullOrEmpty(email)) throw new HttpRequestException("Not found");
+
+            return await _userService.GetUserByEmail(email);
         }
     }
 }

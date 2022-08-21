@@ -1,16 +1,30 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { GoogleLogin } from '@react-oauth/google';
+import useAuth from '../hooks/useAuth';
+import {AuthContext} from './AuthProvider';
 
 const AuthToolbar = () => {
+  const { login, logout } = useAuth();
+  const session = useContext(AuthContext);
+  
+  if (session?.loggedIn) {
+    return(
+      <div className="flex-initial relative">
+        <span className="text-sm mr-2">{session?.user?.email}</span>
+        <button onClick={() => logout()}>Logout</button>
+      </div>
+    );
+  }
+  
   return (
-    <div className="flex-initial relative">
+    <div className="flex-initial relative mr-4">
       <GoogleLogin
-        onSuccess={(credentialResponse) => {
+        onSuccess={async (credentialResponse) => {
           if (credentialResponse.credential) {
-            localStorage.setItem('token', credentialResponse.credential);
-            console.log('Set credential');
+            await login(credentialResponse.credential)
+            console.debug('Logged in');
           } else {
-            console.error('No credential was found');
+            console.error('No credential retrieved from Google');
           }
         }}
         onError={() => {

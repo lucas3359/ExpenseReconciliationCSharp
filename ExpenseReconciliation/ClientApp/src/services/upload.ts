@@ -1,7 +1,7 @@
 import ofx from 'node-ofx-parser';
 import TransactionImport from '../model/transactionImport';
 
-function parseOfxBody(file: string): TransactionImport {
+export function parseOfxBody(file: string): TransactionImport {
   let data = ofx.parse(file);
 
   const creditCardPrefix = data.OFX.CREDITCARDMSGSRSV1?.CCSTMTTRNRS?.CCSTMTRS;
@@ -25,18 +25,3 @@ function parseOfxBody(file: string): TransactionImport {
   };
   return body;
 }
-
-export default async (ofxBody) => {
-  const body = parseOfxBody(ofxBody);
-  console.log('Body:');
-  console.log(body);
-  const response = await fetch('http://localhost:5000/api/transaction/Import', {
-    method: 'POST',
-    headers: new Headers({
-      'Content-Type': 'application/json',
-    }),
-    body: JSON.stringify(body),
-  });
-
-  return true;
-};
