@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Unit Test
-        uses: dotnet test
+        run: dotnet test
 
   
   build:
