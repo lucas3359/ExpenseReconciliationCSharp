@@ -39,7 +39,7 @@ namespace ExpenseReconciliation.Controllers
         }
 
         [HttpPost("Import")]
-        public async Task GetAllAsync([FromBody] BankTransactionRequest bankTransactionRequest)
+        public async Task Import([FromBody] BankTransactionRequest bankTransactionRequest)
         {
             await _transactionService.ImportAsync(bankTransactionRequest);
         }
