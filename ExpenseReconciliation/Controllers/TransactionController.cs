@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseReconciliation.Controllers
 {
-
     [Authorize("API")]
     [Route("/api/[controller]")]
     public class TransactionController : Controller
@@ -32,10 +31,11 @@ namespace ExpenseReconciliation.Controllers
         }
 
         [HttpGet("GetById")]
-        public async Task<Transaction> GetById(int id)
+        public async Task<ActionResult<Transaction?>> GetById(int id)
         {
-            return await _transactionService.GetByIdAsync(id);
-
+            var transaction = await _transactionService.GetByIdAsync(id);
+            if (transaction == null) return NotFound("Transaction with that ID couldn't be found");
+            return Ok(transaction);
         }
 
         [HttpPost("Import")]
@@ -45,20 +45,30 @@ namespace ExpenseReconciliation.Controllers
         }
 
         [HttpPost("UpdateSplit")]
-        public async Task Split([FromBody] SplitRequest splitRequest)
+        public async Task<ActionResult> Split([FromBody] SplitRequest splitRequest)
         {
+            var transaction = await _transactionService.GetByIdAsync(splitRequest.TransactionId);
+
+            if (transaction == null) return NotFound("Transaction with that ID couldn't be found");
+
+            if (!transaction.Amount.Equals(splitRequest.Splits.Sum(s => s.Amount)))
+            {
+                return BadRequest("Split amounts don't equal the full transaction");
+            }
+            
+            
             await _transactionService.AddSplitAsync(splitRequest);
+            return Ok();
         }
 
         [HttpGet("GetSplitById")]
         public async Task<IEnumerable<Split>> GetSplitById(int transactionId)
         {
             return await _transactionService.GetSplitByIdAsync(transactionId);
-
         }
 
         [HttpPost("DeleteSplit")]
-        public async Task Split([FromBody] int transactionId)
+        public async Task DeleteSplit([FromBody] int transactionId)
         {
             await _transactionService.DeleteSplitAsync(transactionId);
         }

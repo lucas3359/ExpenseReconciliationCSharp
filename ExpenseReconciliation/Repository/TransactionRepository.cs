@@ -43,7 +43,7 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Transaction> GetById(int id)
+    public async Task<Transaction?> GetById(int id)
     {
         return await _context.Transactions.FindAsync(id);
     }

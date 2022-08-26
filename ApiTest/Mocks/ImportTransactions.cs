@@ -6,7 +6,7 @@ public class ImportTransactions
 {
     public static BankTransactionRequest BankImportRequest()
     {
-        return new BankTransactionRequest()
+        return new BankTransactionRequest
         {
             AccountNumber = "06 0324 0532350 01",
             StartDate = "20220102",

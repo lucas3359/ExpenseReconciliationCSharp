@@ -34,7 +34,7 @@ public class TransactionService : ITransactionService
         return await _transactionRepository.GetByDateAsync(startDate,endDate);
     }
     
-    public async Task<Transaction> GetByIdAsync(int id)
+    public async Task<Transaction?> GetByIdAsync(int id)
     {
         return await _transactionRepository.GetById(id);
     }
@@ -49,7 +49,7 @@ public class TransactionService : ITransactionService
         foreach (var line in bankTransactionRequest.Transactions)
         {
             var transaction = new Transaction();
-            transaction.Amount =  double.Parse(line.Amount)*100;
+            transaction.Amount =  decimal.Parse(line.Amount)*100;
             transaction.Date = DateTime.ParseExact(line.Date, "yyyyMMdd", CultureInfo.InvariantCulture);
             transaction.Details = line.Name +" " + line.Memo;
             transaction.BankId = line.BankId; 
@@ -63,22 +63,19 @@ public class TransactionService : ITransactionService
 
     public async Task AddSplitAsync(SplitRequest splitRequest)
     {
-
-        var splitDb = await _splitRepository.GetByIdAsync(splitRequest.TransactionId);
-        if (splitDb.IsNull())
+        var splitDb = (await _splitRepository.GetByIdAsync(splitRequest.TransactionId)).ToList();
+        if (splitDb.Count > 0)
         {
-            
+            await _splitRepository.DeleteSplitAsync(splitRequest.TransactionId);
         }
-        else
+        
+        foreach (var record in splitRequest.Splits)
         {
-            foreach (var record in splitRequest.Splits)
-            {
-                var split = new Split();
-                split.Amount = record.Amount;
-                split.TransactionId = splitRequest.TransactionId;
-                split.UserId = record.UserId;
-                await _splitRepository.AddSplitAsync(split);
-            }
+            var split = new Split();
+            split.Amount = record.Amount;
+            split.TransactionId = splitRequest.TransactionId;
+            split.UserId = record.UserId;
+            await _splitRepository.AddSplitAsync(split);
         }
     }
     
