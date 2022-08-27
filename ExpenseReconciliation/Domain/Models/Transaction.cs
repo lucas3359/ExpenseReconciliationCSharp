@@ -9,7 +9,7 @@ public class Transaction
     [Column("date")]
     public DateTime Date { get; set; }
     [Column("amount")]
-    public double Amount { get; set; }
+    public decimal Amount { get; set; }
     [Column("details")]
     public string Details { get; set; }
     [Column("account_id")]
