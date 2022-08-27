@@ -62,6 +62,47 @@ public class TransactionTests
         var amount = transactions.Sum(transaction => transaction.Amount);
         Assert.That(amount, Is.EqualTo(-479667d).Within(0.0001));
     }
+    
+    [Test]
+    public async Task TestGetAll_WillGetAllWhenNoPagingSpecified()
+    {
+        var transactions = (await _transactionController.GetAllAsync()).ToList();
+        
+        Assert.That(transactions, Has.Count.EqualTo(4));
+        Assert.Multiple(() =>
+        {
+            Assert.That(transactions.Count(t => t.BankId == "202201041"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201042"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201061"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202202211"), Is.EqualTo(1));
+        });
+    }
+    
+    [Test]
+    public async Task TestGetAll_WillLimitPageSize()
+    {
+        var transactions = (await _transactionController.GetAllAsync(0, 2)).ToList();
+        
+        Assert.That(transactions, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(transactions.Count(t => t.BankId == "202201041"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201042"), Is.EqualTo(1));
+        });
+    }
+    
+    [Test]
+    public async Task TestGetAll_WillOffsetPages()
+    {
+        var transactions = (await _transactionController.GetAllAsync(1, 2)).ToList();
+        
+        Assert.That(transactions, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(transactions.Count(t => t.BankId == "202201061"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202202211"), Is.EqualTo(1));
+        });
+    }
 
     [Test]
     public async Task TestGetByDateAsync_WillGetTransactionsWithinDates()

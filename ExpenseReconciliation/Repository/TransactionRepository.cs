@@ -19,17 +19,25 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         Console.WriteLine(appDbContext.Model.ToDebugString());
         _logger = logger;
     }
-    public async Task<IEnumerable<Transaction>> ListAsync()
+    public async Task<IEnumerable<Transaction>> ListAsync(int page, int pageSize)
     {
-
-        var transactions =  await _context.Transactions.Include(p=>p.splits).ToListAsync();
+        var transactions =  await _context.Transactions
+            .Include(p=>p.splits)
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
         
         return transactions;
     }
     
-    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize)
     {
-        var transactions =  await _context.Transactions.Include(p=>p.splits).Where(txn=>txn.Date >= startDate && txn.Date <= endDate).ToListAsync();
+        var transactions =  await _context.Transactions
+            .Include(p=>p.splits)
+            .Where(txn=>txn.Date >= startDate && txn.Date <= endDate)
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
         return transactions;
     }
     
