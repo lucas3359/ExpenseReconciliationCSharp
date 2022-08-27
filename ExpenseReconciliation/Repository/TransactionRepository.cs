@@ -19,26 +19,49 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         Console.WriteLine(appDbContext.Model.ToDebugString());
         _logger = logger;
     }
-    public async Task<IEnumerable<Transaction>> ListAsync(int page, int pageSize)
+    public async Task<Paged<Transaction>> ListAsync(int page, int pageSize)
     {
         var transactions =  await _context.Transactions
             .Include(p=>p.splits)
+            .OrderByDescending(p => p.Date)
             .Skip(page * pageSize)
             .Take(pageSize)
             .ToListAsync();
+
+        var itemCount = await _context.Transactions.CountAsync();
         
-        return transactions;
+        return new Paged<Transaction>
+        {
+            Payload = transactions,
+            Page = page,
+            PageSize = pageSize,
+            ResultsThisPage = transactions.Count,
+            TotalNoOfItems = itemCount,
+            TotalNoOfPages = itemCount / pageSize
+        };
     }
     
-    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize)
+    public async Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize)
     {
         var transactions =  await _context.Transactions
             .Include(p=>p.splits)
+            .OrderByDescending(p => p.Date)
             .Where(txn=>txn.Date >= startDate && txn.Date <= endDate)
             .Skip(page * pageSize)
             .Take(pageSize)
             .ToListAsync();
-        return transactions;
+        
+        var itemCount = await _context.Transactions.CountAsync();
+        
+        return new Paged<Transaction>
+        {
+            Payload = transactions,
+            Page = page,
+            PageSize = pageSize,
+            ResultsThisPage = transactions.Count,
+            TotalNoOfItems = itemCount,
+            TotalNoOfPages = itemCount / pageSize
+        };
     }
     
 

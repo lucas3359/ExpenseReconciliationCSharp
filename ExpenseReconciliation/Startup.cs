@@ -39,7 +39,7 @@ namespace ExpenseReconciliation
                 options => options
                     .UseNpgsql(connectionString)
                     .UseSnakeCaseNamingConvention()
-                    .EnableSensitiveDataLogging() // TODO: Dev only
+                    //.EnableSensitiveDataLogging() // TODO: Dev only
             );
 
             services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();

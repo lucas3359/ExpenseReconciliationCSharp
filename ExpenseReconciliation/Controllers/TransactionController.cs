@@ -18,14 +18,14 @@ namespace ExpenseReconciliation.Controllers
         }
 
         [HttpGet("GetAllAsync")]
-        public async Task<IEnumerable<Transaction>> GetAllAsync(int page = 0, int pageSize = 50)
+        public async Task<Paged<Transaction>> GetAllAsync(int page = 0, int pageSize = 50)
         {
             return await _transactionService.ListAsync(page, pageSize);
 
         }
 
         [HttpGet("GetByDateAsync")]
-        public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page = 0, int pageSize = 50)
+        public async Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page = 0, int pageSize = 50)
         {
             return await _transactionService.GetByDateAsync(startDate, endDate, page, pageSize);
 

@@ -24,12 +24,12 @@ public class TransactionService : ITransactionService
         _logger = logger;
     }
         
-    public async Task<IEnumerable<Transaction>> ListAsync(int page, int pageSize)
+    public async Task<Paged<Transaction>> ListAsync(int page, int pageSize)
     {
         return await _transactionRepository.ListAsync(page, pageSize);
     }
 
-    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize)
+    public async Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize)
     {
         return await _transactionRepository.GetByDateAsync(startDate,endDate, page, pageSize);
     }
