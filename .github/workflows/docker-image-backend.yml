@@ -2,7 +2,7 @@ name: Docker Image Backend CI
 
 on:
   push:
-    branches: [ master, backend-testing ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
