@@ -29,9 +29,6 @@ namespace ExpenseReconciliation.Controllers
         public async Task<string> GetAmountAsync()
         {
             return await _dashboardService.AmountAsync();
-
         }
-
-        
     }
 }

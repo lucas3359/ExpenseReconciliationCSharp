@@ -19,7 +19,7 @@ public class TransactionTests
      */
     
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
         var dbContextOptions = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: "dev_expenses")
             .Options;
@@ -36,13 +36,13 @@ public class TransactionTests
         var transactionService = new TransactionService(transactionRepository, accountServiceMock.Object, importRecordService, 
             Mock.Of<ILogger<TransactionService>>(), splitRepository);
         _transactionController = new TransactionController(transactionService);
+        
+        await _transactionController.Import(ImportTransactions.BankImportRequest());
     }
 
     [Test]
     public async Task TestImportBankTransactions_ShouldImportAll()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var transactions = (await _transactionController.GetAllAsync()).ToList();
         Assert.That(transactions, Has.Count.EqualTo(4));
 
@@ -66,8 +66,6 @@ public class TransactionTests
     [Test]
     public async Task TestGetByDateAsync_WillGetTransactionsWithinDates()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var startDate = new DateTime(2022, 01, 01);
         var endDate = new DateTime(2022, 01, 05);
         var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).ToList();
@@ -83,8 +81,6 @@ public class TransactionTests
     [Test]
     public async Task TestGetByDateAsync_WillReturnEmptyIfNoMatches()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var startDate = new DateTime(2021, 01, 01);
         var endDate = new DateTime(2021, 01, 05);
         var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).ToList();
@@ -94,8 +90,6 @@ public class TransactionTests
     [Test]
     public async Task TestGetByDateAsync_WillUseOuterBounds()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-        
         var startDate = new DateTime(2022, 01, 04);
         var endDate = new DateTime(2022, 01, 06);
         
@@ -115,8 +109,6 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_NormalSplitWillBeAccepted()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var transaction = (await _transactionController.GetAllAsync()).First();
 
         await _transactionController.Split(new SplitRequest
@@ -149,13 +141,13 @@ public class TransactionTests
             Assert.That(split.Count(s => s.UserId == 1), Is.EqualTo(1));
             Assert.That(split.Count(s => s.UserId == 2), Is.EqualTo(1));
         });
+        
+        await _transactionController.DeleteSplit(transaction.Id);
     }
     
     [Test]
     public async Task TestUpdateSplit_OverSplitWillNotBeAccepted()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var transaction = (await _transactionController.GetAllAsync()).First();
 
         var splitRequest = new SplitRequest
@@ -188,8 +180,6 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_NewSplitResultOverwritesExisting()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var transaction = (await _transactionController.GetAllAsync()).First();
 
         await _transactionController.Split(new SplitRequest
@@ -257,6 +247,8 @@ public class TransactionTests
             Assert.That(updatedSplit.Count(s => s.Amount == 100), Is.EqualTo(1));
             Assert.That(updatedSplit.Count(s => s.Amount == 900), Is.EqualTo(1));
         });
+        
+        await _transactionController.DeleteSplit(transaction.Id);
     }
     
     /**
@@ -265,8 +257,6 @@ public class TransactionTests
     [Test]
     public async Task TestDeleteSplit_DeletesAllSplits()
     {
-        await _transactionController.Import(ImportTransactions.BankImportRequest());
-
         var transaction = (await _transactionController.GetAllAsync()).First();
 
         await _transactionController.Split(new SplitRequest
