@@ -91,8 +91,8 @@ public class TransactionTests
         Assert.That(transactions, Has.Count.EqualTo(2));
         Assert.Multiple(() =>
         {
-            Assert.That(transactions.Count(t => t.BankId == "202201041"), Is.EqualTo(1));
-            Assert.That(transactions.Count(t => t.BankId == "202201042"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202202211"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201061"), Is.EqualTo(1));
         });
     }
     
@@ -109,8 +109,8 @@ public class TransactionTests
         Assert.That(transactions, Has.Count.EqualTo(2));
         Assert.Multiple(() =>
         {
-            Assert.That(transactions.Count(t => t.BankId == "202201061"), Is.EqualTo(1));
-            Assert.That(transactions.Count(t => t.BankId == "202202211"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201041"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201042"), Is.EqualTo(1));
         });
     }
 
@@ -160,7 +160,7 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_NormalSplitWillBeAccepted()
     {
-        var transaction = (await _transactionController.GetAllAsync()).Payload.First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         await _transactionController.Split(new SplitRequest
         {
@@ -199,7 +199,7 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_OverSplitWillNotBeAccepted()
     {
-        var transaction = (await _transactionController.GetAllAsync()).Payload.First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         var splitRequest = new SplitRequest
         {
@@ -231,7 +231,7 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_NewSplitResultOverwritesExisting()
     {
-        var transaction = (await _transactionController.GetAllAsync()).Payload.First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         await _transactionController.Split(new SplitRequest
         {
@@ -308,7 +308,7 @@ public class TransactionTests
     [Test]
     public async Task TestDeleteSplit_DeletesAllSplits()
     {
-        var transaction = (await _transactionController.GetAllAsync()).Payload.First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         await _transactionController.Split(new SplitRequest
         {
