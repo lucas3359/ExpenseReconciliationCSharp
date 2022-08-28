@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
-import { baseUrl, getCurrentToken } from '../services/auth';
+import { baseUrl } from '../services/auth';
+import {AuthContext} from "../auth/AuthProvider";
+import split from "../services/split";
 
 const TransactionSplit = ({
   data,
@@ -11,12 +13,15 @@ const TransactionSplit = ({
   users,
   changeSplitStatus,
 }: {
-  data: any;
+  data: Split[];
   amount: number;
   transaction_id: number;
   users: User[];
   changeSplitStatus(status: boolean): void;
 }) => {
+  const session = useContext(AuthContext);
+  const token = session?.token;
+  
   amount = Math.round((amount / 100) * 100) / 100;
   const [splitted, setSplitted] = useState(data.length !== 0);
 
@@ -88,10 +93,7 @@ const TransactionSplit = ({
     };
 
     // TODO: Local service
-    const response = await fetch('/api/split', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
+    const response = await split(body, token);
 
     if (response.status == 201) {
       changeSplitStatus(true);
@@ -110,7 +112,7 @@ const TransactionSplit = ({
     return users.map((user) => {
       return (
         <span key={`${transaction_id}-split-${user.id}-input`}>
-          <label className="italic">{user.name}</label>
+          <label className="italic">{user.userName}</label>
           <input
             className="w-16 text-center"
             type="text"
@@ -133,7 +135,7 @@ const TransactionSplit = ({
           className="text-center"
         >
           <span className="font-normal">
-            {users?.find((user) => user.id == split.userId)?.name}:{' '}
+            {users?.find((user) => user.id == split.userId)?.userName}:{' '}
           </span>
           <em>{(split.amount / 100).toFixed(2)}</em>&nbsp;
         </span>
@@ -157,7 +159,7 @@ const TransactionSplit = ({
     await fetch(`${baseUrl}/api/transaction/DeleteSplit`, {
       method: 'POST',
       headers: new Headers({
-        Authorization: `Bearer ${getCurrentToken()}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       }),
       body: JSON.stringify(transaction_id),

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExpenseReconciliation.Controllers
 {
     [Authorize("API")] 
-    [Route("/api/user")]
+    [Route("/api/[controller]")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;

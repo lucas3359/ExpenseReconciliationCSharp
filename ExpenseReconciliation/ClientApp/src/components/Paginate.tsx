@@ -23,7 +23,7 @@ export function Paginate({ currentPage, totalPages, onPageChange }) {
     icons.push(renderPageIcon(1));
     
     for (let i = currentPage - 2; i <= currentPage + 2; i++) {
-      if (i > 1 && i <= totalPages) {
+      if (i > 1 && i < totalPages) {
         icons.push(renderPageIcon(i));
       }
     }
