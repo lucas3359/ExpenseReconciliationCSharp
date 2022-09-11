@@ -73,7 +73,7 @@ const TransactionRow = ({
   };
   
   const renderSplitDetails = (splits: Split[]) => {
-    return splits.map(split => `${users[split.userId]?.userName}: ${renderCurrency(split.amount)}`).join(' ')
+    return splits.map(split => `${users.find(user => user.id === split.userId)?.userName}: ${renderCurrency(split.amount)}`).join(' ')
   }
 
   return (
