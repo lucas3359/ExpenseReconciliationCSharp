@@ -1,6 +1,6 @@
 import SplitImport from '../model/updateSplit';
 import Transaction from '../model/transaction';
-import { baseUrl, getCurrentToken } from './auth';
+import {baseUrl} from './auth';
 
 const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
   let sum = 0;
@@ -18,17 +18,15 @@ const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
   return sum === amount && absSum === Math.abs(amount);
 };
 
-export default async (splitAmount: string) => {
-  const body: SplitImport = JSON.parse(splitAmount);
-
+const split = async (split: SplitImport, token: string | null) => {
   const response = await fetch(
     `${baseUrl}/api/transaction/GetById?id=${encodeURIComponent(
-      body.transactionId,
+        split.transactionId,
     )}`,
     {
       method: 'GET',
       headers: new Headers({
-        Authorization: `Bearer ${getCurrentToken()}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       }),
     },
@@ -37,20 +35,20 @@ export default async (splitAmount: string) => {
   const transaction: Transaction = await response.json();
 
   console.log('Split Data:');
-  console.log(body);
+  console.log(split);
 
-  if (!splitAmountsAddUp(body, transaction.amount)) {
+  if (!splitAmountsAddUp(split, transaction.amount)) {
     throw new Error('Amounts do not add up');
   } else {
-    const split = await fetch(`${baseUrl}/api/transaction/UpdateSplit`, {
+    return await fetch(`${baseUrl}/api/transaction/UpdateSplit`, {
       method: 'POST',
       headers: new Headers({
-        Authorization: `Bearer ${getCurrentToken()}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body),
+      body: JSON.stringify(split),
     });
-
-    return split;
   }
 };
+
+export default split;

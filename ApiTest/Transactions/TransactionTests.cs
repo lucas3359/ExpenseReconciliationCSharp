@@ -43,7 +43,7 @@ public class TransactionTests
     [Test]
     public async Task TestImportBankTransactions_ShouldImportAll()
     {
-        var transactions = (await _transactionController.GetAllAsync()).ToList();
+        var transactions = (await _transactionController.GetAllAsync()).Payload.ToList();
         Assert.That(transactions, Has.Count.EqualTo(4));
 
         var amount = transactions.Sum(transaction => transaction.Amount);
@@ -56,11 +56,62 @@ public class TransactionTests
         await _transactionController.Import(ImportTransactions.BankImportRequest());
         await _transactionController.Import(ImportTransactions.BankImportRequest());
 
-        var transactions = (await _transactionController.GetAllAsync()).ToList();
+        var transactions = (await _transactionController.GetAllAsync()).Payload.ToList();
         Assert.That(transactions, Has.Count.EqualTo(4));
 
         var amount = transactions.Sum(transaction => transaction.Amount);
         Assert.That(amount, Is.EqualTo(-479667d).Within(0.0001));
+    }
+    
+    [Test]
+    public async Task TestGetAll_WillGetAllWhenNoPagingSpecified()
+    {
+        var transactions = (await _transactionController.GetAllAsync()).Payload.ToList();
+        
+        Assert.That(transactions, Has.Count.EqualTo(4));
+        Assert.Multiple(() =>
+        {
+            Assert.That(transactions.Count(t => t.BankId == "202201041"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201042"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201061"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202202211"), Is.EqualTo(1));
+        });
+    }
+    
+    [Test]
+    public async Task TestGetAll_WillLimitPageSize()
+    {
+        var pagedResponse = await _transactionController.GetAllAsync(0, 2);
+        var transactions = pagedResponse.Payload.ToList();
+        
+        Assert.That(pagedResponse.Page, Is.EqualTo(0));
+        Assert.That(pagedResponse.PageSize, Is.EqualTo(2));
+        Assert.That(pagedResponse.TotalNoOfPages, Is.EqualTo(2));
+        Assert.That(pagedResponse.TotalNoOfItems, Is.EqualTo(4));
+        Assert.That(transactions, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(transactions.Count(t => t.BankId == "202202211"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201061"), Is.EqualTo(1));
+        });
+    }
+    
+    [Test]
+    public async Task TestGetAll_WillOffsetPages()
+    {
+        var pagedResponse = await _transactionController.GetAllAsync(1, 2);
+        var transactions = pagedResponse.Payload.ToList();
+        
+        Assert.That(pagedResponse.Page, Is.EqualTo(1));
+        Assert.That(pagedResponse.PageSize, Is.EqualTo(2));
+        Assert.That(pagedResponse.TotalNoOfPages, Is.EqualTo(2));
+        Assert.That(pagedResponse.TotalNoOfItems, Is.EqualTo(4));
+        Assert.That(transactions, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(transactions.Count(t => t.BankId == "202201041"), Is.EqualTo(1));
+            Assert.That(transactions.Count(t => t.BankId == "202201042"), Is.EqualTo(1));
+        });
     }
 
     [Test]
@@ -68,7 +119,7 @@ public class TransactionTests
     {
         var startDate = new DateTime(2022, 01, 01);
         var endDate = new DateTime(2022, 01, 05);
-        var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).ToList();
+        var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).Payload.ToList();
         
         Assert.That(transactions, Has.Count.EqualTo(2));
         Assert.Multiple(() =>
@@ -83,7 +134,7 @@ public class TransactionTests
     {
         var startDate = new DateTime(2021, 01, 01);
         var endDate = new DateTime(2021, 01, 05);
-        var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).ToList();
+        var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).Payload.ToList();
         Assert.That(transactions, Has.Count.EqualTo(0));
     }
 
@@ -93,7 +144,7 @@ public class TransactionTests
         var startDate = new DateTime(2022, 01, 04);
         var endDate = new DateTime(2022, 01, 06);
         
-        var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).ToList();
+        var transactions = (await _transactionController.GetByDateAsync(startDate, endDate)).Payload.ToList();
         Assert.That(transactions, Has.Count.EqualTo(3));
         Assert.Multiple(() =>
         {
@@ -109,7 +160,7 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_NormalSplitWillBeAccepted()
     {
-        var transaction = (await _transactionController.GetAllAsync()).First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         await _transactionController.Split(new SplitRequest
         {
@@ -148,7 +199,7 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_OverSplitWillNotBeAccepted()
     {
-        var transaction = (await _transactionController.GetAllAsync()).First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         var splitRequest = new SplitRequest
         {
@@ -180,7 +231,7 @@ public class TransactionTests
     [Test]
     public async Task TestUpdateSplit_NewSplitResultOverwritesExisting()
     {
-        var transaction = (await _transactionController.GetAllAsync()).First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         await _transactionController.Split(new SplitRequest
         {
@@ -257,7 +308,7 @@ public class TransactionTests
     [Test]
     public async Task TestDeleteSplit_DeletesAllSplits()
     {
-        var transaction = (await _transactionController.GetAllAsync()).First();
+        var transaction = (await _transactionController.GetAllAsync()).Payload.First(t => t.Amount == 1000);
 
         await _transactionController.Split(new SplitRequest
         {

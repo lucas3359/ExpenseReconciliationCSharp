@@ -25,7 +25,7 @@ export default function useAuth() {
       loggedIn: true,
       user: {
         id: response.id,
-        name: response.name,
+        userName: response.userName,
         email: response.email,
       },
       token: token,

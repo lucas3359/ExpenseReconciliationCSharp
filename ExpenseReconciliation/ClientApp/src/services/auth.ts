@@ -2,10 +2,6 @@ import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 export const baseUrl = `http://localhost:5000`; // TODO: Configurable
 
-export const getCurrentToken = (): string | null => {
-  return null;
-};
-
 export const fetcher = (url: string, token: string) => {
   const apiUrl = `${baseUrl}${url}`;
   

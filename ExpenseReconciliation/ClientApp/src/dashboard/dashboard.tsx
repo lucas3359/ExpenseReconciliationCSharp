@@ -25,7 +25,7 @@ export default function Dashboard() {
   console.log(totalsData);
 
   const getUser = (userId: number): string | undefined => {
-    return userData.find((user) => user.id === userId)?.name;
+    return userData.find((user) => user.id === userId)?.userName;
   };
 
   const renderCurrency = (amount: number): string => {

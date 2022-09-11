@@ -9,6 +9,7 @@ namespace ExpenseReconciliation.Controllers
     [Route("/api/[controller]")]
     public class TransactionController : Controller
     {
+        private const int DefaultPageSize = 50;
         private readonly ITransactionService _transactionService;
 
         public TransactionController(ITransactionService transactionService)
@@ -17,16 +18,16 @@ namespace ExpenseReconciliation.Controllers
         }
 
         [HttpGet("GetAllAsync")]
-        public async Task<IEnumerable<Transaction>> GetAllAsync()
+        public async Task<Paged<Transaction>> GetAllAsync(int page = 0, int pageSize = 50)
         {
-            return await _transactionService.ListAsync();
+            return await _transactionService.ListAsync(page, pageSize);
 
         }
 
         [HttpGet("GetByDateAsync")]
-        public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate)
+        public async Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page = 0, int pageSize = 50)
         {
-            return await _transactionService.GetByDateAsync(startDate, endDate);
+            return await _transactionService.GetByDateAsync(startDate, endDate, page, pageSize);
 
         }
 
