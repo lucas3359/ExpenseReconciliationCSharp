@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseReconciliation.Controllers
 {
-    [Authorize("API")]
     [Route("/api/[controller]")]
     public class TransactionController : Controller
     {

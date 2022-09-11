@@ -10,12 +10,12 @@ public class SplitSummary
 }
 public class Total
 {
+    public DateTime timeUnit { get; set; }
     public int userId { get; set; }
-    public double amount { get; set; }
+    public decimal amount { get; set; }
 }
 public enum TimeUnit
 {
-    Week,
     Month,
     Year
 }
