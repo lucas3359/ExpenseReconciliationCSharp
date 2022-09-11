@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ExpenseReconciliation.ClientApp.src.model;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
-using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services
 {
@@ -15,10 +15,12 @@ namespace ExpenseReconciliation.Services
         }
 
         private readonly ISplitRepository _splitRepository;
-        
-        public DashboardService(ISplitRepository splitRepository )
+        private readonly ITransactionRepository _transactionRepository;
+
+        public DashboardService(ISplitRepository splitRepository,ITransactionRepository transactionRepository )
         {
             this._splitRepository = splitRepository;
+            _transactionRepository = transactionRepository;
         }
         
         public async Task<string> AmountAsync()
@@ -45,5 +47,57 @@ namespace ExpenseReconciliation.Services
         {
             return _splitRepository.ListAsync();
         }
+
+        public async Task<SplitSummary> SplitSummary(DateTime startDate, DateTime endDate, TimeUnit timeUnit)
+        {
+            var splitSummary = new SplitSummary();
+
+            
+            var transactions = await _transactionRepository.GetByDateAsync(startDate,endDate) ;
+            var userAmountDic = new Dictionary<int, int>();
+
+            var unsplittedAmount=0m;
+            foreach (var t in transactions)
+            {
+                //splitted amount
+                if (t.splits!=null)
+                {
+                    foreach (var split in t.splits)
+                    {
+                        if(!userAmountDic.ContainsKey(split.UserId))
+                        {
+                            userAmountDic.Add(split.UserId,split.Amount);
+                        }
+                        else
+                        {
+                            userAmountDic[split.UserId] += split.Amount;
+                        }
+                    }
+                }
+                else
+                {
+                    unsplittedAmount += t.Amount;
+                }
+            }
+            var totalList = new List<Total>();
+
+            foreach (var record in userAmountDic)
+            {
+                var total = new Total();
+                total.userId = record.Key;
+                total.amount = record.Value;
+                totalList.Add(total);
+            }
+
+            splitSummary.total = totalList;
+            splitSummary.startDate = startDate;
+            splitSummary.endDate = endDate;
+            splitSummary.unSplitted = unsplittedAmount;
+            splitSummary.timeunit = timeUnit;
+            
+            return splitSummary;
+        }
+        
+        
     }
 }

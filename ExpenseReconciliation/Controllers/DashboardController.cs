@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ExpenseReconciliation.ClientApp.src.model;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
@@ -30,5 +31,12 @@ namespace ExpenseReconciliation.Controllers
         {
             return await _dashboardService.AmountAsync();
         }
+
+        [HttpGet("GetSplitSummary")]
+        public async Task<SplitSummary> GetSplitSummary(DateTime startDate, DateTime endDate, TimeUnit timeUnit)
+        {
+            return await _dashboardService.SplitSummary( startDate,  endDate,  timeUnit);
+        }
+
     }
 }

@@ -63,7 +63,11 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
             TotalNoOfPages = itemCount / pageSize
         };
     }
-    
+
+    public async Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _context.Transactions.Include(t=>t.splits).Where(t => t.Date >= startDate && t.Date <= endDate).ToListAsync();
+    }
 
     public async Task AddAsync(List<Transaction> transactionList)
     {
