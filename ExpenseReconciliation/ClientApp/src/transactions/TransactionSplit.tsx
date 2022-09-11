@@ -95,7 +95,7 @@ const TransactionSplit = ({
     // TODO: Local service
     const response = await split(body, token);
 
-    if (response.status == 201) {
+    if (response.status === 201 || response.status === 200) {
       changeSplitStatus(true);
       setSplitted(true);
       console.log(splitted);
