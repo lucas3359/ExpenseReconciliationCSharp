@@ -38,40 +38,5 @@ namespace ExpenseReconciliation.Repository
              _context.Splits.RemoveRange(_context.Splits.Where(split => split.TransactionId == transactionId).ToList());
              await _context.SaveChangesAsync();
         }
-
-
-        // public async Task<SplitSummary> SummarizeSplit(DateTime startDate, DateTime endDate)
-        // {
-        //     var splitSummary = new SplitSummary();
-        //     IQueryable<Split> splits= _context.Splits;
-        //
-        //     var records =
-        //         _context.Transactions.Where(t => t.Date >= startDate && t.Date <= endDate);
-        //         // splits.Join(_context.Transactions, s => s.TransactionId, t => t.Id, (s, t) => new
-        //         // {
-        //         //     transactionId = s.TransactionId,
-        //         //     userId = s.UserId,
-        //         //     amount = Aggregate ,
-        //         //     date = t.Date
-        //         // })
-        //         // .Where(t => t.date >= startDate && t.date <= endDate)
-        //         // .GroupBy()
-        //         // .ToList();
-        //         
-        //         
-        //         // from s in _context.Splits
-        //         // join t in _context.Transactions on s.TransactionId equals t.Id
-        //         // where t.Date >= startDate && t.Date <= endDate
-        //         // group s by s.UserId, t.
-        //         // select new
-        //         // {
-        //         //     userId = u.Key,
-        //         //     amount = 
-        //         //
-        //         // };
-        //     
-        //     return splitSummary;
-        // }
-
     }
 }
