@@ -1,13 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './Card';
 import Icon from '../components/Icon';
-import {baseUrl} from '../services/auth';
-import {parseOfxBody} from '../services/upload';
-import {AuthContext} from '../auth/AuthProvider';
+import { baseUrl } from '../services/auth';
+import { parseOfxBody } from '../services/upload';
 
 const UploadFile = () => {
   const [badFile, setBadFile] = useState(false);
-  const session = useContext(AuthContext);
+  const session = { loggedIn: false, token: 'false', user: {}};
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -43,17 +42,17 @@ const UploadFile = () => {
   };
 
   const sendFile = async (file: string | ArrayBuffer) => {
-    if (typeof file !== "string") {
+    if (typeof file !== 'string') {
       file = (file as ArrayBuffer).toString();
     }
-    
+
     const body = parseOfxBody(file);
-    
+
     const response = await fetch(`${baseUrl}/api/transaction/Import`, {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
+        Authorization: `Bearer ${session.token}`,
       }),
       body: JSON.stringify(body),
     });
@@ -77,7 +76,7 @@ const UploadFile = () => {
       <p className="text-center font-bold">Was not able to upload file</p>
     </div>
   );
-  
+
   if (!session.loggedIn) {
     return <Card link={false}>Log in to upload</Card>;
   }

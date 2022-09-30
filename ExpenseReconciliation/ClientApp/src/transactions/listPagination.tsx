@@ -1,5 +1,5 @@
 import useSWRInfinite from 'swr/infinite';
-import {fetcher} from '../services/auth';
+import { fetcher } from '../services/auth';
 
 const listPagination = (path, token) => {
   if (!path) {
@@ -8,7 +8,7 @@ const listPagination = (path, token) => {
   if (!token) {
     throw new Error('Token is required');
   }
-  
+
   const baseUrl = '/api/transaction/GetByDateAsync';
   const url = baseUrl + path;
   const PAGE_LIMIT = 5;
@@ -19,7 +19,8 @@ const listPagination = (path, token) => {
     setSize,
     mutate,
   } = useSWRInfinite(
-    (index) => [`${url}?_page=${index + 1}&_limit=${PAGE_LIMIT}`, token], fetcher
+    (index) => [`${url}?_page=${index + 1}&_limit=${PAGE_LIMIT}`, token],
+    fetcher,
   );
 
   const transactionData = data ? [].concat(...data) : [];

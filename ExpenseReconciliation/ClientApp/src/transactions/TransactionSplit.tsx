@@ -1,10 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
 import { baseUrl } from '../services/auth';
-import {AuthContext} from "../auth/AuthProvider";
-import split from "../services/split";
+import split from '../services/split';
 
 const TransactionSplit = ({
   data,
@@ -19,9 +18,9 @@ const TransactionSplit = ({
   users: User[];
   changeSplitStatus(status: boolean): void;
 }) => {
-  const session = useContext(AuthContext);
+  const session = { loggedIn: false, token: 'false', user: {}};
   const token = session?.token;
-  
+
   amount = Math.round((amount / 100) * 100) / 100;
   const [splitted, setSplitted] = useState(data.length !== 0);
 

@@ -1,14 +1,13 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import useSWR from 'swr';
 import User from '../model/user';
 import Total from '../model/total';
-import {fetcher} from '../services/auth';
-import {AuthContext} from '../auth/AuthProvider';
+import { fetcher } from '../services/auth';
 
 export default function Dashboard() {
-  const session = useContext(AuthContext);
+  const session = { loggedIn: false, token: 'false', user: {}};
   const token = session?.token;
-  
+
   const { data: totalsData, error: totalsError } = useSWR<Total[], any>(
     ['/api/dashboard/GetAmountAsync', token],
     fetcher,

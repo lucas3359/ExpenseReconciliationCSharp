@@ -71,10 +71,17 @@ const TransactionRow = ({
   const renderCurrency = (amount: number): string => {
     return (amount / 100).toFixed(2);
   };
-  
+
   const renderSplitDetails = (splits: Split[]) => {
-    return splits.map(split => `${users.find(user => user.id === split.userId)?.userName}: ${renderCurrency(split.amount)}`).join(' ')
-  }
+    return splits
+      .map(
+        (split) =>
+          `${
+            users.find((user) => user.id === split.userId)?.userName
+          }: ${renderCurrency(split.amount)}`,
+      )
+      .join(' ');
+  };
 
   return (
     <>
@@ -83,7 +90,11 @@ const TransactionRow = ({
         key={`row-${row.id}`}
       >
         <td className="p-2 text-gray-600">{renderDate(row.date)}</td>
-        <td className="p-2">{row.details}<br />{renderSplitDetails(row.splits)}</td>
+        <td className="p-2">
+          {row.details}
+          <br />
+          {renderSplitDetails(row.splits)}
+        </td>
         <td
           className={`p-2 text-right font-semibold ${
             Number(row.amount) < 0 ? 'text-gray-600' : 'text-green-400'

@@ -1,6 +1,6 @@
 import SplitImport from '../model/updateSplit';
 import Transaction from '../model/transaction';
-import {baseUrl} from './auth';
+import { baseUrl } from './auth';
 
 const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
   let sum = 0;
@@ -21,7 +21,7 @@ const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
 const split = async (split: SplitImport, token: string | null) => {
   const response = await fetch(
     `${baseUrl}/api/transaction/GetById?id=${encodeURIComponent(
-        split.transactionId,
+      split.transactionId,
     )}`,
     {
       method: 'GET',

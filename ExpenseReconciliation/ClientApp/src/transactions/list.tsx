@@ -1,33 +1,45 @@
 import useSWR from 'swr';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import TransactionRow from './TransactionRow';
 import User from '../model/user';
-import {AuthContext} from '../auth/AuthProvider';
-import {fetcher} from '../services/auth';
+import { fetcher } from '../services/auth';
 import PagedTransaction from '../model/pagedTransaction';
-import {Paginate} from '../components/Paginate';
+import { Paginate } from '../components/Paginate';
+import {useAppSelector} from '../hooks/hooks';
+import {selectLoggedIn, selectToken, unauthenticated} from '../auth/authSlice';
+import {useDispatch} from 'react-redux';
 
 export default function List() {
-  const session = useContext(AuthContext);
-  const token = session?.token;
+  const loggedIn = useAppSelector(selectLoggedIn);
+  const token = useAppSelector(selectToken);
+  const dispatch = useDispatch();
+  
+  if (loggedIn === false) {
+    dispatch(unauthenticated());
+  }
   
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  
-  const { data: userData, error: userError } = useSWR<User[], any>(['/api/user', token], fetcher);
+
+  const { data: userData, error: userError } = useSWR<User[], any>(
+    ['/api/user', token],
+    fetcher,
+  );
   const {
     data: transactionData,
     error: transactionError,
     mutate,
-  } = useSWR<PagedTransaction, any>([
-    `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`,
-    token], fetcher);
+  } = useSWR<PagedTransaction, any>(
+    [
+      `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`,
+      token,
+    ],
+    fetcher,
+  );
 
-  useEffect(() => {
-    
-  }, [currentPage, pageSize]);
+  useEffect(() => {}, [currentPage, pageSize]);
 
-  if (!session.loggedIn) {
+  if (!loggedIn) {
     return <div>Not signed in</div>;
   }
   if (transactionError || userError) return <div>Failed to load</div>;
@@ -71,9 +83,11 @@ export default function List() {
         {/* <tbody className='text-sm font-light'>{renderedList()}</tbody> */}
         <RenderedList currentItems={transactionData.payload} />
       </table>
-      <Paginate currentPage={currentPage + 1}
-                totalPages={transactionData.totalNoOfPages + 1}
-                onPageChange={handlePageClick} />
+      <Paginate
+        currentPage={currentPage + 1}
+        totalPages={transactionData.totalNoOfPages + 1}
+        onPageChange={handlePageClick}
+      />
     </>
   );
 }
