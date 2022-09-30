@@ -1,17 +1,18 @@
 import React from 'react';
 import {GoogleLogin} from '@react-oauth/google';
-import {login, logout, selectLoggedIn} from './authSlice';
+import {login, logout, selectLoggedIn, selectUser} from './authSlice';
 import {useAppDispatch, useAppSelector} from '../hooks/hooks';
+import User from '../model/user';
 
 const AuthToolbar = () => {
-  const loggedIn = useAppSelector(selectLoggedIn);
+  const loggedIn: boolean = useAppSelector(selectLoggedIn);
+  const user: User | null = useAppSelector(selectUser); 
   const dispatch = useAppDispatch();
-  
-  const user = { email: 'dummy' };
 
   if (loggedIn) {
     return (
       <div className="flex-initial relative">
+        (debug: user {JSON.stringify(user)})
         <span className="text-sm mr-2">{user?.email}</span>
         <button onClick={() => dispatch(logout())}>Logout</button>
       </div>
