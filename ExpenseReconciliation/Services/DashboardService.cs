@@ -69,7 +69,7 @@ namespace ExpenseReconciliation.Services
                         var total = new Total();
                         total.userId = record.Key;
                         total.amount = record.Value;
-                        total.timeUnit = DateTime.Parse(tp);
+                        total.timeUnit = tp;
                         userAmountList.Add(total);
                     }
                     else
@@ -83,7 +83,7 @@ namespace ExpenseReconciliation.Services
             splitSummary.startDate = startDate;
             splitSummary.endDate = endDate;
             splitSummary.unSplitted = unsplittedAmount;
-            splitSummary.timeunit = timeUnit;
+            splitSummary.timeunit = timeUnit.ToString();
 
             return splitSummary;
         }
@@ -99,8 +99,8 @@ namespace ExpenseReconciliation.Services
             }
             else if (timeUnit == TimeUnit.Year)
             {
-                timeUnitList = Enumerable.Range(2017, 2100).Select(a => startDate.AddYears(a))
-                    .TakeWhile(a => a <= endDate.AddDays(DateTime.DaysInMonth(endDate.Year,endDate.Month)-endDate.Day))
+                timeUnitList = Enumerable.Range(0, 30).Select(a => startDate.Date.AddYears(a))
+                    .TakeWhile(a => a <= endDate)
                     .Select(a => String.Concat( a.Year)).ToList();
             }
 
@@ -116,7 +116,7 @@ namespace ExpenseReconciliation.Services
             {
                 var y = String.Concat(t.Date.ToString("MMMM") + ", " + t.Date.Year);
                 var yy = t.Date.ToString("yy");
-                if (timePeriodName == String.Concat(t.Date.ToString("MMMM") + ", " + t.Date.Year) || timePeriodName == t.Date.Year.ToString("yy"))
+                if (timePeriodName == String.Concat(t.Date.ToString("MMMM") + ", " + t.Date.Year) || timePeriodName == t.Date.Year.ToString())
                 {
                     if (t.splits.Count!=0)
                     {

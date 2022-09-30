@@ -2,7 +2,7 @@ namespace ExpenseReconciliation.ClientApp.src.model;
 
 public class SplitSummary
 {
-    public TimeUnit timeunit { get; set; }
+    public string timeunit { get; set; }
     public DateTime startDate { get; set; }
     public DateTime endDate { get; set; }
     public List<Total> total { get; set; }
@@ -10,7 +10,7 @@ public class SplitSummary
 }
 public class Total
 {
-    public DateTime timeUnit { get; set; }
+    public string timeUnit { get; set; }
     public int userId { get; set; }
     public decimal amount { get; set; }
 }
