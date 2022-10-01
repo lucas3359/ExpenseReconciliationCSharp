@@ -6,5 +6,5 @@ export const getCurrentUser = async (): Promise<User> => {
 }
 
 export const getAllUsers = async (): Promise<User[]> => {
-  return await get<User[]>('users');
+  return await get<User[]>('user');
 }

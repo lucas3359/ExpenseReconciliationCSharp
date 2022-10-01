@@ -1,22 +1,35 @@
 import React from 'react';
 import {GoogleLogin} from '@react-oauth/google';
-import {login, logout, selectLoggedIn, selectUser} from './authSlice';
+import {getUser, login, logout, selectAuthStatus, selectUser} from './authSlice';
 import {useAppDispatch, useAppSelector} from '../hooks/hooks';
 import User from '../model/user';
+import {AuthStatus} from './authStatus';
 
 const AuthToolbar = () => {
-  const loggedIn: boolean = useAppSelector(selectLoggedIn);
+  const authStatus: AuthStatus = useAppSelector(selectAuthStatus);
   const user: User | null = useAppSelector(selectUser); 
   const dispatch = useAppDispatch();
+  
+  if (authStatus == AuthStatus.Unknown) {
+    dispatch(getUser());
+  }
 
-  if (loggedIn) {
+  if (authStatus == AuthStatus.LoggedIn) {
     return (
       <div className="flex-initial relative">
-        (debug: user {JSON.stringify(user)})
         <span className="text-sm mr-2">{user?.email}</span>
         <button onClick={() => dispatch(logout())}>Logout</button>
       </div>
     );
+  }
+  
+  // TODO: Some spinner or something
+  if (authStatus == AuthStatus.Pending) {
+    return (
+      <div className="flex-initial relative">
+        Loading...
+      </div>
+    )
   }
 
   return (

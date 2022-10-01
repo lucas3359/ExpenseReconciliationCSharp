@@ -3,10 +3,13 @@ import Card from './Card';
 import Icon from '../components/Icon';
 import { baseUrl } from '../services/auth';
 import { parseOfxBody } from '../services/upload';
+import {useAppSelector} from '../hooks/hooks';
+import {selectLoggedIn} from '../auth/authSlice';
 
 const UploadFile = () => {
   const [badFile, setBadFile] = useState(false);
-  const session = { loggedIn: false, token: 'false', user: {}};
+  const loggedIn = useAppSelector(selectLoggedIn);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -52,7 +55,7 @@ const UploadFile = () => {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`,
+        Authorization: `Bearer ${token}`,
       }),
       body: JSON.stringify(body),
     });
@@ -77,7 +80,7 @@ const UploadFile = () => {
     </div>
   );
 
-  if (!session.loggedIn) {
+  if (!loggedIn) {
     return <Card link={false}>Log in to upload</Card>;
   }
 

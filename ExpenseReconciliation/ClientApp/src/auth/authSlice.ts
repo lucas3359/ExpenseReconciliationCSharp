@@ -38,15 +38,15 @@ const authSlice = createSlice({
   }
 });
 
-export const selectAuthState = (state: RootState) => state.auth.status;
+export const selectAuthStatus = (state: RootState) => state.auth.status;
 export const selectLoggedIn = (state: RootState) => state.auth.status === AuthStatus.LoggedIn;
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 
-export const { logout, unauthenticated } = authSlice.actions;
+export const { logout } = authSlice.actions;
 
-export const login = createAsyncThunk('auth/login', async (token: any, thunkAPI) => {
-  console.log(`[Auth] New login with token ${token}`);
+export const login = createAsyncThunk('auth/login', async ({ token }: any, thunkAPI) => {
+  console.log(`[Auth] New login with token`);
 
   localStorage.setItem('token', token);
   

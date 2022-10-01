@@ -6,17 +6,11 @@ import { fetcher } from '../services/auth';
 import PagedTransaction from '../model/pagedTransaction';
 import { Paginate } from '../components/Paginate';
 import {useAppSelector} from '../hooks/hooks';
-import {selectLoggedIn, selectToken, unauthenticated} from '../auth/authSlice';
-import {useDispatch} from 'react-redux';
+import {selectLoggedIn, selectToken} from '../auth/authSlice';
 
 export default function List() {
   const loggedIn = useAppSelector(selectLoggedIn);
   const token = useAppSelector(selectToken);
-  const dispatch = useDispatch();
-  
-  if (loggedIn === false) {
-    dispatch(unauthenticated());
-  }
   
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -31,8 +25,7 @@ export default function List() {
     mutate,
   } = useSWR<PagedTransaction, any>(
     [
-      `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`,
-      token,
+      `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`
     ],
     fetcher,
   );

@@ -1,6 +1,6 @@
 export enum ApiStatus {
-  Idle,
-  Loading,
-  Succeeded,
-  Failed
+  Idle = "Idle",
+  Loading = "Loading",
+  Succeeded = "Succeeded",
+  Failed = "Failed"
 }

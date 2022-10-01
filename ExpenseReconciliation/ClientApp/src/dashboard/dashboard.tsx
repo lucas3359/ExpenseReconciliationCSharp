@@ -3,28 +3,34 @@ import useSWR from 'swr';
 import User from '../model/user';
 import Total from '../model/total';
 import { fetcher } from '../services/auth';
+import {useAppDispatch, useAppSelector} from '../hooks/hooks';
+import {selectLoggedIn} from '../auth/authSlice';
+import {fetchTotals, selectDashboardStatus, selectTotals} from './dashboardSlice';
+import {ApiStatus} from '../model/apiStatus';
+import {fetchAllUsers, selectUsers} from '../auth/userSlice';
 
 export default function Dashboard() {
-  const session = { loggedIn: false, token: 'false', user: {}};
-  const token = session?.token;
-
-  const { data: totalsData, error: totalsError } = useSWR<Total[], any>(
-    ['/api/dashboard/GetAmountAsync', token],
-    fetcher,
-  );
-  const { data: userData, error: userError } = useSWR<User[], any>(
-    ['/api/user', token],
-    fetcher,
-  );
-
-  if (!session.loggedIn) return <div>Unauthenticated</div>;
-  if (totalsError || userError) return <div>Failed to load</div>;
-  if (!totalsData || !userData) return <div>loading...</div>;
-  console.log('TotalsData');
-  console.log(totalsData);
+  const loggedIn = useAppSelector(selectLoggedIn);
+  const totals = useAppSelector(selectTotals);
+  const dashboardStatus = useAppSelector(selectDashboardStatus);
+  const users = useAppSelector(selectUsers);
+  const dispatch = useAppDispatch();
+  
+  if (!loggedIn) return <div>Unauthenticated</div>;
+  
+  if (dashboardStatus === ApiStatus.Idle) {
+    dispatch(fetchTotals());
+  }
+  
+  if (users.status === ApiStatus.Idle) {
+    dispatch(fetchAllUsers());
+  }
+  
+  if (dashboardStatus === ApiStatus.Failed || users.status === ApiStatus.Failed) return <div>Failed to load</div>;
+  if (dashboardStatus === ApiStatus.Loading || users.status === ApiStatus.Loading) return <div>loading...</div>;
 
   const getUser = (userId: number): string | undefined => {
-    return userData.find((user) => user.id === userId)?.userName;
+    return users.users.find((user) => user.id === userId)?.userName;
   };
 
   const renderCurrency = (amount: number): string => {
@@ -32,7 +38,7 @@ export default function Dashboard() {
   };
 
   const getTotals = () => {
-    return totalsData.map((total) => {
+    return totals?.map((total) => {
       return (
         <div>
           <span>

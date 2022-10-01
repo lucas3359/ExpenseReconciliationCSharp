@@ -4,6 +4,8 @@ import SplitImport from '../model/updateSplit';
 import User from '../model/user';
 import { baseUrl } from '../services/auth';
 import split from '../services/split';
+import {useAppSelector} from '../hooks/hooks';
+import {selectToken} from '../auth/authSlice';
 
 const TransactionSplit = ({
   data,
@@ -18,8 +20,7 @@ const TransactionSplit = ({
   users: User[];
   changeSplitStatus(status: boolean): void;
 }) => {
-  const session = { loggedIn: false, token: 'false', user: {}};
-  const token = session?.token;
+  const token = useAppSelector(selectToken);
 
   amount = Math.round((amount / 100) * 100) / 100;
   const [splitted, setSplitted] = useState(data.length !== 0);

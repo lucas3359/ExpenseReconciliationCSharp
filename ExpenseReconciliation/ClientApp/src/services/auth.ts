@@ -2,8 +2,9 @@ import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 export const baseUrl = `http://localhost:5000`; // TODO: Configurable
 
-export const fetcher = (url: string, token: string) => {
+export const fetcher = (url: string, ignoreToken?: string) => {
   const apiUrl = `${baseUrl}${url}`;
+  const token = localStorage.getItem('token');
 
   console.debug(
     `Making a fetch to ${apiUrl}${url} with token ${token?.length}`,
