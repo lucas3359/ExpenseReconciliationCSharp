@@ -15,6 +15,8 @@ namespace ExpenseReconciliation.DataContext
 
         public DbSet<ImportRecord> ImportRecords { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -43,6 +45,13 @@ namespace ExpenseReconciliation.DataContext
 
             builder.Entity<Role>().ToTable("role");
             builder.Entity<Role>().HasKey(role => role.Id);
+            
+            builder.Entity<Category>().ToTable("category");
+            builder.Entity<Category>().HasKey(p => p.Id);
+
+            builder.Entity<Transaction>().HasOne<Category>(transaction => transaction.Category)
+                .WithMany(category => category.Transactions)
+                .HasForeignKey(transaction => transaction.CategoryId);
         }
     }  
 }
