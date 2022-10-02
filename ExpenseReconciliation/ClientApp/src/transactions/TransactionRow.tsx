@@ -4,6 +4,7 @@ import User from '../model/user';
 import Icon from '../components/Icon';
 import Split from '../model/split';
 import TransactionSplit from './TransactionSplit';
+import Category from "../model/category";
 
 const TransactionRow = ({
   row,
@@ -75,6 +76,10 @@ const TransactionRow = ({
   const renderSplitDetails = (splits: Split[]) => {
     return splits.map(split => `${users.find(user => user.id === split.userId)?.userName}: ${renderCurrency(split.amount)}`).join(' ')
   }
+  
+  const renderCategory = (category: Category)=>{
+    return category.name ?? "empty"
+  }
 
   return (
     <>
@@ -84,6 +89,7 @@ const TransactionRow = ({
       >
         <td className="p-2 text-gray-600">{renderDate(row.date)}</td>
         <td className="p-2">{row.details}<br />{renderSplitDetails(row.splits)}</td>
+        <td className="p-2">{row.category?.name ?? "/"}</td>
         <td
           className={`p-2 text-right font-semibold ${
             Number(row.amount) < 0 ? 'text-gray-600' : 'text-green-400'

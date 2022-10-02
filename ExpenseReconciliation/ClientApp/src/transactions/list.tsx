@@ -64,6 +64,7 @@ export default function List() {
           <tr className="bg-gray-100">
             <th className="py-3">Date</th>
             <th className="py-3">Description</th>
+            <th className="py-3">Category</th>
             <th className="py-3 text-right">Amount</th>
             <th className="py-3"></th>
           </tr>

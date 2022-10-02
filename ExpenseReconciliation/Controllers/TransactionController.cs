@@ -73,5 +73,11 @@ namespace ExpenseReconciliation.Controllers
         {
             await _transactionService.DeleteSplitAsync(transactionId);
         }
+        
+        [HttpGet("GetAllCategories")]
+        public async Task<IEnumerable<Category>> GetAllCategories()
+        {
+            return await _transactionService.GetAllCategoriesAsync();
+        }
     }
 }
