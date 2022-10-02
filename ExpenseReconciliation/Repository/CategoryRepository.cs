@@ -13,7 +13,6 @@ namespace ExpenseReconciliation.Repository
         }
         public async Task<IEnumerable<Category>> ListAllAsync()
         {
-            var t = await _context.Categories.ToListAsync();
             return await _context.Categories.ToListAsync();
         }
     }

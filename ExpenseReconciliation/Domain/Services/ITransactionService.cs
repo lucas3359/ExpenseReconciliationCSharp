@@ -12,5 +12,5 @@ public interface ITransactionService
     Task<IEnumerable<Split>> GetSplitByIdAsync(int transactionId);
     Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize);
     Task<IEnumerable<Category>> GetAllCategoriesAsync();
-
+    Task UpdateCategoryAsync(CategoryRequest categoryRequest);
 }

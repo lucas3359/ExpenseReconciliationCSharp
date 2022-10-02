@@ -97,5 +97,10 @@ public class TransactionService : ITransactionService
     {
         return await _categoryRepository.ListAllAsync();
     }
+    
+    public async Task UpdateCategoryAsync(CategoryRequest categoryRequest)
+    {
+        await _transactionRepository.UpdateCategoryAsync(categoryRequest);
+    }
 
 }

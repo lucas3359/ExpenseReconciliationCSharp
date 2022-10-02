@@ -80,5 +80,10 @@ public class TransactionRepository: RepositoryBase, ITransactionRepository
         return await _context.Transactions.Include(t=>t.splits).Include(t=>t.Category).FirstOrDefaultAsync (t=>t.Id == id);
     }
 
-
+    public async Task UpdateCategoryAsync(CategoryRequest categoryRequest)
+    {
+        var t = _context.Transactions.Single(txn => txn.Id == categoryRequest.TransactionId);
+        t.CategoryId = categoryRequest.Category.Id;
+        await _context.SaveChangesAsync();
+    }
 }
