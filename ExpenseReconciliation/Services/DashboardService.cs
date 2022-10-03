@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Text.Json;
-using System.Threading.Tasks;
-using ExpenseReconciliation.ClientApp.src.model;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
@@ -114,8 +111,6 @@ namespace ExpenseReconciliation.Services
             //splitted amount
             foreach (var t in transactions)
             {
-                var y = String.Concat(t.Date.ToString("MMMM") + ", " + t.Date.Year);
-                var yy = t.Date.ToString("yy");
                 if (timePeriodName == String.Concat(t.Date.ToString("MMMM") + ", " + t.Date.Year) || timePeriodName == t.Date.Year.ToString())
                 {
                     if (t.splits.Count!=0)

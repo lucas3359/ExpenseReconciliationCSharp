@@ -1,4 +1,4 @@
-namespace ExpenseReconciliation.ClientApp.src.model;
+namespace ExpenseReconciliation.Domain.Models;
 
 public class SplitSummary
 {

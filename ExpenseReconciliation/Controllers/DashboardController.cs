@@ -1,11 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ExpenseReconciliation.ClientApp.src.model;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Services;
-using ExpenseReconciliation.Repository;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseReconciliation.Controllers

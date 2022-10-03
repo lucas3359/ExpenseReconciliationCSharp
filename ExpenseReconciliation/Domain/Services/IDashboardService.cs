@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ExpenseReconciliation.ClientApp.src.model;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Domain.Services
 {
