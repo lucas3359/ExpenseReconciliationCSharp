@@ -1,5 +1,4 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {getAmounts} from '../api/dashboardClient';
 import {ApiStatus} from '../model/apiStatus';
 import {RootState} from '../store';
 import Total from '../model/total';
@@ -27,7 +26,7 @@ export const dashboardSlice = createSlice({
       })
       .addCase(fetchTotals.fulfilled, (state, action) => {
         state.status = ApiStatus.Succeeded;
-        state.totals = action.payload;
+        // state.totals = action.payload;
       })
       .addCase(fetchTotals.rejected, (state) => {
         state.status = ApiStatus.Failed;
@@ -37,7 +36,7 @@ export const dashboardSlice = createSlice({
 });
 
 export const fetchTotals = createAsyncThunk('dashboard/fetchTotals', async () => {
-  return await getAmounts();
+  // return await getAmounts();
 });
 
 export const selectTotals = (state: RootState) => state.dashboard.totals;

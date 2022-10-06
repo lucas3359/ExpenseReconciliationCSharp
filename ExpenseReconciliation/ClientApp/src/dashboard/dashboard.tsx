@@ -1,44 +1,30 @@
 import React from 'react';
-import useSWR from 'swr';
-import User from '../model/user';
 import Total from '../model/total';
-import { fetcher } from '../services/auth';
-import {useAppDispatch, useAppSelector} from '../hooks/hooks';
+import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
-import {fetchTotals, selectDashboardStatus, selectTotals} from './dashboardSlice';
-import {ApiStatus} from '../model/apiStatus';
-import {fetchAllUsers, selectUsers} from '../auth/userSlice';
+import {useGetAllUsersQuery, useGetAmountsQuery} from '../api/expensesApi';
 
 export default function Dashboard() {
   const loggedIn = useAppSelector(selectLoggedIn);
-  const totals = useAppSelector(selectTotals);
-  const dashboardStatus = useAppSelector(selectDashboardStatus);
-  const users = useAppSelector(selectUsers);
-  const dispatch = useAppDispatch();
+  
+  const { data: totalsData, error: totalsError, isLoading: totalsLoading } = useGetAmountsQuery(undefined);
+  const { data: userData, error: userError, isLoading: userLoading } = useGetAllUsersQuery();
   
   if (!loggedIn) return <div>Unauthenticated</div>;
   
-  if (dashboardStatus === ApiStatus.Idle) {
-    dispatch(fetchTotals());
-  }
-  
-  if (users.status === ApiStatus.Idle) {
-    dispatch(fetchAllUsers());
-  }
-  
-  if (dashboardStatus === ApiStatus.Failed || users.status === ApiStatus.Failed) return <div>Failed to load</div>;
-  if (dashboardStatus === ApiStatus.Loading || users.status === ApiStatus.Loading) return <div>loading...</div>;
+  if (totalsLoading || userLoading) return <div>loading...</div>;
+  if (!totalsData || !userData || totalsError || userError) return <div>Failed to load</div>;
 
   const getUser = (userId: number): string | undefined => {
-    return users.users.find((user) => user.id === userId)?.userName;
+    return userData.find((user) => user.id === userId)?.userName;
   };
 
   const renderCurrency = (amount: number): string => {
     return (amount / 100).toFixed(2);
   };
 
-  const getTotals = () => {
-    return totals?.map((total) => {
+  const getTotals = (data: Total[]) => {
+    return data.map((total) => {
       return (
         <div>
           <span>
@@ -56,7 +42,7 @@ export default function Dashboard() {
       <br />
       <h2 className="text-xl text-gray-500">Amounts owing</h2>
       <br />
-      <div>{getTotals()}</div>
+      <div>{getTotals(totalsData)}</div>
     </div>
   );
 }

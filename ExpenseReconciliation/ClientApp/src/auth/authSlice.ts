@@ -14,6 +14,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
+    setToken: (state, action) => {
+      return {
+        ...state,
+        token: action.payload,
+      }
+    },
     logout: (state) => {
       console.log('[Auth] Log out');
       localStorage.removeItem('token');
@@ -43,13 +49,14 @@ export const selectLoggedIn = (state: RootState) => state.auth.status === AuthSt
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 
-export const { logout } = authSlice.actions;
+export const { setToken, logout } = authSlice.actions;
 
 export const login = createAsyncThunk('auth/login', async ({ token }: any, thunkAPI) => {
   console.log(`[Auth] New login with token`);
 
   localStorage.setItem('token', token);
   
+  thunkAPI.dispatch(setToken(token));
   thunkAPI.dispatch(getUser());
 });
 

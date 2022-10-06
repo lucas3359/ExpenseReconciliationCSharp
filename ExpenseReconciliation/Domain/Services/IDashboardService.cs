@@ -7,7 +7,7 @@ namespace ExpenseReconciliation.Domain.Services
 {
     public interface IDashboardService
     {
-        Task<string> AmountAsync();
+        Task<IEnumerable<Total>> AmountAsync();
         Task<IEnumerable<Split>> ListAsync();
         
     }

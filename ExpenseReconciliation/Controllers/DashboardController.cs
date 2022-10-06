@@ -26,7 +26,7 @@ namespace ExpenseReconciliation.Controllers
         }
         
         [HttpGet("GetAmountAsync")]
-        public async Task<string> GetAmountAsync()
+        public async Task<IEnumerable<Total>> GetAmountAsync()
         {
             return await _dashboardService.AmountAsync();
         }
