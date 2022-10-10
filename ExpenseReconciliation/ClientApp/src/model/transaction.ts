@@ -1,3 +1,5 @@
+import Category from "./category";
+
 type Transaction = {
   id: number;
   date: Date;
@@ -6,6 +8,7 @@ type Transaction = {
   accountId: number;
   importId: number;
   splits: [];
+  category?: Category;
 };
 
 export default Transaction;

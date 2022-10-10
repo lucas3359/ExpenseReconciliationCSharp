@@ -18,6 +18,9 @@ public class Transaction
     public int ImportId { get; set; }
     [Column("bank_id")]
     public string BankId { get; set; }
+    [Column("category_id")]
+    public int? CategoryId { get; set; }
 
-    public virtual ICollection<Split> splits { get; set; } 
+    public virtual ICollection<Split> splits { get; set; }
+    public virtual Category? Category { get; set; } 
 }

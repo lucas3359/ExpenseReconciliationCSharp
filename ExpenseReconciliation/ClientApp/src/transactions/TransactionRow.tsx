@@ -4,18 +4,24 @@ import User from '../model/user';
 import Icon from '../components/Icon';
 import Split from '../model/split';
 import TransactionSplit from './TransactionSplit';
+import Category from '../model/category';
+import CategoryDropDown from './CategoryDropDown';
 
 const TransactionRow = ({
   row,
   users,
+  categories,
   ChangeSplitStatus,
 }: {
   row: Transaction;
   users: User[];
+  categories : Category[]|undefined;
   ChangeSplitStatus(status: boolean): void;
 }) => {
   const [showSplit, setShowSplit] = useState(false);
-
+  const [selectCategory, setCategory] = useState<string|undefined>(row.category?.name);
+  const [showDropDown, setShowDropDown] = useState<boolean>(false);
+  
   const splits: Split[] = row.splits;
 
   const renderSplit = () => {
@@ -83,6 +89,18 @@ const TransactionRow = ({
       .join(' ');
   };
 
+  const renderCategory = (category: Category)=>{
+    return category.name ?? "empty"
+  };
+
+  const categorySelection = (category: string):void =>{
+    setCategory(category);
+  };
+
+  const toggleDropDown = () => {
+    setShowDropDown(!showDropDown);
+  };
+  
   return (
     <>
       <tr
@@ -95,6 +113,25 @@ const TransactionRow = ({
           <br />
           {renderSplitDetails(row.splits)}
         </td>
+        <td className="p-2">{row.details}<br />{renderSplitDetails(row.splits)}</td>
+        {/*<td className="p-2">{row.category?.name ?? "/"}</td> label*/} 
+        <td>
+          <button className={selectCategory ? "bg-green-300 w-15 hover:bg-green-100 focus:border-green-600 border-green-300 text-sm":"p-2 w-20"}
+              onClick={(): void => toggleDropDown()}
+          >
+            <div>{selectCategory ? selectCategory : "Select ..."} </div>
+          {showDropDown && (<CategoryDropDown
+              key = {`${row.id}-category`}
+              transactionId={row.id}
+              categories={categories}
+              showDropDown={false}
+              toggleDropDown={(): void => toggleDropDown()}
+              categorySelection={categorySelection}
+
+          />)
+          }
+          </button>
+          </td>
         <td
           className={`p-2 text-right font-semibold ${
             Number(row.amount) < 0 ? 'text-gray-600' : 'text-green-400'

@@ -7,6 +7,7 @@ import PagedTransaction from '../model/pagedTransaction';
 import { Paginate } from '../components/Paginate';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn, selectToken} from '../auth/authSlice';
+import Category from '../model/category';
 
 export default function List() {
   const loggedIn = useAppSelector(selectLoggedIn);
@@ -29,6 +30,7 @@ export default function List() {
     ],
     fetcher,
   );
+  const { data: categoryData, error: categoryError } = useSWR<Category[], any>(['/api/transaction/GetAllCategories'], fetcher);
 
   useEffect(() => {}, [currentPage, pageSize]);
 
@@ -55,6 +57,7 @@ export default function List() {
             key={row.id}
             row={row}
             users={userData}
+            categories={categoryData}
             ChangeSplitStatus={(status) => handleSplitChange(status)}
           />
         );
@@ -69,6 +72,7 @@ export default function List() {
           <tr className="bg-gray-100">
             <th className="py-3">Date</th>
             <th className="py-3">Description</th>
+            <th className="py-3">Category</th>
             <th className="py-3 text-right">Amount</th>
             <th className="py-3"></th>
           </tr>
