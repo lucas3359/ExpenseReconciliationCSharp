@@ -6,6 +6,7 @@ import {AuthContext} from '../auth/AuthProvider';
 import {fetcher} from '../services/auth';
 import PagedTransaction from '../model/pagedTransaction';
 import {Paginate} from '../components/Paginate';
+import Category from "../model/category";
 
 export default function List() {
   const session = useContext(AuthContext);
@@ -21,7 +22,8 @@ export default function List() {
     mutate,
   } = useSWR<PagedTransaction, any>([
     `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`,
-    token], fetcher);
+    token], fetcher)
+  const { data: categoryData, error: categoryError } = useSWR<Category[], any>(['/api/transaction/GetAllCategories', token], fetcher);
 
   useEffect(() => {
     
@@ -50,6 +52,7 @@ export default function List() {
             key={row.id}
             row={row}
             users={userData}
+            categories={categoryData}
             ChangeSplitStatus={(status) => handleSplitChange(status)}
           />
         );
@@ -64,6 +67,7 @@ export default function List() {
           <tr className="bg-gray-100">
             <th className="py-3">Date</th>
             <th className="py-3">Description</th>
+            <th className="py-3">Category</th>
             <th className="py-3 text-right">Amount</th>
             <th className="py-3"></th>
           </tr>

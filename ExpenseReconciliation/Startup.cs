@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
 using ExpenseReconciliation.Domain.Repositories;
@@ -24,7 +25,7 @@ namespace ExpenseReconciliation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddJsonOptions(x=>x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
@@ -89,6 +90,7 @@ namespace ExpenseReconciliation
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         }
 

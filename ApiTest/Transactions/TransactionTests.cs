@@ -2,6 +2,7 @@ using ApiTest.Mocks;
 using ExpenseReconciliation.Controllers;
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
+using ExpenseReconciliation.Domain.Repositories;
 using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
@@ -25,6 +26,7 @@ public class TransactionTests
             .Options;
         var appDbContext = new AppDbContext(dbContextOptions);
         var accountServiceMock = new Mock<IAccountService>();
+        var categoryRepositoryMock = new Mock<ICategoryRepository>();
         accountServiceMock.Setup(
             s => s.FindOrCreateId(It.IsAny<string>())).ReturnsAsync(1);
         
@@ -34,7 +36,7 @@ public class TransactionTests
 
         var importRecordService = new ImportRecordService(importRecordRepository);
         var transactionService = new TransactionService(transactionRepository, accountServiceMock.Object, importRecordService, 
-            Mock.Of<ILogger<TransactionService>>(), splitRepository);
+            Mock.Of<ILogger<TransactionService>>(), splitRepository, categoryRepositoryMock.Object);
         _transactionController = new TransactionController(transactionService);
         
         await _transactionController.Import(ImportTransactions.BankImportRequest());

@@ -11,17 +11,21 @@ public class TransactionService : ITransactionService
     private readonly IAccountService _accountService;
     private readonly IImportRecordService _importRecordService;
     private readonly ISplitRepository _splitRepository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly ILogger _logger;
         
     public TransactionService(ITransactionRepository transactionRepository,IAccountService accountService, 
         IImportRecordService importRecordService, ILogger<TransactionService> logger,
-        ISplitRepository splitRepository )
+        ISplitRepository splitRepository,
+        ICategoryRepository categoryRepository)
     {
         _transactionRepository = transactionRepository;
         _accountService = accountService;
         _importRecordService = importRecordService;
         _splitRepository = splitRepository;
+        _categoryRepository = categoryRepository;
         _logger = logger;
+        
     }
         
     public async Task<Paged<Transaction>> ListAsync(int page, int pageSize)
@@ -87,6 +91,16 @@ public class TransactionService : ITransactionService
     public async Task DeleteSplitAsync(int transactionId)
     {
         await _splitRepository.DeleteSplitAsync(transactionId);
+    }
+    
+    public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+    {
+        return await _categoryRepository.ListAllAsync();
+    }
+    
+    public async Task UpdateCategoryAsync(CategoryRequest categoryRequest)
+    {
+        await _transactionRepository.UpdateCategoryAsync(categoryRequest);
     }
 
 }
