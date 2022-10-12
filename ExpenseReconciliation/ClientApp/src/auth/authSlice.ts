@@ -31,14 +31,14 @@ const authSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(getUser.pending, (state, action) => {
+      .addCase(getUser.pending, (state) => {
         state.status = AuthStatus.Pending;
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.status = AuthStatus.LoggedIn;
         state.user = action.payload;
       })
-      .addCase(getUser.rejected, (state, action) => {
+      .addCase(getUser.rejected, (state) => {
         state.status = AuthStatus.Unauthenticated;
       })
   }
