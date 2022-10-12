@@ -2,12 +2,13 @@ import React from 'react';
 import Total from '../model/total';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
-import {useGetAllUsersQuery, useGetAmountsQuery} from '../api/expensesApi';
+import {useGetAllUsersQuery} from '../api/usersApi';
+import {useGetAmountsQuery} from '../api/dashboardApi';
 
 export default function Dashboard() {
   const loggedIn = useAppSelector(selectLoggedIn);
   
-  const { data: totalsData, error: totalsError, isLoading: totalsLoading } = useGetAmountsQuery(undefined);
+  const { data: totalsData, error: totalsError, isLoading: totalsLoading } = useGetAmountsQuery();
   const { data: userData, error: userError, isLoading: userLoading } = useGetAllUsersQuery();
   
   if (!loggedIn) return <div>Unauthenticated</div>;

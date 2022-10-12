@@ -1,45 +1,36 @@
-import useSWR from 'swr';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import TransactionRow from './TransactionRow';
-import User from '../model/user';
-import { fetcher } from '../services/auth';
-import PagedTransaction from '../model/pagedTransaction';
-import { Paginate } from '../components/Paginate';
+import {Paginate} from '../components/Paginate';
 import {useAppSelector} from '../hooks/hooks';
-import {selectLoggedIn, selectToken} from '../auth/authSlice';
-import Category from '../model/category';
+import {selectLoggedIn} from '../auth/authSlice';
+import {useGetAllCategoriesQuery, useGetTransactionPageQuery} from '../api/transactionApi';
+import {useGetAllUsersQuery} from '../api/usersApi';
 
 export default function List() {
   const loggedIn = useAppSelector(selectLoggedIn);
-  const token = useAppSelector(selectToken);
   
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data: userData, error: userError } = useSWR<User[], any>(
-    ['/api/user', token],
-    fetcher,
-  );
+  const { data: userData, error: userError } = useGetAllUsersQuery();
   const {
     data: transactionData,
     error: transactionError,
-    mutate,
-  } = useSWR<PagedTransaction, any>(
-    [
-      `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`
-    ],
-    fetcher,
-  );
-  const { data: categoryData, error: categoryError } = useSWR<Category[], any>(['/api/transaction/GetAllCategories'], fetcher);
-
+  } = useGetTransactionPageQuery({ currentPage, pageSize });
+  const { data: categoryData, error: categoryError } = useGetAllCategoriesQuery();
+  
   useEffect(() => {}, [currentPage, pageSize]);
 
   if (!loggedIn) {
     return <div>Not signed in</div>;
   }
-  if (transactionError || userError) return <div>Failed to load</div>;
+  if (transactionError || userError || categoryError) return <div>Failed to load</div>;
   if (!transactionData || !userData) return <div>loading...</div>;
 
+  const mutate = () => {
+    console.log(`mutate`); // TODO: finish by changing to subscription
+  }
+  
   const handleSplitChange = (status: boolean) => {
     console.log(`handle split change: ${status}`);
     mutate();

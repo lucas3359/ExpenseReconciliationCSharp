@@ -1,8 +1,9 @@
-import React, {useContext, useState} from 'react';
-import Category from "../model/category";
-import {AuthContext} from "../auth/AuthProvider";
-import UpdateCategoryModel from "../model/updateCategoryModel";
-import updateCategory from "../services/category";
+import React, {useState} from 'react';
+import Category from '../model/category';
+import UpdateCategoryModel from '../model/updateCategoryModel';
+import updateCategory from '../services/category';
+import {useAppSelector} from '../hooks/hooks';
+import {selectToken} from '../auth/authSlice';
 
 type DropDownProps = {
     transactionId: number;
@@ -18,8 +19,7 @@ const CategoryDropDown = ({
     categorySelection,
 }:DropDownProps)=>{
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
-    const session = useContext(AuthContext);
-    const token = session?.token;
+    const token = useAppSelector(selectToken);
     
     const onClickHandler = async (category: Category): Promise<void> => {
         categorySelection(category.name);

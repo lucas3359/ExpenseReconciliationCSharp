@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
-import { baseUrl } from '../services/auth';
 import split from '../services/split';
 import {useAppSelector} from '../hooks/hooks';
 import {selectToken} from '../auth/authSlice';
@@ -156,7 +155,7 @@ const TransactionSplit = ({
 
   const deleteSplit = async () => {
     console.log('Delete');
-    await fetch(`${baseUrl}/api/transaction/DeleteSplit`, {
+    await fetch(`/api/transaction/DeleteSplit`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${token}`,

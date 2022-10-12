@@ -1,8 +1,7 @@
 import SplitImport from '../model/updateSplit';
 import Transaction from '../model/transaction';
-import { baseUrl } from './auth';
 
-const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
+export const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
   let sum = 0;
   let absSum = 0;
 
@@ -20,7 +19,7 @@ const splitAmountsAddUp = (split: SplitImport, amount: number): boolean => {
 
 const split = async (split: SplitImport, token: string | null) => {
   const response = await fetch(
-    `${baseUrl}/api/transaction/GetById?id=${encodeURIComponent(
+    `/api/transaction/GetById?id=${encodeURIComponent(
       split.transactionId,
     )}`,
     {
@@ -40,7 +39,7 @@ const split = async (split: SplitImport, token: string | null) => {
   if (!splitAmountsAddUp(split, transaction.amount)) {
     throw new Error('Amounts do not add up');
   } else {
-    return await fetch(`${baseUrl}/api/transaction/UpdateSplit`, {
+    return await fetch(`/api/transaction/UpdateSplit`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${token}`,

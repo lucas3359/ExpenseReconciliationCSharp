@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Card from './Card';
 import Icon from '../components/Icon';
-import { baseUrl } from '../services/auth';
 import { parseOfxBody } from '../services/upload';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
@@ -51,7 +50,7 @@ const UploadFile = () => {
 
     const body = parseOfxBody(file);
 
-    const response = await fetch(`${baseUrl}/api/transaction/Import`, {
+    const response = await fetch(`/api/transaction/Import`, {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json',
