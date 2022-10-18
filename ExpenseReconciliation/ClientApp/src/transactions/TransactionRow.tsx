@@ -6,17 +6,16 @@ import Split from '../model/split';
 import TransactionSplit from './TransactionSplit';
 import Category from '../model/category';
 import CategoryDropDown from './CategoryDropDown';
+import SplitImport from '../model/updateSplit';
 
 const TransactionRow = ({
   row,
   users,
   categories,
-  ChangeSplitStatus,
 }: {
-  row: Transaction;
-  users: User[];
-  categories : Category[]|undefined;
-  ChangeSplitStatus(status: boolean): void;
+  row: Transaction,
+  users: User[],
+  categories : Category[]|undefined,
 }) => {
   const [showSplit, setShowSplit] = useState(false);
   const [selectCategory, setCategory] = useState<string|undefined>(row.category?.name);
@@ -38,7 +37,6 @@ const TransactionRow = ({
           amount={Number(row.amount)}
           transaction_id={row.id}
           users={users}
-          changeSplitStatus={(status: boolean) => ChangeSplitStatus(status)}
         />
       </tr>
     );

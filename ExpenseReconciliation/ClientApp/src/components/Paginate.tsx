@@ -7,7 +7,7 @@ export function Paginate({ currentPage, totalPages, onPageChange }) {
     const isActive = pageNumber === currentPage;
 
     return (
-      <li>
+      <li key={`page-${pageNumber}`}>
         <button
           className="block py-2 px-3 ml-0 leading-tight disabled:bg-gray-100"
           disabled={isActive}

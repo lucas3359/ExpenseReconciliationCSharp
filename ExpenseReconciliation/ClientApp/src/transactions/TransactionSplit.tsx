@@ -1,26 +1,20 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
-import split from '../services/split';
-import {useAppSelector} from '../hooks/hooks';
-import {selectToken} from '../auth/authSlice';
+import {useDeleteSplitMutation, useUpdateSplitMutation} from '../api/transactionApi';
 
 const TransactionSplit = ({
   data,
   amount,
   transaction_id,
   users,
-  changeSplitStatus,
 }: {
   data: Split[];
   amount: number;
   transaction_id: number;
   users: User[];
-  changeSplitStatus(status: boolean): void;
 }) => {
-  const token = useAppSelector(selectToken);
-
   amount = Math.round((amount / 100) * 100) / 100;
   const [splitted, setSplitted] = useState(data.length !== 0);
 
@@ -29,6 +23,9 @@ const TransactionSplit = ({
     1: Math.round(amount * percent * 100) / 100,
     2: Math.round(amount * (1 - percent) * 100) / 100,
   });
+
+  const [updateSplit] = useUpdateSplitMutation();
+  const [deleteSplit] = useDeleteSplitMutation();
 
   const splitOptions = [
     { value: 0, description: '0' },
@@ -58,13 +55,12 @@ const TransactionSplit = ({
       2: Math.round((amount - percentage * amount) * 100) / 100,
     });
   };
-
-  ////parseSplit
-  const parseSplit = async () => {
+  
+  const parseSplit = () => {
     const splits: Split[] = [];
     amount = amount * 100;
     let sum = 0;
-    users.map(async (user) => {
+    users.map((user: User) => {
       const roundedAmount = Math.round(splitAmounts[user.id] * 100);
       const split: Split = {
         userId: user.id,
@@ -72,7 +68,7 @@ const TransactionSplit = ({
         reviewed: false,
       };
       sum += roundedAmount;
-      await splits.push(split);
+      splits.push(split);
     });
 
     if (sum !== amount) {
@@ -86,26 +82,19 @@ const TransactionSplit = ({
       }
     }
 
-    const body: SplitImport = {
+    const split: SplitImport = {
       transactionId: transaction_id,
       splits: splits,
     };
-
-    // TODO: Local service
-    const response = await split(body, token);
-
-    if (response.status === 201 || response.status === 200) {
-      changeSplitStatus(true);
-      setSplitted(true);
-      console.log(splitted);
-      // Updated, refresh the row
-    } else if (response.status == 204) {
-      // Amounts don't add up
-    } else {
-      // Error
-    }
-  };
-  ////parseSplit
+    
+    updateSplit(split);
+    setSplitted(true);
+  }
+  
+  const onDeleteSplit = (transactionId: number) => {
+    deleteSplit({ id: transactionId });
+    setSplitted(false);
+  }
 
   const renderUser = () => {
     return users.map((user) => {
@@ -153,28 +142,13 @@ const TransactionSplit = ({
     );
   });
 
-  const deleteSplit = async () => {
-    console.log('Delete');
-    await fetch(`/api/transaction/DeleteSplit`, {
-      method: 'POST',
-      headers: new Headers({
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify(transaction_id),
-    });
-    setSplitted(false);
-    changeSplitStatus(false);
-    console.log('Changed split status');
-  };
-
   return splitted ? (
     <>
       <td className="p-2" colSpan={3}>
         Already split: {renderAlreadySplit(data)}
       </td>
       <td>
-        <button className="p-1 w-16" onClick={deleteSplit}>
+        <button className="p-1 w-16" onClick={() => onDeleteSplit(transaction_id)}>
           Delete
         </button>
       </td>

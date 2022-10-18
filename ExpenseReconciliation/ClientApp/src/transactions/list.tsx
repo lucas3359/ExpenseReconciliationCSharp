@@ -26,16 +26,7 @@ export default function List() {
   }
   if (transactionError || userError || categoryError) return <div>Failed to load</div>;
   if (!transactionData || !userData) return <div>loading...</div>;
-
-  const mutate = () => {
-    console.log(`mutate`); // TODO: finish by changing to subscription
-  }
   
-  const handleSplitChange = (status: boolean) => {
-    console.log(`handle split change: ${status}`);
-    mutate();
-  };
-
   const handlePageClick = (page: number) => {
     setCurrentPage(page - 1);
   };
@@ -49,7 +40,6 @@ export default function List() {
             row={row}
             users={userData}
             categories={categoryData}
-            ChangeSplitStatus={(status) => handleSplitChange(status)}
           />
         );
       }
@@ -68,8 +58,9 @@ export default function List() {
             <th className="py-3"></th>
           </tr>
         </thead>
-        {/* <tbody className='text-sm font-light'>{renderedList()}</tbody> */}
-        <RenderedList currentItems={transactionData.payload} />
+        <tbody className='text-sm font-light'>
+          <RenderedList currentItems={transactionData.payload} />
+        </tbody>
       </table>
       <Paginate
         currentPage={currentPage + 1}
