@@ -27,7 +27,7 @@ export default function Dashboard() {
   const getTotals = (data: Total[]) => {
     return data.map((total) => {
       return (
-        <div>
+        <div key={total.userId}>
           <span>
             <strong>{getUser(total.userId)} </strong>
           </span>
