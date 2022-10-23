@@ -1,45 +1,32 @@
-import useSWR from 'swr';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TransactionRow from './TransactionRow';
-import User from '../model/user';
-import {AuthContext} from '../auth/AuthProvider';
-import {fetcher} from '../services/auth';
-import PagedTransaction from '../model/pagedTransaction';
 import {Paginate} from '../components/Paginate';
-import Category from "../model/category";
+import {useAppSelector} from '../hooks/hooks';
+import {selectLoggedIn} from '../auth/authSlice';
+import {useGetAllCategoriesQuery, useGetTransactionPageQuery} from '../api/transactionApi';
+import {useGetAllUsersQuery} from '../api/usersApi';
 
 export default function List() {
-  const session = useContext(AuthContext);
-  const token = session?.token;
+  const loggedIn = useAppSelector(selectLoggedIn);
   
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  
-  const { data: userData, error: userError } = useSWR<User[], any>(['/api/user', token], fetcher);
+
+  const { data: userData, error: userError } = useGetAllUsersQuery();
   const {
     data: transactionData,
     error: transactionError,
-    mutate,
-  } = useSWR<PagedTransaction, any>([
-    `/api/transaction/GetAllAsync?page=${currentPage}&pageSize=${pageSize}`,
-    token], fetcher)
-  const { data: categoryData, error: categoryError } = useSWR<Category[], any>(['/api/transaction/GetAllCategories', token], fetcher);
+  } = useGetTransactionPageQuery({ currentPage, pageSize });
+  const { data: categoryData, error: categoryError } = useGetAllCategoriesQuery();
+  
+  useEffect(() => {}, [currentPage, pageSize]);
 
-  useEffect(() => {
-    
-  }, [currentPage, pageSize]);
-
-  if (!session.loggedIn) {
+  if (!loggedIn) {
     return <div>Not signed in</div>;
   }
-  if (transactionError || userError) return <div>Failed to load</div>;
+  if (transactionError || userError || categoryError) return <div>Failed to load</div>;
   if (!transactionData || !userData) return <div>loading...</div>;
-
-  const handleSplitChange = (status: boolean) => {
-    console.log(`handle split change: ${status}`);
-    mutate();
-  };
-
+  
   const handlePageClick = (page: number) => {
     setCurrentPage(page - 1);
   };
@@ -53,7 +40,6 @@ export default function List() {
             row={row}
             users={userData}
             categories={categoryData}
-            ChangeSplitStatus={(status) => handleSplitChange(status)}
           />
         );
       }
@@ -72,12 +58,15 @@ export default function List() {
             <th className="py-3"></th>
           </tr>
         </thead>
-        {/* <tbody className='text-sm font-light'>{renderedList()}</tbody> */}
-        <RenderedList currentItems={transactionData.payload} />
+        <tbody className='text-sm font-light'>
+          <RenderedList currentItems={transactionData.payload} />
+        </tbody>
       </table>
-      <Paginate currentPage={currentPage + 1}
-                totalPages={transactionData.totalNoOfPages + 1}
-                onPageChange={handlePageClick} />
+      <Paginate
+        currentPage={currentPage + 1}
+        totalPages={transactionData.totalNoOfPages + 1}
+        onPageChange={handlePageClick}
+      />
     </>
   );
 }

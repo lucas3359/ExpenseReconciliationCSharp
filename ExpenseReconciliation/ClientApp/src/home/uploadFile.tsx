@@ -1,13 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './Card';
 import Icon from '../components/Icon';
-import {baseUrl} from '../services/auth';
-import {parseOfxBody} from '../services/upload';
-import {AuthContext} from '../auth/AuthProvider';
+import { parseOfxBody } from '../services/upload';
+import {useAppSelector} from '../hooks/hooks';
+import {selectLoggedIn} from '../auth/authSlice';
+import {useImportTransactionsMutation} from '../api/transactionApi';
 
 const UploadFile = () => {
   const [badFile, setBadFile] = useState(false);
-  const session = useContext(AuthContext);
+  const [importTransactions, importTransactionResult] = useImportTransactionsMutation();
+  
+  const loggedIn = useAppSelector(selectLoggedIn);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -43,22 +46,15 @@ const UploadFile = () => {
   };
 
   const sendFile = async (file: string | ArrayBuffer) => {
-    if (typeof file !== "string") {
+    if (typeof file !== 'string') {
       file = (file as ArrayBuffer).toString();
     }
-    
-    const body = parseOfxBody(file);
-    
-    const response = await fetch(`${baseUrl}/api/transaction/Import`, {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      }),
-      body: JSON.stringify(body),
-    });
 
-    if (response.status !== 201 && !response.ok) {
+    const body = parseOfxBody(file);
+
+    await importTransactions(body);
+    
+    if (importTransactionResult.isError) {
       setBadFile(true);
     }
   };
@@ -78,8 +74,19 @@ const UploadFile = () => {
     </div>
   );
   
-  if (!session.loggedIn) {
+  const isLoadingBar = (
+    <div className="text-green-400">
+      <Icon icon="upload" classes="w-20 mx-auto animate-bounce" />
+      <p className="text-center font-bold">Uploading, please wait</p>
+    </div>
+  );
+
+  if (!loggedIn) {
     return <Card link={false}>Log in to upload</Card>;
+  }
+  
+  if (importTransactionResult.isLoading) {
+    return <Card link={false}>{isLoadingBar}</Card>
   }
 
   return <Card link={true}>{badFile ? badFileBar : uploadBar}</Card>;

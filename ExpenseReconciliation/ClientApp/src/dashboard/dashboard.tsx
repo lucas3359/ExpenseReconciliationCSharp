@@ -1,28 +1,20 @@
-import React, {useContext} from 'react';
-import useSWR from 'swr';
-import User from '../model/user';
+import React from 'react';
 import Total from '../model/total';
-import {fetcher} from '../services/auth';
-import {AuthContext} from '../auth/AuthProvider';
+import {useAppSelector} from '../hooks/hooks';
+import {selectLoggedIn} from '../auth/authSlice';
+import {useGetAllUsersQuery} from '../api/usersApi';
+import {useGetAmountsQuery} from '../api/dashboardApi';
 
 export default function Dashboard() {
-  const session = useContext(AuthContext);
-  const token = session?.token;
+  const loggedIn = useAppSelector(selectLoggedIn);
   
-  const { data: totalsData, error: totalsError } = useSWR<Total[], any>(
-    ['/api/dashboard/GetAmountAsync', token],
-    fetcher,
-  );
-  const { data: userData, error: userError } = useSWR<User[], any>(
-    ['/api/user', token],
-    fetcher,
-  );
-
-  if (!session.loggedIn) return <div>Unauthenticated</div>;
-  if (totalsError || userError) return <div>Failed to load</div>;
-  if (!totalsData || !userData) return <div>loading...</div>;
-  console.log('TotalsData');
-  console.log(totalsData);
+  const { data: totalsData, error: totalsError, isLoading: totalsLoading } = useGetAmountsQuery();
+  const { data: userData, error: userError, isLoading: userLoading } = useGetAllUsersQuery();
+  
+  if (!loggedIn) return <div>Unauthenticated</div>;
+  
+  if (totalsLoading || userLoading) return <div>loading...</div>;
+  if (!totalsData || !userData || totalsError || userError) return <div>Failed to load</div>;
 
   const getUser = (userId: number): string | undefined => {
     return userData.find((user) => user.id === userId)?.userName;
@@ -32,8 +24,8 @@ export default function Dashboard() {
     return (amount / 100).toFixed(2);
   };
 
-  const getTotals = () => {
-    return totalsData.map((total) => {
+  const getTotals = (data: Total[]) => {
+    return data.map((total) => {
       return (
         <div>
           <span>
@@ -51,7 +43,7 @@ export default function Dashboard() {
       <br />
       <h2 className="text-xl text-gray-500">Amounts owing</h2>
       <br />
-      <div>{getTotals()}</div>
+      <div>{getTotals(totalsData)}</div>
     </div>
   );
 }

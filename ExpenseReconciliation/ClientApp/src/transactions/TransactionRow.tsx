@@ -1,23 +1,21 @@
-import React, {useContext, useState} from 'react';
+import React, { useState } from 'react';
 import Transaction from '../model/transaction';
 import User from '../model/user';
 import Icon from '../components/Icon';
 import Split from '../model/split';
 import TransactionSplit from './TransactionSplit';
-import Category from "../model/category";
-import CategoryDropDown from "./CategoryDropDown";
-import {AuthContext} from "../auth/AuthProvider";
+import Category from '../model/category';
+import CategoryDropDown from './CategoryDropDown';
+import SplitImport from '../model/updateSplit';
 
 const TransactionRow = ({
   row,
   users,
   categories,
-  ChangeSplitStatus,
 }: {
-  row: Transaction;
-  users: User[];
-  categories : Category[]|undefined;
-  ChangeSplitStatus(status: boolean): void;
+  row: Transaction,
+  users: User[],
+  categories : Category[]|undefined,
 }) => {
   const [showSplit, setShowSplit] = useState(false);
   const [selectCategory, setCategory] = useState<string|undefined>(row.category?.name);
@@ -39,7 +37,6 @@ const TransactionRow = ({
           amount={Number(row.amount)}
           transaction_id={row.id}
           users={users}
-          changeSplitStatus={(status: boolean) => ChangeSplitStatus(status)}
         />
       </tr>
     );
@@ -78,18 +75,25 @@ const TransactionRow = ({
   const renderCurrency = (amount: number): string => {
     return (amount / 100).toFixed(2);
   };
-  
+
   const renderSplitDetails = (splits: Split[]) => {
-    return splits.map(split => `${users.find(user => user.id === split.userId)?.userName}: ${renderCurrency(split.amount)}`).join(' ')
-  }
-  
+    return splits
+      .map(
+        (split) =>
+          `${
+            users.find((user) => user.id === split.userId)?.userName
+          }: ${renderCurrency(split.amount)}`,
+      )
+      .join(' ');
+  };
+
   const renderCategory = (category: Category)=>{
     return category.name ?? "empty"
-  }
-  
+  };
+
   const categorySelection = (category: string):void =>{
     setCategory(category);
-  }
+  };
 
   const toggleDropDown = () => {
     setShowDropDown(!showDropDown);
@@ -102,6 +106,11 @@ const TransactionRow = ({
         key={`row-${row.id}`}
       >
         <td className="p-2 text-gray-600">{renderDate(row.date)}</td>
+        <td className="p-2">
+          {row.details}
+          <br />
+          {renderSplitDetails(row.splits)}
+        </td>
         <td className="p-2">{row.details}<br />{renderSplitDetails(row.splits)}</td>
         {/*<td className="p-2">{row.category?.name ?? "/"}</td> label*/} 
         <td>

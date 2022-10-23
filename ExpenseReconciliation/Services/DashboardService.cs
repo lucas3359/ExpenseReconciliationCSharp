@@ -20,7 +20,7 @@ namespace ExpenseReconciliation.Services
             _transactionRepository = transactionRepository;
         }
         
-        public async Task<string> AmountAsync()
+        public async Task<IEnumerable<Total>> AmountAsync()
         {
             var list = new List<Total>();
             var records = await _splitRepository.ListAsync();
@@ -36,8 +36,8 @@ namespace ExpenseReconciliation.Services
                 total.userId = result.user;
                 list.Add(total);
             }
-            var jsonString = JsonSerializer.Serialize(list);
-            return jsonString;
+
+            return list;
         }
 
         public Task<IEnumerable<Split>> ListAsync()

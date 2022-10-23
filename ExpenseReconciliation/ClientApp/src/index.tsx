@@ -4,22 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { SWRConfig } from 'swr';
-import { fetcher } from './services/auth';
-import { AuthProvider } from './auth/AuthProvider';
+import { store } from './store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
-        <SWRConfig value={{ fetcher: fetcher }}>
-          <App />
-        </SWRConfig>
+    <Provider store={store}>
+      <GoogleOAuthProvider
+        clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}
+      >
+        <App />
       </GoogleOAuthProvider>
-    </AuthProvider>
+    </Provider>
   </React.StrictMode>,
 );
 

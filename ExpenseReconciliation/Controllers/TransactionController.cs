@@ -62,14 +62,14 @@ namespace ExpenseReconciliation.Controllers
             return Ok();
         }
 
-        [HttpGet("GetSplitById")]
+        [HttpGet("split/{transactionId:int}")]
         public async Task<IEnumerable<Split>> GetSplitById(int transactionId)
         {
             return await _transactionService.GetSplitByIdAsync(transactionId);
         }
 
-        [HttpPost("DeleteSplit")]
-        public async Task DeleteSplit([FromBody] int transactionId)
+        [HttpDelete("split/{transactionId:int}")]
+        public async Task DeleteSplit(int transactionId)
         {
             await _transactionService.DeleteSplitAsync(transactionId);
         }

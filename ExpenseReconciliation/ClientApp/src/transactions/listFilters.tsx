@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import {addDays} from 'date-fns';
-import {DateRangePicker} from 'react-date-range';
+import React, { useState } from 'react';
+import { addDays } from 'date-fns';
+import { DateRangePicker } from 'react-date-range';
 
 export default function ListFilters() {
   // ByDateAsync?startDate=${encodeURIComponent(dateRange.startDate.toISOString())}&endDate=${encodeURIComponent(dateRange.endDate.toISOString())}
-  
+
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
     endDate: addDays(new Date(), 7),
@@ -14,7 +14,7 @@ export default function ListFilters() {
   const onChange = (item) => {
     setDateRange(item.selection);
   };
-  
+
   return (
     <div className="list heading">
       <DateRangePicker
@@ -26,5 +26,5 @@ export default function ListFilters() {
         direction="horizontal"
       />
     </div>
-  )
+  );
 }
