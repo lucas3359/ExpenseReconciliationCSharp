@@ -3,6 +3,9 @@ import PagedTransaction from '../model/pagedTransaction';
 import Category from '../model/category';
 import Transaction from '../model/transaction';
 import UpdateSplit from '../model/updateSplit';
+import UpdateCategoryModel from '../model/updateCategoryModel';
+import TransactionImport from '../model/transactionImport';
+import category from '../model/category';
 
 const transactionApi = expensesApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,6 +22,27 @@ const transactionApi = expensesApi.injectEndpoints({
     }), // TODO: Was used by ListPaginate, no longer used
     getAllCategories: builder.query<Category[], void>({
       query: () => `transaction/GetAllCategories`,
+      providesTags: [{ type: 'Categories', id: 'ALL' }],
+    }),
+    importTransactions: builder.mutation<void, TransactionImport>({
+      query: (importPayload) => ({
+        url: `transaction/Import`,
+        method: 'POST',
+        body: importPayload,
+      }),
+      invalidatesTags: (_) => [
+        { type: 'Transactions', id: 'LIST' },
+      ],
+    }),
+    updateCategory: builder.mutation<void, UpdateCategoryModel>({
+      query: (category) => ({
+        url: `transaction/UpdateCategory`,
+        method: 'POST',
+        body: category
+      }),
+      invalidatesTags: (_) => [
+        { type: 'Transactions', id: 'LIST' }
+      ],
     }),
     updateSplit: builder.mutation<void, UpdateSplit>({
       query: (split) => ({
@@ -47,6 +71,8 @@ export const {
     useGetTransactionPageQuery,
     useGetTransactionByDateQuery,
     useGetAllCategoriesQuery,
+    useImportTransactionsMutation,
+    useUpdateCategoryMutation, 
     useUpdateSplitMutation,
     useDeleteSplitMutation,
 } = transactionApi;

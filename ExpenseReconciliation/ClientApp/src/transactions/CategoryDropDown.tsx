@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
 import Category from '../model/category';
 import UpdateCategoryModel from '../model/updateCategoryModel';
-import updateCategory from '../services/category';
-import {useAppSelector} from '../hooks/hooks';
-import {selectToken} from '../auth/authSlice';
+import {useUpdateCategoryMutation} from '../api/transactionApi';
 
 type DropDownProps = {
     transactionId: number;
@@ -19,7 +17,7 @@ const CategoryDropDown = ({
     categorySelection,
 }:DropDownProps)=>{
     const [showDropDown, setShowDropDown] = useState<boolean>(false);
-    const token = useAppSelector(selectToken);
+    const [updateCategory] = useUpdateCategoryMutation();
     
     const onClickHandler = async (category: Category): Promise<void> => {
         categorySelection(category.name);
@@ -29,7 +27,7 @@ const CategoryDropDown = ({
             category: category,
         };
         console.log(body);
-        await updateCategory(body, token);
+        await updateCategory(body);
     };
     
     return (

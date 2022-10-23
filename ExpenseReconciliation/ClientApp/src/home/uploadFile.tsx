@@ -4,11 +4,13 @@ import Icon from '../components/Icon';
 import { parseOfxBody } from '../services/upload';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
+import {useImportTransactionsMutation} from '../api/transactionApi';
 
 const UploadFile = () => {
   const [badFile, setBadFile] = useState(false);
+  const [importTransactions, importTransactionResult] = useImportTransactionsMutation();
+  
   const loggedIn = useAppSelector(selectLoggedIn);
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -50,16 +52,9 @@ const UploadFile = () => {
 
     const body = parseOfxBody(file);
 
-    const response = await fetch(`/api/transaction/Import`, {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }),
-      body: JSON.stringify(body),
-    });
-
-    if (response.status !== 201 && !response.ok) {
+    await importTransactions(body);
+    
+    if (importTransactionResult.isError) {
       setBadFile(true);
     }
   };
@@ -78,9 +73,20 @@ const UploadFile = () => {
       <p className="text-center font-bold">Was not able to upload file</p>
     </div>
   );
+  
+  const isLoadingBar = (
+    <div className="text-green-400">
+      <Icon icon="upload" classes="w-20 mx-auto animate-bounce" />
+      <p className="text-center font-bold">Uploading, please wait</p>
+    </div>
+  );
 
   if (!loggedIn) {
     return <Card link={false}>Log in to upload</Card>;
+  }
+  
+  if (importTransactionResult.isLoading) {
+    return <Card link={false}>{isLoadingBar}</Card>
   }
 
   return <Card link={true}>{badFile ? badFileBar : uploadBar}</Card>;

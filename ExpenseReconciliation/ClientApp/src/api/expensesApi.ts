@@ -14,7 +14,7 @@ export const expensesApi = createApi({
       return headers;
     }
   }),
-  tagTypes: ['Transactions'],
+  tagTypes: ['Transactions', 'Categories'],
   endpoints: () => ({}),
 });
 
