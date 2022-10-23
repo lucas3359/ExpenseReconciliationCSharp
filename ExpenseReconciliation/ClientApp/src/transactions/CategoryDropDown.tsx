@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Category from '../model/category';
 import UpdateCategoryModel from '../model/updateCategoryModel';
 import {useUpdateCategoryMutation} from '../api/transactionApi';
@@ -16,7 +16,6 @@ const CategoryDropDown = ({
     categories,
     categorySelection,
 }:DropDownProps)=>{
-    const [showDropDown, setShowDropDown] = useState<boolean>(false);
     const [updateCategory] = useUpdateCategoryMutation();
     
     const onClickHandler = async (category: Category): Promise<void> => {
@@ -26,7 +25,6 @@ const CategoryDropDown = ({
             transactionId: transactionId,
             category: category,
         };
-        console.log(body);
         await updateCategory(body);
     };
     
@@ -35,14 +33,15 @@ const CategoryDropDown = ({
             {categories?.map(
                 (category: Category, index: number): JSX.Element => {
                     return (
-                        <p
+                        <li
                             key={index}
-                            onClick={(): void => {
-                                onClickHandler(category);
-                            }}
                         >
+                            <a onClick={(): void => {
+                                onClickHandler(category);
+                            }}>
                             {category.name}
-                        </p>
+                            </a>
+                        </li>
                     );
                 }
             )}

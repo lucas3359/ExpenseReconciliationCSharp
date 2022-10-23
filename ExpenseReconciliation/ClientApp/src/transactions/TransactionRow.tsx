@@ -114,21 +114,21 @@ const TransactionRow = ({
         <td className="p-2">{row.details}<br />{renderSplitDetails(row.splits)}</td>
         {/*<td className="p-2">{row.category?.name ?? "/"}</td> label*/} 
         <td>
-          <button className={selectCategory ? "bg-green-300 w-15 hover:bg-green-100 focus:border-green-600 border-green-300 text-sm":"p-2 w-20"}
-              onClick={(): void => toggleDropDown()}
-          >
-            <div>{selectCategory ? selectCategory : "Select ..."} </div>
-          {showDropDown && (<CategoryDropDown
-              key = {`${row.id}-category`}
-              transactionId={row.id}
-              categories={categories}
-              showDropDown={false}
-              toggleDropDown={(): void => toggleDropDown()}
-              categorySelection={categorySelection}
-
-          />)
-          }
-          </button>
+          <div className='dropdown dropdown-end'>
+            <label tabIndex={0} className={`btn btn-xs m-0 border-0 ${selectCategory ? 'bg-green-200 hover:bg-green-300' : 'bg-purple-200 hover:bg-purple-300'}`}>
+              {selectCategory ? selectCategory : "Select..."}
+            </label>
+            <ul tabIndex={0} className={`dropdown-content menu p-2 shadow rounded-box w-52 ${selectCategory ? 'bg-green-200' : 'bg-purple-200'}`}>
+              <CategoryDropDown
+                key = {`${row.id}-category`}
+                transactionId={row.id}
+                categories={categories}
+                showDropDown={false}
+                toggleDropDown={(): void => toggleDropDown()}
+                categorySelection={categorySelection}
+              />
+            </ul>
+          </div>
           </td>
         <td
           className={`p-2 text-right font-semibold ${
