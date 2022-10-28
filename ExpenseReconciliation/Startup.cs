@@ -36,6 +36,19 @@ namespace ExpenseReconciliation
                 connectionString = Configuration.GetConnectionString("defaultConnection");
             }
 
+            var clientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+            if (string.IsNullOrEmpty(clientId))
+            {
+                clientId = Configuration["clientId"];
+            }
+            
+            var clientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                clientSecret = Configuration["clientSecret"];
+            }
+            
+
             services.AddDbContext<AppDbContext>(
                 options => options
                     .UseNpgsql(connectionString)
@@ -49,7 +62,7 @@ namespace ExpenseReconciliation
                 .AddJwtBearer(options =>
                 {
                     options.UseGoogle(
-                        clientId: Configuration["clientId"]
+                        clientId: clientId
                         );
                 });
             services.AddAuthorization(options =>
@@ -71,12 +84,6 @@ namespace ExpenseReconciliation
                         .AllowAnyMethod()
                         .Build();
                 });
-                
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                    policy =>
-                    {
-                        policy.WithOrigins("http://localhost:3000");
-                    });
             });
 
             services.AddScoped<IUserService, UserService>();
