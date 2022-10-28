@@ -48,7 +48,6 @@ namespace ExpenseReconciliation
                 clientSecret = Configuration["clientSecret"];
             }
             
-
             services.AddDbContext<AppDbContext>(
                 options => options
                     .UseNpgsql(connectionString)

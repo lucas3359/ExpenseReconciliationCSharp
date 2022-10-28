@@ -23,5 +23,7 @@ RUN dotnet publish "ExpenseReconciliation.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
+COPY --from=publish /src/ExpenseReconciliation/run.sh /app/run.sh
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ExpenseReconciliation.dll"]
+RUN chmod +x /app/run.sh
+ENTRYPOINT ["/app/run.sh"]
