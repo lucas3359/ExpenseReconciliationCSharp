@@ -2,17 +2,17 @@ namespace ExpenseReconciliation.Domain.Models;
 
 public class SplitSummary
 {
-    public string timeunit { get; set; }
-    public DateTime startDate { get; set; }
-    public DateTime endDate { get; set; }
-    public List<Total> total { get; set; }
-    public decimal unSplitted { get; set; }
+    public string TimeUnit { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public List<Total> Total { get; set; }
+    public decimal Unassigned { get; set; }
 }
 public class Total
 {
-    public string timeUnit { get; set; }
-    public int userId { get; set; }
-    public decimal amount { get; set; }
+    public string TimeDescription { get; set; }
+    public int UserId { get; set; }
+    public decimal Amount { get; set; }
 }
 public enum TimeUnit
 {

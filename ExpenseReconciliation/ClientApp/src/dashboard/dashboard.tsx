@@ -4,6 +4,8 @@ import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
 import {useGetAllUsersQuery} from '../api/usersApi';
 import {useGetAmountsQuery} from '../api/dashboardApi';
+import SplitTable from './SplitTable';
+import {renderCurrency} from '../services/formatting';
 
 export default function Dashboard() {
   const loggedIn = useAppSelector(selectLoggedIn);
@@ -18,10 +20,6 @@ export default function Dashboard() {
 
   const getUser = (userId: number): string | undefined => {
     return userData.find((user) => user.id === userId)?.userName;
-  };
-
-  const renderCurrency = (amount: number): string => {
-    return (amount / 100).toFixed(2);
   };
 
   const getTotals = (data: Total[]) => {
@@ -44,6 +42,8 @@ export default function Dashboard() {
       <h2 className="text-xl text-gray-500">Amounts owing</h2>
       <br />
       <div>{getTotals(totalsData)}</div>
+      <br />
+      <SplitTable users={userData} monthsPrior={12} />
     </div>
   );
 }

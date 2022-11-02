@@ -32,8 +32,8 @@ namespace ExpenseReconciliation.Services
             foreach (var result in results)
             {
                 var total = new Total();
-                total.amount = result.amount;
-                total.userId = result.user;
+                total.Amount = result.amount;
+                total.UserId = result.user;
                 list.Add(total);
             }
 
@@ -64,9 +64,9 @@ namespace ExpenseReconciliation.Services
                     if (record.Key != -1)
                     {
                         var total = new Total();
-                        total.userId = record.Key;
-                        total.amount = record.Value;
-                        total.timeUnit = tp;
+                        total.UserId = record.Key;
+                        total.Amount = record.Value;
+                        total.TimeDescription = tp;
                         userAmountList.Add(total);
                     }
                     else
@@ -76,11 +76,11 @@ namespace ExpenseReconciliation.Services
                 }
             }
 
-            splitSummary.total = userAmountList;
-            splitSummary.startDate = startDate;
-            splitSummary.endDate = endDate;
-            splitSummary.unSplitted = unsplittedAmount;
-            splitSummary.timeunit = timeUnit.ToString();
+            splitSummary.Total = userAmountList;
+            splitSummary.StartDate = startDate;
+            splitSummary.EndDate = endDate;
+            splitSummary.Unassigned = unsplittedAmount;
+            splitSummary.TimeUnit = timeUnit.ToString();
 
             return splitSummary;
         }

@@ -7,6 +7,7 @@ import TransactionSplit from './TransactionSplit';
 import Category from '../model/category';
 import CategoryDropDown from './CategoryDropDown';
 import SplitImport from '../model/updateSplit';
+import {renderCurrency, renderDate} from '../services/formatting';
 
 const TransactionRow = ({
   row,
@@ -65,15 +66,6 @@ const TransactionRow = ({
         </button>
       );
     }
-  };
-
-  const renderDate = (inputDate: string | Date) => {
-    const date = new Date(inputDate);
-    return `${date.getDate()}/${date.getMonth() + 1}`;
-  };
-
-  const renderCurrency = (amount: number): string => {
-    return (amount / 100).toFixed(2);
   };
 
   const renderSplitDetails = (splits: Split[]) => {
