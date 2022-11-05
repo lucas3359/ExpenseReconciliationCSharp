@@ -27,9 +27,9 @@ const Header = () => {
   );
 
   return (
-    <header className="text-gray-700 bg-white bg-opacity-25 w-full flex h-14 py-2 px-2">
+    <header className="navbar bg-white bg-opacity-25">
       {location.pathname === '/' ? (
-        <div className="flex-initial"></div>
+        <div className="flex-1"></div>
       ) : (
         homeLink
       )}

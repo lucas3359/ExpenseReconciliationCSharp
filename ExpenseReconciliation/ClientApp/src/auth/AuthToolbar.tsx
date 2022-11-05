@@ -18,7 +18,8 @@ const AuthToolbar = () => {
     return (
       <div className="flex-initial relative">
         <span className="text-sm mr-2">{user?.email}</span>
-        <button onClick={() => dispatch(logout())}>Logout</button>
+        <button className="btn btn-sm btn-secondary"
+          onClick={() => dispatch(logout())}>Logout</button>
       </div>
     );
   }
@@ -26,14 +27,14 @@ const AuthToolbar = () => {
   // TODO: Some spinner or something
   if (authStatus == AuthStatus.Pending) {
     return (
-      <div className="flex-initial relative">
+      <div className="flex-none">
         Loading...
       </div>
     )
   }
 
   return (
-    <div className="flex-initial relative mr-4">
+    <div className="flex-none mr-4">
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
           if (credentialResponse.credential) {

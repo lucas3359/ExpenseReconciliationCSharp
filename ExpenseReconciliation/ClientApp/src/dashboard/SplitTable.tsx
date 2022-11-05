@@ -73,7 +73,7 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
   
   return (
     <div>
-      <h1>Split Summary</h1>
+      <h1 className="text-4xl text-gray-700 my-4">Split Summary</h1>
       <table className="table table-compact w-full">
         <thead>
           {headers()}

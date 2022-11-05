@@ -51,7 +51,7 @@ const TransactionRow = ({
       return (
         <button
           onClick={() => setShowSplit(!showSplit)}
-          className="bg-green-300 w-16 hover:bg-green-100 focus:border-green-600 border-green-300 px-5"
+          className="btn btn-xs bg-green-300 w-16 hover:bg-green-100"
         >
           {showSplit ? upIcon : tickIcon}
         </button>
@@ -60,7 +60,7 @@ const TransactionRow = ({
       return (
         <button
           onClick={() => setShowSplit(!showSplit)}
-          className={`w-16 ${showSplit ? 'px-5' : 'px-3'}`}
+          className={`btn btn-xs btn-primary w-16 ${showSplit ? 'px-5' : 'px-3'}`}
         >
           {showSplit ? upIcon : 'Split'}
         </button>
@@ -103,8 +103,6 @@ const TransactionRow = ({
           <br />
           {renderSplitDetails(row.splits)}
         </td>
-        <td className="p-2">{row.details}<br />{renderSplitDetails(row.splits)}</td>
-        {/*<td className="p-2">{row.category?.name ?? "/"}</td> label*/} 
         <td>
           <div className='dropdown dropdown-end'>
             <label tabIndex={0} className={`btn btn-xs m-0 border-0 ${selectCategory ? 'bg-green-200 hover:bg-green-300' : 'bg-purple-200 hover:bg-purple-300'}`}>
