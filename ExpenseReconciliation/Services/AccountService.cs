@@ -1,9 +1,10 @@
 using ExpenseReconciliation.Domain.Models;
+using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
 
-public class AccountService
+public class AccountService: IAccountService
 {
     private readonly AccountRepository _accountRepository;
         

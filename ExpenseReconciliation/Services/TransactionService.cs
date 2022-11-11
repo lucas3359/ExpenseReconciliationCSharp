@@ -1,5 +1,7 @@
 using System.Globalization;
 using ExpenseReconciliation.Domain.Models;
+using ExpenseReconciliation.Domain.Repositories;
+using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
@@ -7,17 +9,17 @@ namespace ExpenseReconciliation.Services;
 public class TransactionService
 {
     private readonly TransactionRepository _transactionRepository;
-    private readonly AccountService _accountService;
+    private readonly IAccountService _accountService;
     private readonly ImportRecordService _importRecordService;
     private readonly SplitRepository _splitRepository;
-    private readonly CategoryRepository _categoryRepository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly ILogger _logger;
 
     public TransactionService(TransactionRepository transactionRepository,
-        AccountService accountService,
+        IAccountService accountService,
         ImportRecordService importRecordService, ILogger<TransactionService> logger,
         SplitRepository splitRepository,
-        CategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository)
     {
         _transactionRepository = transactionRepository;
         _accountService = accountService;

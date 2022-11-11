@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
+using ExpenseReconciliation.Domain.Repositories;
+using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -86,7 +88,7 @@ namespace ExpenseReconciliation
             services.AddScoped<UserService>();
             services.AddScoped<DashboardService>();
             services.AddScoped<TransactionService>();
-            services.AddScoped<AccountService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ImportRecordService>();
 
             services.AddScoped<UserRepository>();
@@ -94,7 +96,7 @@ namespace ExpenseReconciliation
             services.AddScoped<TransactionRepository>();
             services.AddScoped<AccountRepository>();
             services.AddScoped<ImportRecordRepository>();
-            services.AddScoped<CategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         }
 
