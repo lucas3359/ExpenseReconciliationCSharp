@@ -1,7 +1,8 @@
 import Total from './total';
 
 type Totals = {
-  notReconciledTotal: number;
+  timeDescription: string;
+  unassigned: number;
   totals: Total[];
 };
 

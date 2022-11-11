@@ -1,43 +1,48 @@
-using System.Text.Json;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
-using ExpenseReconciliation.Domain.Services;
+using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services
 {
-    public class DashboardService : IDashboardService
+    public class DashboardService
     {
         public class Dshhh
         {
         }
 
-        private readonly ISplitRepository _splitRepository;
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly SplitRepository _splitRepository;
+        private readonly TransactionRepository _transactionRepository;
 
-        public DashboardService(ISplitRepository splitRepository,ITransactionRepository transactionRepository )
+        public DashboardService(SplitRepository splitRepository,
+            TransactionRepository transactionRepository )
         {
             this._splitRepository = splitRepository;
             _transactionRepository = transactionRepository;
         }
         
-        public async Task<IEnumerable<Total>> AmountAsync()
+        public async Task<TimePeriod> AmountAsync()
         {
-            var list = new List<Total>();
+            var summary = new TimePeriod();
+            summary.TimeDescription = "All time";
             var records = await _splitRepository.ListAsync();
-            var amount = 0.0;
 
-            var results = records.GroupBy(x => x.UserId)
-                .Select(g => new { user = g.Key, amount = g.Sum(x => x.Amount) });
-            
+            var results = records
+                .GroupBy(x => x.UserId)
+                .Select(g => new
+                    { user = g.Key,
+                      credit = g.Where(x => x.Amount > 0).Sum(x => x.Amount),
+                      debit = g.Where(x => x.Amount < 0).Sum(x => x.Amount)
+                    });
+
             foreach (var result in results)
             {
                 var total = new Total();
-                total.Amount = result.amount;
+                total.Credit = result.credit;
+                total.Debit = result.debit;
                 total.UserId = result.user;
-                list.Add(total);
+                summary.Totals.Add(total);
             }
 
-            return list;
+            return summary;
         }
 
         public Task<IEnumerable<Split>> ListAsync()
@@ -45,15 +50,20 @@ namespace ExpenseReconciliation.Services
             return _splitRepository.ListAsync();
         }
 
-
         public async Task<SplitSummary> SplitSummary(DateTime startDate, DateTime endDate, TimeUnit timeUnit)
+        {
+            return new SplitSummary();
+        }
+
+        /*public async Task<SplitSummary> SplitSummary(DateTime startDate, DateTime endDate, TimeUnit timeUnit)
         {
             var splitSummary = new SplitSummary();
             var transactions = await _transactionRepository.GetByDateAsync(startDate,endDate) ;
             var totalPeriod = GetTimeUnitStringList(startDate, endDate, timeUnit);
             
-            var userAmountList = new List<Total>();
+            var userAmountList = new List<TimePeriod>();
             var unsplittedAmount=0m;
+            
             // summing amount
             foreach (var tp in totalPeriod)
             {
@@ -63,7 +73,7 @@ namespace ExpenseReconciliation.Services
                 {
                     if (record.Key != -1)
                     {
-                        var total = new Total();
+                        var total = new TimePeriod();
                         total.UserId = record.Key;
                         total.Amount = record.Value;
                         total.TimeDescription = tp;
@@ -76,7 +86,7 @@ namespace ExpenseReconciliation.Services
                 }
             }
 
-            splitSummary.Total = userAmountList;
+            splitSummary.TimePeriods = userAmountList;
             splitSummary.StartDate = startDate;
             splitSummary.EndDate = endDate;
             splitSummary.Unassigned = unsplittedAmount;
@@ -135,7 +145,7 @@ namespace ExpenseReconciliation.Services
                 }
             }
             return userAmountDic;
-        }
+        }*/
 
 
 }

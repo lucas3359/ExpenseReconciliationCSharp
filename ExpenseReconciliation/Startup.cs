@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
-using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,18 +83,18 @@ namespace ExpenseReconciliation
                 });
             });
 
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<ITransactionService, TransactionService>();
-            services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IImportRecordService, ImportRecordService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<DashboardService>();
+            services.AddScoped<TransactionService>();
+            services.AddScoped<AccountService>();
+            services.AddScoped<ImportRecordService>();
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ISplitRepository, SplitRepository>();
-            services.AddScoped<ITransactionRepository, TransactionRepository>();
-            services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<SplitRepository>();
+            services.AddScoped<TransactionRepository>();
+            services.AddScoped<AccountRepository>();
+            services.AddScoped<ImportRecordRepository>();
+            services.AddScoped<CategoryRepository>();
 
         }
 

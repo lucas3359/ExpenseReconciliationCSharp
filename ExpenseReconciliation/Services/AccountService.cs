@@ -1,15 +1,13 @@
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
-using ExpenseReconciliation.Domain.Services;
-using Microsoft.Extensions.Caching.Memory;
+using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
 
-public class AccountService : IAccountService
+public class AccountService
 {
-    private readonly IAccountRepository _accountRepository;
+    private readonly AccountRepository _accountRepository;
         
-    public AccountService(IAccountRepository accountRepository )
+    public AccountService(AccountRepository accountRepository )
     {
         _accountRepository = accountRepository;
     }

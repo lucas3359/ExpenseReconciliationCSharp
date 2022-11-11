@@ -1,6 +1,7 @@
 type Total = {
   userId: number;
-  amount: number;
+  debit: number;
+  credit: number;
 };
 
 export default Total;

@@ -1,7 +1,6 @@
 import {useGetSplitSummaryQuery} from '../api/dashboardApi';
 import User from '../model/user';
-import {SplitSummaryTotal} from '../model/splitSummary';
-import {renderCurrency} from '../services/formatting';
+import Totals from '../model/totals';
 
 const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }) => {
   const getFirstDayOfMonthsPrior = (date: Date, months: number): Date => {
@@ -49,7 +48,7 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
   // TODO: Better way of doing this
   let oddCount = 0;
   
-  const renderTimeDescription = (total: SplitSummaryTotal) => {
+  const renderTimeDescription = (total: Totals) => {
     if (oddCount === 1) {
       oddCount = 0;
       return (<></>);
@@ -60,13 +59,16 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
     )
   }
   
-  const userTotals = (totals: SplitSummaryTotal[]) => {
+  const userTotals = (totals: Totals[]) => {
+    if (!totals) {
+      return (<></>);
+    }
     return totals.map((total) => {
       return (
-        <tr key={total.timeDescription + total.userId}>
+        <tr key={total.timeDescription}>
           {renderTimeDescription(total)}
-          <td>{users.find(user => user.id === total.userId)?.userName}</td>
-          <td>{renderCurrency(total.amount)}</td>
+          <td>{/*{users.find(user => user.id === total.)?.userName}*/}</td>
+          <td>{/*renderCurrency(total.amount)*/}</td>
         </tr>)
     });
   }
@@ -79,9 +81,13 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
           {headers()}
         </thead>
         <tbody>
-          {userTotals(splitSummaryData?.total)}
+          {userTotals(splitSummaryData?.timePeriods)}
         </tbody>
       </table>
+      <h1 className="text-2xl">JSON</h1>
+      <code>
+        {JSON.stringify(splitSummaryData)}
+      </code>
     </div>
   )
 }

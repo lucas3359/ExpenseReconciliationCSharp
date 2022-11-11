@@ -29,7 +29,7 @@ export default function Dashboard() {
           <span>
             <strong>{getUser(total.userId)} </strong>
           </span>
-          <span>${renderCurrency(total.amount)}</span>
+          <span>${renderCurrency(total.credit + total.debit)}</span>
         </div>
       );
     });
@@ -41,7 +41,7 @@ export default function Dashboard() {
       <br />
       <h2 className="text-xl text-gray-500">Amounts owing</h2>
       <br />
-      <div>{getTotals(totalsData)}</div>
+      <div>{getTotals(totalsData.totals)}</div>
       <br />
       <SplitTable users={userData} monthsPrior={12} />
     </div>

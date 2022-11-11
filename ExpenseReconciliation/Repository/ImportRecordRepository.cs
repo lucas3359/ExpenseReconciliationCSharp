@@ -1,14 +1,13 @@
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
 
 namespace ExpenseReconciliation.Repository;
 
-public class ImportRecordRepository : RepositoryBase, IImportRecordRepository
+public class ImportRecordRepository : RepositoryBase
 {
     private readonly ImportRecord _importRecord;
-    
-    public ImportRecordRepository(AppDbContext appDbContext): base(appDbContext) 
+
+    public ImportRecordRepository(AppDbContext appDbContext) : base(appDbContext)
     {
     }
 
@@ -18,5 +17,4 @@ public class ImportRecordRepository : RepositoryBase, IImportRecordRepository
         await _context.SaveChangesAsync();
         return record.Entity;
     }
-    
 }
