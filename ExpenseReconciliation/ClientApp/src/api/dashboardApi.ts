@@ -1,12 +1,11 @@
 import {expensesApi} from './expensesApi';
 import Split from '../model/split';
 import {SplitSummaryRequest} from '../model/splitSummaryRequest';
-import {SplitSummary} from '../model/splitSummary';
-import Totals from '../model/totals';
+import {SplitSummary, TimePeriod} from '../model/splitSummary';
 
 const dashboardApi = expensesApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAmounts: builder.query<Totals, void>({
+    getAmounts: builder.query<TimePeriod, void>({
       query: () => `dashboard/GetAmountAsync`,
     }),
     getSplits: builder.query<Split[], void>({

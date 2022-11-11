@@ -1,11 +1,11 @@
 import React from 'react';
-import Total from '../model/total';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
 import {useGetAllUsersQuery} from '../api/usersApi';
 import {useGetAmountsQuery} from '../api/dashboardApi';
 import SplitTable from './SplitTable';
 import {renderCurrency} from '../services/formatting';
+import {Total} from '../model/splitSummary';
 
 export default function Dashboard() {
   const loggedIn = useAppSelector(selectLoggedIn);

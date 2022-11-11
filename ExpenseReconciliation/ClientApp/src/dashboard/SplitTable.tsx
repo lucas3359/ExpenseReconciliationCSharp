@@ -1,6 +1,8 @@
 import {useGetSplitSummaryQuery} from '../api/dashboardApi';
 import User from '../model/user';
-import Totals from '../model/totals';
+import {TimePeriod, Total} from '../model/splitSummary';
+import {renderCurrency} from '../services/formatting';
+import React from 'react';
 
 const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }) => {
   const getFirstDayOfMonthsPrior = (date: Date, months: number): Date => {
@@ -33,42 +35,66 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
     );
   }
   
+  const userHeaders = () => {
+    return users.map((user) => {
+      return (
+        <th key={user.id} colSpan={3}>{user.userName}</th>
+      );
+    });
+  }
+  
   const headers = () => {
     return (
       <>
         <tr className='text-center'>
           <th>Month</th>
-          <th>Users</th>
+          {userHeaders()}
           <th>Balance</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th>Credit</th>
+          <th>Debit</th>
+          <th>Total</th>
+          <th>Credit</th>
+          <th>Debit</th>
+          <th>Total</th>
+          <th></th>
         </tr>
       </>
     );
   }
   
-  // TODO: Better way of doing this
-  let oddCount = 0;
-  
-  const renderTimeDescription = (total: Totals) => {
-    if (oddCount === 1) {
-      oddCount = 0;
-      return (<></>);
-    }
-    oddCount = 1;
-    return (
-      <td rowSpan={2}>{total.timeDescription}</td>
-    )
+  const getUserTotals = (totals: Total[], timeKey: string) => {
+    return users.map((user) => {
+      const total = totals.find((total) => total.userId === user.id);
+      if (!total) {
+        return <React.Fragment key={timeKey + user.id}>
+          <td></td><td></td><td className='bg-slate-50'></td>
+        </React.Fragment>
+      }
+      
+      const sum = total.credit + total.debit;
+      
+      return (
+        <React.Fragment key={timeKey + user.id}>
+          <td>{renderCurrency(total.credit)}</td>
+          <td>{renderCurrency(total.debit)}</td>
+          <td className={`${sum < 0 ? 'text-error' : 'text-success'} bg-slate-50`}>
+            {renderCurrency(sum)}
+          </td>
+        </React.Fragment>
+      )
+    });
   }
   
-  const userTotals = (totals: Totals[]) => {
-    if (!totals) {
-      return (<></>);
-    }
-    return totals.map((total) => {
+  const getTimePeriods = (timePeriods: TimePeriod[]) => {
+    return timePeriods.map((total) => {
       return (
         <tr key={total.timeDescription}>
-          {renderTimeDescription(total)}
-          <td>{/*{users.find(user => user.id === total.)?.userName}*/}</td>
-          <td>{/*renderCurrency(total.amount)*/}</td>
+          <td>{total.timeDescription}</td>
+          {getUserTotals(total.totals, total.timeDescription)}
+          <td className={`${total.unassigned < 0 ? 'text-error' : 'text-success'}`}>{renderCurrency(total.unassigned)}</td>
         </tr>)
     });
   }
@@ -76,18 +102,14 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
   return (
     <div>
       <h1 className="text-4xl text-gray-700 my-4">Split Summary</h1>
-      <table className="table table-compact w-full">
+      <table className="table w-full">
         <thead>
           {headers()}
         </thead>
         <tbody>
-          {userTotals(splitSummaryData?.timePeriods)}
+          {getTimePeriods(splitSummaryData?.timePeriods)}
         </tbody>
       </table>
-      <h1 className="text-2xl">JSON</h1>
-      <code>
-        {JSON.stringify(splitSummaryData)}
-      </code>
     </div>
   )
 }
