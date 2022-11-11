@@ -1,14 +1,13 @@
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
-using ExpenseReconciliation.Domain.Services;
+using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly UserRepository _userRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(UserRepository userRepository)
         {
             this._userRepository = userRepository;
         }

@@ -1,14 +1,14 @@
 using System.Globalization;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
-using ExpenseReconciliation.Domain.Services;
+using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
 
-public class ImportRecordService : IImportRecordService
+public class ImportRecordService
 {
-    private readonly IImportRecordRepository _importRecordRepository;
-    public ImportRecordService(IImportRecordRepository importRecordRepository)
+    private readonly ImportRecordRepository _importRecordRepository;
+
+    public ImportRecordService(ImportRecordRepository importRecordRepository)
     {
         _importRecordRepository = importRecordRepository;
     }
@@ -16,12 +16,13 @@ public class ImportRecordService : IImportRecordService
     public async Task<int> CreateNewImport(BankTransactionRequest bankTransactionRequest, int accountId)
     {
         var importRecord = new ImportRecord();
-        importRecord.StartDate = DateTime.ParseExact(bankTransactionRequest.StartDate, "yyyyMMdd",  CultureInfo.InvariantCulture );//.ToLocalTime();
-        importRecord.EndDate = DateTime.ParseExact(bankTransactionRequest.EndDate, "yyyyMMdd", CultureInfo.InvariantCulture);
+        importRecord.StartDate =
+            DateTime.ParseExact(bankTransactionRequest.StartDate, "yyyyMMdd",
+                CultureInfo.InvariantCulture); //.ToLocalTime();
+        importRecord.EndDate =
+            DateTime.ParseExact(bankTransactionRequest.EndDate, "yyyyMMdd", CultureInfo.InvariantCulture);
         importRecord.AccountId = accountId;
         var recordId = await _importRecordRepository.CreateNewImport(importRecord, accountId);
         return recordId.Id;
-
     }
-    
 }

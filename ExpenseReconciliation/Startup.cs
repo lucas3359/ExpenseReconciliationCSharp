@@ -85,17 +85,17 @@ namespace ExpenseReconciliation
                 });
             });
 
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<DashboardService>();
+            services.AddScoped<TransactionService>();
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IImportRecordService, ImportRecordService>();
+            services.AddScoped<ImportRecordService>();
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ISplitRepository, SplitRepository>();
-            services.AddScoped<ITransactionRepository, TransactionRepository>();
-            services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<SplitRepository>();
+            services.AddScoped<TransactionRepository>();
+            services.AddScoped<AccountRepository>();
+            services.AddScoped<ImportRecordRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         }

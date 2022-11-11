@@ -1,9 +1,11 @@
 import React from 'react';
-import Total from '../model/total';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
 import {useGetAllUsersQuery} from '../api/usersApi';
 import {useGetAmountsQuery} from '../api/dashboardApi';
+import SplitTable from './SplitTable';
+import {renderCurrency} from '../services/formatting';
+import {Total} from '../model/splitSummary';
 
 export default function Dashboard() {
   const loggedIn = useAppSelector(selectLoggedIn);
@@ -20,10 +22,6 @@ export default function Dashboard() {
     return userData.find((user) => user.id === userId)?.userName;
   };
 
-  const renderCurrency = (amount: number): string => {
-    return (amount / 100).toFixed(2);
-  };
-
   const getTotals = (data: Total[]) => {
     return data.map((total) => {
       return (
@@ -31,7 +29,7 @@ export default function Dashboard() {
           <span>
             <strong>{getUser(total.userId)} </strong>
           </span>
-          <span>${renderCurrency(total.amount)}</span>
+          <span>${renderCurrency(total.credit + total.debit)}</span>
         </div>
       );
     });
@@ -43,7 +41,9 @@ export default function Dashboard() {
       <br />
       <h2 className="text-xl text-gray-500">Amounts owing</h2>
       <br />
-      <div>{getTotals(totalsData)}</div>
+      <div>{getTotals(totalsData.totals)}</div>
+      <br />
+      <SplitTable users={userData} monthsPrior={12} />
     </div>
   );
 }

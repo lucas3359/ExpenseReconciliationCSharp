@@ -1,16 +1,15 @@
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseReconciliation.Repository
 {
-    public class UserRepository : RepositoryBase, IUserRepository
+    public class UserRepository : RepositoryBase
     {
         public UserRepository(AppDbContext appDbContext) : base(appDbContext)
         {
         }
-        
+
         public async Task<IEnumerable<User>> ListAsync()
         {
             return await _context.Users.ToListAsync();

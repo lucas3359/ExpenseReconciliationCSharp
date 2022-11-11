@@ -1,5 +1,5 @@
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Services;
+using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +10,9 @@ namespace ExpenseReconciliation.Controllers
     public class TransactionController : Controller
     {
         private const int DefaultPageSize = 50;
-        private readonly ITransactionService _transactionService;
+        private readonly TransactionService _transactionService;
 
-        public TransactionController(ITransactionService transactionService)
+        public TransactionController(TransactionService transactionService)
         {
             this._transactionService = transactionService;
         }
@@ -21,14 +21,13 @@ namespace ExpenseReconciliation.Controllers
         public async Task<Paged<Transaction>> GetAllAsync(int page = 0, int pageSize = 50)
         {
             return await _transactionService.ListAsync(page, pageSize);
-
         }
 
         [HttpGet("GetByDateAsync")]
-        public async Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page = 0, int pageSize = 50)
+        public async Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page = 0,
+            int pageSize = 50)
         {
             return await _transactionService.GetByDateAsync(startDate, endDate, page, pageSize);
-
         }
 
         [HttpGet("GetById")]
@@ -56,8 +55,7 @@ namespace ExpenseReconciliation.Controllers
             {
                 return BadRequest("Split amounts don't equal the full transaction");
             }
-            
-            
+
             await _transactionService.AddSplitAsync(splitRequest);
             return Ok();
         }
@@ -73,17 +71,17 @@ namespace ExpenseReconciliation.Controllers
         {
             await _transactionService.DeleteSplitAsync(transactionId);
         }
-        
+
         [HttpGet("GetAllCategories")]
         public async Task<IEnumerable<Category>> GetAllCategories()
         {
             return await _transactionService.GetAllCategoriesAsync();
         }
-        
+
         [HttpPost("UpdateCategory")]
         public async Task UpdateCategory([FromBody] CategoryRequest categoryRequest)
         {
-             await _transactionService.UpdateCategoryAsync(categoryRequest);
+            await _transactionService.UpdateCategoryAsync(categoryRequest);
         }
     }
 }

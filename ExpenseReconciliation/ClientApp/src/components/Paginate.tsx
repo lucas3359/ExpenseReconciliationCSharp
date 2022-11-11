@@ -7,15 +7,13 @@ export function Paginate({ currentPage, totalPages, onPageChange }) {
     const isActive = pageNumber === currentPage;
 
     return (
-      <li key={`page-${pageNumber}`}>
-        <button
-          className="block py-2 px-3 ml-0 leading-tight disabled:bg-gray-100"
-          disabled={isActive}
-          onClick={() => handlePageChange(pageNumber)}
-        >
-          {pageNumber}
-        </button>
-      </li>
+      <button key={`btn-page-${pageNumber}`}
+        className={`btn btn-sm btn-accent disabled:btn-active`}
+        disabled={isActive}
+        onClick={() => handlePageChange(pageNumber)}
+      >
+        {pageNumber}
+      </button>
     );
   };
 
@@ -38,31 +36,27 @@ export function Paginate({ currentPage, totalPages, onPageChange }) {
   };
 
   return (
-    <nav aria-label="Page navigation">
-      <p>
+    <nav aria-label="Page navigation" className="mt-6">
+      <p className="hidden">
         (debug) CurrentPage: {currentPage} totalPages: {totalPages}
       </p>
-      <ul className="inline-flex items-center -space-x-px mt-5">
-        <li>
+      <div className="btn-group">
           <button
-            className="block py-2 px-3 ml-0 leading-tight disabled:bg-gray-100"
+            className={`btn btn-sm btn-accent disabled:bg-gray-100`}
             disabled={currentPage === 0}
             onClick={() => handlePageChange(currentPage - 1)}
           >
             Previous
           </button>
-        </li>
         {renderIconRow()}
-        <li>
           <button
-            className="block py-2 px-3 ml-0 leading-tight disabled:bg-gray-100"
+            className={`btn btn-sm btn-accent disabled:bg-gray-100`}
             disabled={currentPage === totalPages}
             onClick={() => handlePageChange(currentPage + 1)}
           >
             Next
           </button>
-        </li>
-      </ul>
+      </div>
     </nav>
   );
 }

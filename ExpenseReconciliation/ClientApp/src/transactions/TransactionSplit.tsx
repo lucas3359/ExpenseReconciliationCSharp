@@ -3,6 +3,11 @@ import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
 import {useDeleteSplitMutation, useUpdateSplitMutation} from '../api/transactionApi';
+import user from '../model/user';
+
+interface SplitState {
+  [key: number]: number,
+}
 
 const TransactionSplit = ({
   data,
@@ -16,10 +21,10 @@ const TransactionSplit = ({
   users: User[];
 }) => {
   amount = Math.round((amount / 100) * 100) / 100;
-  const [splitted, setSplitted] = useState(data.length !== 0);
+  const [alreadySplit, setAlreadySplit] = useState(data.length !== 0);
 
   const [percent, setPercent] = useState(0.7);
-  const [splitAmounts, setSplitSplitAmounts] = useState({
+  const [splitAmounts, setSplitAmounts] = useState<SplitState>({
     1: Math.round(amount * percent * 100) / 100,
     2: Math.round(amount * (1 - percent) * 100) / 100,
   });
@@ -40,7 +45,7 @@ const TransactionSplit = ({
 
   const customAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(event.target.value);
-    setSplitSplitAmounts({
+    setSplitAmounts({
       1: value,
       2: Math.round((amount - value) * 100) / 100,
     });
@@ -48,20 +53,30 @@ const TransactionSplit = ({
   };
 
   const splitAmountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    var percentage = Number(event.target.value);
+    const percentage = Number(event.target.value);
     setPercent(percentage);
-    setSplitSplitAmounts({
+    setSplitAmounts({
       1: Math.round(percentage * amount * 100) / 100,
       2: Math.round((amount - percentage * amount) * 100) / 100,
     });
   };
   
-  const parseSplit = () => {
+  const quickAssign = async (userId: number) => {
+    const amounts = {
+      1: userId === 1 ? amount : 0,
+      2: userId === 2 ? amount : 0,
+    };
+    setPercent(userId === 1 ? 1 : 0);
+    
+    parseSplit(amounts);
+  }
+  
+  const parseSplit = (splitState: SplitState) => {
     const splits: Split[] = [];
     amount = amount * 100;
     let sum = 0;
     users.map((user: User) => {
-      const roundedAmount = Math.round(splitAmounts[user.id] * 100);
+      const roundedAmount = Math.round(splitState[user.id] * 100);
       const split: Split = {
         userId: user.id,
         amount: roundedAmount,
@@ -88,12 +103,12 @@ const TransactionSplit = ({
     };
     
     updateSplit(split);
-    setSplitted(true);
+    setAlreadySplit(true);
   }
   
   const onDeleteSplit = (transactionId: number) => {
     deleteSplit({ id: transactionId });
-    setSplitted(false);
+    setAlreadySplit(false);
   }
 
   const renderUser = () => {
@@ -114,6 +129,17 @@ const TransactionSplit = ({
       );
     });
   };
+  
+  const renderUserButtons = () => {
+    return users.map((user) => {
+      return (
+        <button className="btn btn-xs btn-secondary mr-1" key={`quick-button-${user.id}`}
+          onClick={() => quickAssign(user.id)}>
+          {user.userName}
+        </button>
+      );
+    });
+  }
 
   const renderAlreadySplit = (splits: Split[]) => {
     return splits.map((split: Split) => {
@@ -142,20 +168,20 @@ const TransactionSplit = ({
     );
   });
 
-  return splitted ? (
+  return alreadySplit ? (
     <>
-      <td className="p-2" colSpan={3}>
+      <td className="p-2" colSpan={4}>
         Already split: {renderAlreadySplit(data)}
       </td>
       <td>
-        <button className="p-1 w-16" onClick={() => onDeleteSplit(transaction_id)}>
+        <button className="btn btn-error btn-xs p-1 w-16" onClick={() => onDeleteSplit(transaction_id)}>
           Delete
         </button>
       </td>
     </>
   ) : (
     <>
-      <td className="p-2" colSpan={3} key={`${transaction_id}-split-td`}>
+      <td className="p-2" colSpan={2} key={`${transaction_id}-split-td`}>
         <div>
           <select className="mr-2" value={percent} onChange={splitAmountChange}>
             {renderOptions}
@@ -163,9 +189,12 @@ const TransactionSplit = ({
           {renderUser()}
         </div>
       </td>
-      <td className="p-2">
+      <td className="py-2" colSpan={2}>
+        {renderUserButtons()}
+      </td>
+      <td className="text-right pr-6">
         {' '}
-        <button className="p-1 w-16" onClick={parseSplit}>
+        <button className="btn btn-accent btn-xs p-1 w-16" onClick={() => parseSplit(splitAmounts)}>
           Split
         </button>
       </td>
