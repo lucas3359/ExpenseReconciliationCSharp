@@ -14,7 +14,7 @@ namespace ExpenseReconciliation.Controllers
 
         public TransactionController(TransactionService transactionService)
         {
-            this._transactionService = transactionService;
+            _transactionService = transactionService;
         }
 
         [HttpGet("GetAllAsync")]
@@ -70,12 +70,6 @@ namespace ExpenseReconciliation.Controllers
         public async Task DeleteSplit(int transactionId)
         {
             await _transactionService.DeleteSplitAsync(transactionId);
-        }
-
-        [HttpGet("GetAllCategories")]
-        public async Task<IEnumerable<Category>> GetAllCategories()
-        {
-            return await _transactionService.GetAllCategoriesAsync();
         }
 
         [HttpPost("UpdateCategory")]

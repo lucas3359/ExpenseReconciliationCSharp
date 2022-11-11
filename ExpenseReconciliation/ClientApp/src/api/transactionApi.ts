@@ -1,11 +1,9 @@
 import {expensesApi} from './expensesApi';
 import PagedTransaction from '../model/pagedTransaction';
-import Category from '../model/category';
 import Transaction from '../model/transaction';
 import UpdateSplit from '../model/updateSplit';
 import UpdateCategoryModel from '../model/updateCategoryModel';
 import TransactionImport from '../model/transactionImport';
-import category from '../model/category';
 
 const transactionApi = expensesApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -20,10 +18,6 @@ const transactionApi = expensesApi.injectEndpoints({
     getTransactionByDate: builder.query<PagedTransaction, any>({
       query: ({index, pageLimit}) => `transaction/GetByDateAsync?_page=${index}&_limit=${pageLimit}`
     }), // TODO: Was used by ListPaginate, no longer used
-    getAllCategories: builder.query<Category[], void>({
-      query: () => `transaction/GetAllCategories`,
-      providesTags: [{ type: 'Categories', id: 'ALL' }],
-    }),
     importTransactions: builder.mutation<void, TransactionImport>({
       query: (importPayload) => ({
         url: `transaction/Import`,
@@ -70,7 +64,6 @@ const transactionApi = expensesApi.injectEndpoints({
 export const {
     useGetTransactionPageQuery,
     useGetTransactionByDateQuery,
-    useGetAllCategoriesQuery,
     useImportTransactionsMutation,
     useUpdateCategoryMutation, 
     useUpdateSplitMutation,

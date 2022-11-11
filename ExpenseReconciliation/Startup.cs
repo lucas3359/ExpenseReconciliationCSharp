@@ -14,7 +14,7 @@ namespace ExpenseReconciliation
 {
     public class Startup
     {
-        string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        private readonly string _allowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,6 +26,7 @@ namespace ExpenseReconciliation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddJsonOptions(x=>x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            services.AddSwaggerGen();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
@@ -88,6 +89,7 @@ namespace ExpenseReconciliation
             services.AddScoped<UserService>();
             services.AddScoped<DashboardService>();
             services.AddScoped<TransactionService>();
+            services.AddScoped<CategoryService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ImportRecordService>();
 
@@ -112,6 +114,10 @@ namespace ExpenseReconciliation
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            
             app.UseHttpLogging();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -119,7 +125,7 @@ namespace ExpenseReconciliation
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(MyAllowSpecificOrigins);
+            app.UseCors(_allowSpecificOrigins);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

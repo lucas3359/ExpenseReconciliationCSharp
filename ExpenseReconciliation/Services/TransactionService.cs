@@ -12,20 +12,17 @@ public class TransactionService
     private readonly IAccountService _accountService;
     private readonly ImportRecordService _importRecordService;
     private readonly SplitRepository _splitRepository;
-    private readonly ICategoryRepository _categoryRepository;
     private readonly ILogger _logger;
 
     public TransactionService(TransactionRepository transactionRepository,
         IAccountService accountService,
         ImportRecordService importRecordService, ILogger<TransactionService> logger,
-        SplitRepository splitRepository,
-        ICategoryRepository categoryRepository)
+        SplitRepository splitRepository)
     {
         _transactionRepository = transactionRepository;
         _accountService = accountService;
         _importRecordService = importRecordService;
         _splitRepository = splitRepository;
-        _categoryRepository = categoryRepository;
         _logger = logger;
     }
 
@@ -95,12 +92,7 @@ public class TransactionService
     {
         await _splitRepository.DeleteSplitAsync(transactionId);
     }
-
-    public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
-    {
-        return await _categoryRepository.ListAllAsync();
-    }
-
+    
     public async Task UpdateCategoryAsync(CategoryRequest categoryRequest)
     {
         await _transactionRepository.UpdateCategoryAsync(categoryRequest);

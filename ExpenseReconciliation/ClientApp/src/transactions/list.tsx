@@ -3,8 +3,9 @@ import TransactionRow from './TransactionRow';
 import {Paginate} from '../components/Paginate';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
-import {useGetAllCategoriesQuery, useGetTransactionPageQuery} from '../api/transactionApi';
+import {useGetTransactionPageQuery} from '../api/transactionApi';
 import {useGetAllUsersQuery} from '../api/usersApi';
+import {useGetAllCategoriesQuery} from '../api/categoryApi';
 
 export default function List() {
   const loggedIn = useAppSelector(selectLoggedIn);
