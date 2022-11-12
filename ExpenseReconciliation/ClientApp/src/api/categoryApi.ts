@@ -4,7 +4,7 @@ import Category from '../model/category';
 const categoryApi = expensesApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllCategories: builder.query<Category[], void>({
-      query: () => `Category/GetAllCategories`,
+      query: () => `Category`,
       providesTags: [{ type: 'Categories', id: 'ALL' }],
     }),
   }),

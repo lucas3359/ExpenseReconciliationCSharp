@@ -16,9 +16,21 @@ public class CategoryController : Controller
         _categoryService = categoryService;
     }
     
-    [HttpGet("GetAllCategories")]
+    [HttpGet("")]
     public async Task<IEnumerable<Category>> GetAllCategories()
     {
         return await _categoryService.GetAllCategoriesAsync();
+    }
+    
+    [HttpPost("")]   
+    public async Task AddCategory([FromBody] Category category)
+    {
+        await _categoryService.AddCategoryAsync(category);
+    }
+    
+    [HttpDelete("{id:int}")]
+    public async Task DeleteCategory(int id)
+    {
+        await _categoryService.DeleteCategoryAsync(id);
     }
 }
