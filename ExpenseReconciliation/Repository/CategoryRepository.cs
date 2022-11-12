@@ -27,9 +27,18 @@ namespace ExpenseReconciliation.Repository
             var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {
+                if (!await IsCategoryParent(id))
+                {
+                    throw new Exception("Can't delete category with children");
+                }
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        private async Task<bool> IsCategoryParent(int id)
+        {
+            return await _context.Categories.Where(c => c.ParentId == id).AnyAsync();
         }
     }
 }

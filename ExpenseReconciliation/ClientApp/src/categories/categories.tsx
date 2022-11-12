@@ -1,7 +1,7 @@
 import {selectLoggedIn} from '../auth/authSlice';
 import {useAppSelector} from '../hooks/hooks';
 import React, {useState} from 'react';
-import {useGetAllCategoriesQuery} from '../api/categoryApi';
+import {useDeleteCategoryMutation, useGetAllCategoriesQuery} from '../api/categoryApi';
 import CategoryRow from './CategoryRow';
 import AddCategoryModal from './AddCategoryModal';
 
@@ -10,17 +10,41 @@ export default function Categories() {
   const [modalOpen, setModalOpen] = useState(false);
   
   const { data: categoriesData, error: categoriesError, isLoading: categoriesLoading } = useGetAllCategoriesQuery();
+  const [deleteCategory] = useDeleteCategoryMutation();  
   
   if (!loggedIn) return <div>Unauthenticated</div>;
   
   if (categoriesLoading) return <div>loading...</div>;
   if (!categoriesData || categoriesError) return <div>Failed to load</div>;
   
+  const getParentName = (parentId: number | undefined): string | undefined => {
+    if (!parentId) return undefined;
+    
+    return categoriesData.find((category) => category.id === parentId)?.name;
+  }
+  
+  const checkIfParent = (id: number): boolean => {
+    return categoriesData.some((category) => category.parentId === id);
+  }
+  
+  const deleteClicked = (categoryId: number | undefined) => {
+    if (categoryId === undefined) return;
+    
+    if (checkIfParent(categoryId)) {
+      alert("Cannot delete category with children");
+      return;
+    }
+    
+    deleteCategory(categoryId);
+  }
+  
   const categoryRows = categoriesData.map((category) => {
     return (
       <CategoryRow
         key={category.id}
         category={category}
+        deleteClicked={() => deleteClicked(category.id)}
+        parentName={getParentName(category.parentId)}
       />
     )
   });
@@ -44,6 +68,7 @@ export default function Categories() {
               <th>Parent</th>
               <th>Included<br/>in split?</th>
               <th>Default<br/>split</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
