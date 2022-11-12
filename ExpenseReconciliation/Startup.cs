@@ -7,6 +7,7 @@ using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -31,6 +32,7 @@ namespace ExpenseReconciliation
             {
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "ExpenseReconciliation", Version = "v1" });
             });
+            services.AddHealthChecks();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
@@ -57,7 +59,6 @@ namespace ExpenseReconciliation
                 options => options
                     .UseNpgsql(connectionString)
                     .UseSnakeCaseNamingConvention()
-                    //.EnableSensitiveDataLogging() // TODO: Dev only
             );
 
             services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();
@@ -103,7 +104,6 @@ namespace ExpenseReconciliation
             services.AddScoped<AccountRepository>();
             services.AddScoped<ImportRecordRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
