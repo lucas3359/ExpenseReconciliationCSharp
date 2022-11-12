@@ -4,6 +4,9 @@ import SplitImport from '../model/updateSplit';
 import User from '../model/user';
 import {useDeleteSplitMutation, useUpdateSplitMutation} from '../api/transactionApi';
 import user from '../model/user';
+import {useAppDispatch} from '../hooks/hooks';
+import {successToast} from '../toast/toastSlice';
+import Transaction from '../model/transaction';
 
 interface SplitState {
   [key: number]: number,
@@ -12,18 +15,19 @@ interface SplitState {
 const TransactionSplit = ({
   data,
   amount,
-  transaction_id,
+  transaction,
   users,
 }: {
   data: Split[];
   amount: number;
-  transaction_id: number;
+  transaction: Transaction;
   users: User[];
 }) => {
+  const dispatch = useAppDispatch();
   amount = Math.round((amount / 100) * 100) / 100;
   const [alreadySplit, setAlreadySplit] = useState(data.length !== 0);
 
-  const [percent, setPercent] = useState(0.7);
+  const [percent, setPercent] = useState(0.5);
   const [splitAmounts, setSplitAmounts] = useState<SplitState>({
     1: Math.round(amount * percent * 100) / 100,
     2: Math.round(amount * (1 - percent) * 100) / 100,
@@ -69,6 +73,10 @@ const TransactionSplit = ({
     setPercent(userId === 1 ? 1 : 0);
     
     parseSplit(amounts);
+    
+    const user = users.find((user) => user.id === userId);
+    
+    dispatch(successToast(`'${transaction.details}' - Assigned 100% to ${user?.userName}`));
   }
   
   const parseSplit = (splitState: SplitState) => {
@@ -98,12 +106,14 @@ const TransactionSplit = ({
     }
 
     const split: SplitImport = {
-      transactionId: transaction_id,
+      transactionId: transaction.id,
       splits: splits,
     };
     
     updateSplit(split);
     setAlreadySplit(true);
+    
+    dispatch(successToast(`'${transaction.details}' - Assigned ${percent * 100}% to ${users[1]?.userName} and ${Math.round((1 - percent) * 100)}% to ${users[0]?.userName}`));
   }
   
   const onDeleteSplit = (transactionId: number) => {
@@ -114,7 +124,7 @@ const TransactionSplit = ({
   const renderUser = () => {
     return users.map((user) => {
       return (
-        <span key={`${transaction_id}-split-${user.id}-input`}>
+        <span key={`${transaction.id}-split-${user.id}-input`}>
           <label className="italic">{user.userName}</label>
           <input
             className="w-16 text-center"
@@ -145,7 +155,7 @@ const TransactionSplit = ({
     return splits.map((split: Split) => {
       return (
         <span
-          key={`span-${transaction_id}-${split.id}`}
+          key={`span-${transaction.id}-${split.id}`}
           className="text-center"
         >
           <span className="font-normal">
@@ -160,7 +170,7 @@ const TransactionSplit = ({
   const renderOptions = splitOptions.map((option) => {
     return (
       <option
-        key={`option-${transaction_id}-${option.value}`}
+        key={`option-${transaction.id}-${option.value}`}
         value={option.value}
       >
         {option.description}
@@ -174,14 +184,14 @@ const TransactionSplit = ({
         Already split: {renderAlreadySplit(data)}
       </td>
       <td>
-        <button className="btn btn-error btn-xs p-1 w-16" onClick={() => onDeleteSplit(transaction_id)}>
+        <button className="btn btn-error btn-xs p-1 w-16" onClick={() => onDeleteSplit(transaction.id)}>
           Delete
         </button>
       </td>
     </>
   ) : (
     <>
-      <td className="p-2" colSpan={2} key={`${transaction_id}-split-td`}>
+      <td className="p-2" colSpan={2} key={`${transaction.id}-split-td`}>
         <div>
           <select className="mr-2" value={percent} onChange={splitAmountChange}>
             {renderOptions}

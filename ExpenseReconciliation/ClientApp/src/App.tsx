@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import Home from './home/home';
 import Dashboard from './dashboard/dashboard';
@@ -7,8 +7,9 @@ import List from './transactions/list';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Categories from './categories/categories';
+import {ToastContainer} from 'react-toastify';
 
-function App() {   
+function App() {
   return (
     <div
       id="app-root"
@@ -29,6 +30,10 @@ function App() {
           <Footer />
         </BrowserRouter>
       </div>
+      <ToastContainer
+        autoClose={5000}
+        draggable={false}
+      />
     </div>
   );
 }

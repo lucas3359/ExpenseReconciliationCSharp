@@ -1,12 +1,14 @@
 import {selectLoggedIn} from '../auth/authSlice';
-import {useAppSelector} from '../hooks/hooks';
+import {useAppDispatch, useAppSelector} from '../hooks/hooks';
 import React, {useState} from 'react';
 import {useDeleteCategoryMutation, useGetAllCategoriesQuery} from '../api/categoryApi';
 import CategoryRow from './CategoryRow';
 import AddCategoryModal from './AddCategoryModal';
+import {errorToast} from '../toast/toastSlice';
 
 export default function Categories() {
   const loggedIn = useAppSelector(selectLoggedIn);
+  const dispatch = useAppDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   
   const { data: categoriesData, error: categoriesError, isLoading: categoriesLoading } = useGetAllCategoriesQuery();
@@ -31,7 +33,7 @@ export default function Categories() {
     if (categoryId === undefined) return;
     
     if (checkIfParent(categoryId)) {
-      alert("Cannot delete category with children");
+      dispatch(errorToast('Cannot delete a category that has subcategories'));
       return;
     }
     
