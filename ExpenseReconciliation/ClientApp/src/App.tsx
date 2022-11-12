@@ -6,6 +6,7 @@ import Dashboard from './dashboard/dashboard';
 import List from './transactions/list';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Categories from './categories/categories';
 
 function App() {   
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/list" element={<List />} />
+              <Route path="/categories" element={<Categories />} />
             </Routes>
           </main>
           <Footer />
