@@ -36,7 +36,7 @@ const TransactionRow = ({
           key={`${row.id}-split`}
           data={splits}
           amount={Number(row.amount)}
-          transaction_id={row.id}
+          transaction={row}
           users={users}
         />
       </tr>

@@ -17,9 +17,9 @@ export default function Home() {
         <p className="text-center font-semibold">Reconcile transactions</p>
       </Card>
 
-      <Card>
+      <Card link="/categories">
         <Icon icon="sort-asc" classes="w-20 mx-auto" />
-        <p className="text-center font-semibold">Categorise transactions</p>
+        <p className="text-center font-semibold">Categories</p>
       </Card>
     </div>
   );
