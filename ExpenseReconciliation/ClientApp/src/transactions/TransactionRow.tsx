@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Transaction from '../model/transaction';
 import User from '../model/user';
-import Icon from '../components/Icon';
 import Split from '../model/split';
 import TransactionSplit from './TransactionSplit';
 import Category from '../model/category';
 import CategoryDropDown from './CategoryDropDown';
-import SplitImport from '../model/updateSplit';
 import {renderCurrency, renderDate} from '../services/formatting';
+import {Button} from 'primereact/button';
 
 const TransactionRow = ({
   row,
@@ -19,8 +18,6 @@ const TransactionRow = ({
   categories : Category[]|undefined,
 }) => {
   const [showSplit, setShowSplit] = useState(false);
-  const [selectCategory, setCategory] = useState<string|undefined>(row.category?.name);
-  const [showDropDown, setShowDropDown] = useState<boolean>(false);
   
   const splits: Split[] = row.splits;
 
@@ -44,26 +41,21 @@ const TransactionRow = ({
   };
 
   const splitButton = () => {
-    const upIcon = <Icon icon="up" className="w-6 h-6" />;
-    const tickIcon = <Icon icon="tick" className="w-6 h-6" />;
-
     if (splits.length > 0) {
       return (
-        <button
+        <Button icon={`pi ${showSplit ? 'pi-chevron-up' : 'pi-check'}`}
           onClick={() => setShowSplit(!showSplit)}
-          className="btn btn-xs bg-green-300 w-16 hover:bg-green-100"
-        >
-          {showSplit ? upIcon : tickIcon}
-        </button>
+          className="p-button-sm p-button-success"
+        />
       );
     } else {
       return (
-        <button
+        <Button icon={`pi ${showSplit ? 'pi-chevron-up' : ''}`}
           onClick={() => setShowSplit(!showSplit)}
-          className={`btn btn-xs btn-primary w-16 ${showSplit ? 'px-5' : 'px-3'}`}
+          className={`p-button-sm p-button-secondary`}
         >
-          {showSplit ? upIcon : 'Split'}
-        </button>
+          {showSplit ? '' : 'Split'}
+        </Button>
       );
     }
   };
@@ -77,18 +69,6 @@ const TransactionRow = ({
           }: ${renderCurrency(split.amount)}`,
       )
       .join(' ');
-  };
-
-  const renderCategory = (category: Category)=>{
-    return category.name ?? "empty"
-  };
-
-  const categorySelection = (category: string):void =>{
-    setCategory(category);
-  };
-
-  const toggleDropDown = () => {
-    setShowDropDown(!showDropDown);
   };
   
   return (
@@ -104,21 +84,12 @@ const TransactionRow = ({
           {renderSplitDetails(row.splits)}
         </td>
         <td>
-          <div className='dropdown dropdown-end'>
-            <label tabIndex={0} className={`btn btn-xs m-0 border-0 ${selectCategory ? 'bg-green-200 hover:bg-green-300' : 'bg-purple-200 hover:bg-purple-300'}`}>
-              {selectCategory ? selectCategory : "Select..."}
-            </label>
-            <ul tabIndex={0} className={`dropdown-content menu p-2 shadow rounded-box w-52 ${selectCategory ? 'bg-green-200' : 'bg-purple-200'}`}>
-              <CategoryDropDown
-                key = {`${row.id}-category`}
-                transactionId={row.id}
-                categories={categories}
-                showDropDown={false}
-                toggleDropDown={(): void => toggleDropDown()}
-                categorySelection={categorySelection}
-              />
-            </ul>
-          </div>
+          <CategoryDropDown
+            key = {`${row.id}-category`}
+            transactionId={row.id}
+            categories={categories}
+            selectedCategory={row.category?.id}
+            />
           </td>
         <td
           className={`p-2 text-right font-semibold ${

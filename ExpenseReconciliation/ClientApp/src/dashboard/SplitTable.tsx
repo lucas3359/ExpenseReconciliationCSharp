@@ -2,7 +2,11 @@ import {useGetSplitSummaryQuery} from '../api/dashboardApi';
 import User from '../model/user';
 import {TimePeriod, Total} from '../model/splitSummary';
 import {renderCurrency} from '../services/formatting';
-import React from 'react';
+import React, {ReactNode} from 'react';
+import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
+import {ColumnGroup} from 'primereact/columngroup';
+import {Row} from 'primereact/row';
 
 const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }) => {
   const getFirstDayOfMonthsPrior = (date: Date, months: number): Date => {
@@ -99,8 +103,64 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
     });
   }
   
+  const getData = () => {
+    if (!splitSummaryData) return [];
+    return splitSummaryData.timePeriods.map((timePeriod) => {
+      return {
+        timeDescription: timePeriod.timeDescription,
+        user0credit: renderCurrency(timePeriod.totals[0]?.credit),
+        user0debit: renderCurrency(timePeriod.totals[0]?.debit),
+        user0total: renderCurrency(timePeriod.totals[0] ? timePeriod.totals[0].credit + timePeriod.totals[0].debit : 0),
+        user1credit: renderCurrency(timePeriod.totals[1]?.credit),
+        user1debit: renderCurrency(timePeriod.totals[1]?.debit),
+        user1total: renderCurrency(timePeriod.totals[1] ? timePeriod.totals[1].credit + timePeriod.totals[1].debit : 0),
+        balance: renderCurrency(timePeriod.unassigned),
+      }
+    });
+  }
+  
+  const columns = [
+    {field: 'timeDescription', header: 'Month'},
+    {field: 'user0credit', header: 'Credit'},
+    {field: 'user0debit', header: 'Debit'},
+    {field: 'user0total', header: 'Total'},
+    {field: 'user1credit', header: 'Credit'},
+    {field: 'user1debit', header: 'Debit'},
+    {field: 'user1total', header: 'Total'},
+    {field: 'balance', header: 'Balance'},
+  ]
+  
+  const dynamicColumns = columns.map((col, i) => {
+      return <Column key={col.field} field={col.field} header={col.header} />;
+    });
+  
+  const headerGroup = <ColumnGroup>
+    <Row>
+      <Column header="Month" />
+      <Column header="Lucas" colSpan={3} />
+      <Column header="Thomas" colSpan={3} />
+      <Column header="Balance" />
+    </Row>
+    <Row>
+      <Column />
+      <Column header="Credit" />
+      <Column header="Debit" />
+      <Column header="Total" />
+      <Column header="Credit" />
+      <Column header="Debit" />
+      <Column header="Total" />
+      <Column />
+    </Row>
+  </ColumnGroup>;
+  
   return (
-    <div>
+    <DataTable value={getData()} headerColumnGroup={headerGroup}>
+      {dynamicColumns}
+    </DataTable>
+  )
+  
+  /*
+      <div>
       <h1 className="text-4xl text-gray-700 my-4">Split Summary</h1>
       <table className="table w-full">
         <thead>
@@ -111,7 +171,7 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
         </tbody>
       </table>
     </div>
-  )
+   */
 }
 
 export default SplitTable;

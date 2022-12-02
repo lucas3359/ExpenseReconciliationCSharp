@@ -6,9 +6,11 @@ import {MenuItem} from 'primereact/menuitem';
 const Header = () => {  
   const items: MenuItem[] = [{     
       icon: 'pi pi-fw pi-home',
+      url: '/',
     },
     {
       label: 'Expenses Reconciliation',
+      disabled: true,
     }
   ]
 

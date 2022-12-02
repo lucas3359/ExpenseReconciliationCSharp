@@ -3,10 +3,11 @@ import Split from '../model/split';
 import SplitImport from '../model/updateSplit';
 import User from '../model/user';
 import {useDeleteSplitMutation, useUpdateSplitMutation} from '../api/transactionApi';
-import user from '../model/user';
 import {useAppDispatch} from '../hooks/hooks';
 import {successToast} from '../toast/toastSlice';
 import Transaction from '../model/transaction';
+import {Button} from 'primereact/button';
+import {InputNumber} from 'primereact/inputnumber';
 
 interface SplitState {
   [key: number]: number,
@@ -47,8 +48,8 @@ const TransactionSplit = ({
     { value: -1, description: 'Custom' },
   ];
 
-  const customAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(event.target.value);
+  const customAmount = (value: number | null) => {
+    if (!value) return;
     setSplitAmounts({
       1: value,
       2: Math.round((amount - value) * 100) / 100,
@@ -124,18 +125,20 @@ const TransactionSplit = ({
   const renderUser = () => {
     return users.map((user) => {
       return (
-        <span key={`${transaction.id}-split-${user.id}-input`}>
-          <label className="italic">{user.userName}</label>
-          <input
-            className="w-16 text-center"
+        <React.Fragment key={`${transaction.id}-split-${user.id}-input`}>
+          <span className="p-inputgroup-addon">{user.userName}</span>
+          <InputNumber
             type="text"
             placeholder="Amount"
-            onChange={(e) => {
-              customAmount(e);
+            mode="currency"
+            currency="NZD"
+            currencyDisplay="symbol"
+            onValueChange={(e) => {
+              customAmount(e.value);
             }}
             value={splitAmounts[user.id]}
           />
-        </span>
+        </React.Fragment>
       );
     });
   };
@@ -143,10 +146,10 @@ const TransactionSplit = ({
   const renderUserButtons = () => {
     return users.map((user) => {
       return (
-        <button className="btn btn-xs btn-secondary mr-1" key={`quick-button-${user.id}`}
+        <Button className="p-button-sm p-button-help p-button-outlined" key={`quick-button-${user.id}`}
           onClick={() => quickAssign(user.id)}>
           {user.userName}
-        </button>
+        </Button>
       );
     });
   }
@@ -184,29 +187,29 @@ const TransactionSplit = ({
         Already split: {renderAlreadySplit(data)}
       </td>
       <td>
-        <button className="btn btn-error btn-xs p-1 w-16" onClick={() => onDeleteSplit(transaction.id)}>
+        <Button className="p-button-sm p-button-danger" onClick={() => onDeleteSplit(transaction.id)}>
           Delete
-        </button>
+        </Button>
       </td>
     </>
   ) : (
     <>
       <td className="p-2" colSpan={2} key={`${transaction.id}-split-td`}>
-        <div>
+        <div className="p-inputgroup">
           <select className="mr-2" value={percent} onChange={splitAmountChange}>
             {renderOptions}
           </select>
           {renderUser()}
         </div>
       </td>
-      <td className="py-2" colSpan={2}>
+      <td className="p-buttonset" colSpan={2}>
         {renderUserButtons()}
       </td>
       <td className="text-right pr-6">
         {' '}
-        <button className="btn btn-accent btn-xs p-1 w-16" onClick={() => parseSplit(splitAmounts)}>
+        <Button className="p-button-sm p-button-help" onClick={() => parseSplit(splitAmounts)}>
           Split
-        </button>
+        </Button>
       </td>
     </>
   );

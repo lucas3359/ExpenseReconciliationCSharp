@@ -36,7 +36,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols:3 px-5 md:gap-3 gap-y-7">
+    <div className="grid grid-cols-1 px-5 md:gap-3 gap-y-7">
       <h1 className="text-4xl text-gray-700">Dashboard</h1>
       <br />
       <h2 className="text-xl text-gray-500">Amounts owing</h2>
