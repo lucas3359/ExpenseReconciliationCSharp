@@ -22,6 +22,7 @@
     "jwt-decode": "^3.1.2",
     "node-ofx-parser": "^0.5.1",
     "prettier": "^2.7.1",
+    "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primereact": "^8.7.2",
     "react": "^18.2.0",

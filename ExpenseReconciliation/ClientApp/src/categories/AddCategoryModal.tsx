@@ -1,6 +1,11 @@
 import {useCreateCategoryMutation, useGetAllCategoriesQuery} from '../api/categoryApi';
 import {CreateCategoryRequest} from '../model/category';
 import React, {useState} from 'react';
+import {Dialog} from 'primereact/dialog';
+import {Button} from 'primereact/button';
+import {InputText} from 'primereact/inputtext';
+import {InputSwitch} from 'primereact/inputswitch';
+import {Dropdown} from 'primereact/dropdown';
 
 interface AddCategoryModalProps {
   isOpen: boolean;
@@ -22,19 +27,27 @@ export default function AddCategoryModal(
   const { data: categoriesData, error: categoriesError, isLoading: categoriesLoading } = useGetAllCategoriesQuery();
   const [createCategory] = useCreateCategoryMutation();
   
-  const getCategoriesOptions = () => {
-    if (categoriesLoading) return <option disabled>Loading...</option>;
-    if (!categoriesData || categoriesError) return <option disabled>Failed to load</option>;
-
-    return categoriesData.map((category) => {
-      return (
-        <option key={category.id} value={category.id}>{category.name}</option>
-      )
-    });
-  }
+  const splitOptions = [
+    { value: -1, label: 'None' },
+    { value: 0, label: '0%' },
+    { value: 0.3, label: '30%' },
+    { value: 0.4, label: '40%' },
+    { value: 0.5, label: '50%' },
+    { value: 0.6, label: '60%' },
+    { value: 0.7, label: '70%' },
+    { value: 1, label: '100%' },
+  ]
   
-  const selectDefaultSplit = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const split = parseFloat(event.target.value);
+  const categoriesOptions = categoriesData?.filter((x) => !x.parentId)
+    .map((category) => {
+      return {
+        value: category.id,
+        label: category.name,
+      }
+    });
+  
+  const selectDefaultSplit = (value) => {
+    const split = parseFloat(value);
     
     setCategory({
       ...category,
@@ -56,8 +69,8 @@ export default function AddCategoryModal(
     props.modalClosed();
   }
   
-  const selectParent = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    let parent: number | undefined = parseInt(event.target.value);
+  const selectParent = (value: string) => {
+    let parent: number | undefined = parseInt(value);
     
     if (!(categoriesData?.find((category) => category.id === parent))) {
       parent = undefined;
@@ -71,75 +84,62 @@ export default function AddCategoryModal(
   
   return (
     <>
-      <div className={`modal ${props.isOpen ? 'modal-open' : ''}`}>
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Add new category</h3>
-          <div className="py-4">
-            <div className="form-control w-full max-w-md">
-              <label className="label">
-                <span className="label-text font-semibold">Category Name</span>
-              </label>
-              <input type="text"
+      <Dialog visible={props.isOpen}
+              onHide={() => props.modalClosed()}
+              header="Add new category">
+        <div className="card p-fluid">
+          <div className="field mt-4">
+            <span className="p-float-label">
+              <label className="p-float-label">Category Name</label>
+              <InputText
                      className="input input-bordered rounded-box"
                      value={category.name}
                      onChange={(e) => setCategory({...category, name: e.target.value})}
               />
-            </div>
+            </span>
+          </div>
 
-            <div className="grid grid-cols-2 w-full max-w-md">
-              <div className="form-control">
-                <label className="label mb-1">
-                  <span className="label-text font-semibold">Included in Split?</span>
-                </label>
-                <input type="checkbox"
-                       className={`toggle toggle-accent toggle-lg`}
-                       checked={category.splitIncluded}
-                       onChange={(e) => setCategory({...category, splitIncluded: e.target.checked})}
-                />
-              </div>
-  
-              <div className="form-control w-full max-w-md">
-                <label className="label">
-                  <span className="label-text font-semibold">Default Split</span>
-                </label>
-                <select className="select select-bordered rounded-box"
-                        value={category.defaultSplit}
-                        onChange={selectDefaultSplit}
-                >
-                  <option value={-1} key={-1}>None</option>
-                  <option value={0} key={0}>0%</option>
-                  <option value={0.3} key={0.3}>30%</option>
-                  <option value={0.4} key={0.4}>40%</option>
-                  <option value={0.5} key={0.5}>50%</option>
-                  <option value={0.6} key={0.6}>60%</option>
-                  <option value={0.7} key={0.7}>70%</option>
-                  <option value={1} key={1}>100%</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="form-control w-full max-w-md">
-              <label className="label">
-                <span className="label-text font-semibold">Parent Category</span>
-              </label>
-              <select className="select select-bordered rounded-box"
-                      value={category.parentId}
-                      onChange={selectParent}
+          <div className="field mt-4">
+            <span className="">
+              <label>Included in Split?</label>
+              <InputSwitch
+                     checked={category.splitIncluded}
+                     onChange={(e) => setCategory({...category, splitIncluded: e.value})}
+              />
+            </span>
+          </div>
+
+          <div className="field mt-6">
+            <span className="p-float-label">
+              <Dropdown 
+                      options={splitOptions}
+                      value={category.defaultSplit}
+                      onChange={(e) => selectDefaultSplit(e.value)}
               >
-                <option key={undefined}>None</option>
-                {getCategoriesOptions()}
-              </select>
-            </div>
-            
-            <div className="modal-action">
-              <button className="btn btn-error" onClick={() => props.modalClosed()}>Cancel</button>
-              <button className="btn btn-accent"
-                      disabled={!category.name}
-                      onClick={saveForm}>Save</button>
-            </div>
+              </Dropdown>
+              <label className="label">Default Split</label>
+            </span>
+          </div>
+          
+          <div className="field mt-6">
+            <span className="p-float-label">
+              <Dropdown options={categoriesOptions}
+                      value={category.parentId}
+                      onChange={(e) => selectParent(e.value)}
+              >
+              </Dropdown>
+              <label className="label">Parent Category</label>
+            </span>
+          </div>
+          
+          <div className="p-buttonset mt-4">
+            <Button className="p-button-danger" onClick={() => props.modalClosed()}>Cancel</Button>
+            <Button className="p-button-success"
+                    disabled={!category.name}
+                    onClick={saveForm}>Save</Button>
           </div>
         </div>
-      </div>
+      </Dialog>
     </>
   );
 }

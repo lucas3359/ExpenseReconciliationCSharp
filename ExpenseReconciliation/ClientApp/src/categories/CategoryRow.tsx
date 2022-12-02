@@ -1,4 +1,5 @@
 import Category from '../model/category';
+import {Button} from 'primereact/button';
 
 export interface CategoryRowProps {
   category: Category;
@@ -29,11 +30,11 @@ export default function CategoryRow(
       <td>{renderSplitIncluded(category.splitIncluded)}</td>
       <td>{category.defaultSplit}</td>
       <td>
-        <div className="btn-group">
-          <button className="btn btn-primary btn-sm" disabled>Edit</button>
-          <button className="btn btn-error btn-sm"
+        <div className="p-buttonset">
+          <Button className="p-button-sm" disabled>Edit</Button>
+          <Button className="p-button-sm p-button-danger"
                   onClick={() => onDeleteClicked()}
-            >Delete</button>
+            >Delete</Button>
         </div>  
       </td>
     </tr>
