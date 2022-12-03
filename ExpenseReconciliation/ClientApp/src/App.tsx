@@ -1,4 +1,5 @@
 import React from 'react';
+import 'primeflex/primeflex.css';
 import 'react-toastify/dist/ReactToastify.css';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import Home from './home/home';
@@ -14,7 +15,6 @@ function App() {
     <div
       id="app-root"
       className="bg-gradient-to-tl bg-gradient-to-r from-indigo-100 via-red-100 to-yellow-100"
-      data-theme='pastel'
     >
       <div className="flex flex-col min-h-screen backdrop-filter backdrop-saturate-50">
         <BrowserRouter>

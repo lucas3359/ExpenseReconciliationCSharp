@@ -5,6 +5,7 @@ import {useDeleteCategoryMutation, useGetAllCategoriesQuery} from '../api/catego
 import CategoryRow from './CategoryRow';
 import AddCategoryModal from './AddCategoryModal';
 import {errorToast} from '../toast/toastSlice';
+import {Button} from 'primereact/button';
 
 export default function Categories() {
   const loggedIn = useAppSelector(selectLoggedIn);
@@ -52,13 +53,13 @@ export default function Categories() {
   });
   
   return (
-    <div className="container">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols:3 px-5 md:gap-3 gap-y-7">
-        <h1 className="text-4xl text-gray-700">Categories</h1>
-        <button className="btn btn-accent btn-md"
+    <>
+      <div className="grid">
+        <h1 className="text-4xl text-gray-700 col-10">Categories</h1>
+        <Button className="col-2 p-button-primary p-button-sm"
           onClick={() => setModalOpen(!modalOpen)}>
           Add Category
-        </button>
+        </Button>
       </div>
       <br />
       <div className="overflow-x-auto">
@@ -78,7 +79,7 @@ export default function Categories() {
           </tbody>
         </table>
       </div>
-      {<AddCategoryModal isOpen={modalOpen} modalClosed={() => setModalOpen(false)} />}
-    </div>
+      <AddCategoryModal isOpen={modalOpen} modalClosed={() => setModalOpen(false)} />
+    </>
   );
 }

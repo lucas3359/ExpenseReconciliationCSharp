@@ -4,6 +4,7 @@ import {getUser, login, logout, selectAuthStatus, selectUser} from './authSlice'
 import {useAppDispatch, useAppSelector} from '../hooks/hooks';
 import User from '../model/user';
 import {AuthStatus} from './authStatus';
+import {Button} from 'primereact/button';
 
 const AuthToolbar = () => {
   const authStatus: AuthStatus = useAppSelector(selectAuthStatus);
@@ -17,9 +18,12 @@ const AuthToolbar = () => {
   if (authStatus == AuthStatus.LoggedIn) {
     return (
       <div className="flex-initial relative">
-        <span className="text-sm mr-2">{user?.email}</span>
-        <button className="btn btn-sm btn-secondary"
-          onClick={() => dispatch(logout())}>Logout</button>
+        <span className="text-sm">{}</span>
+        <Button label={user?.email}
+                icon='pi pi-power-off'
+                className="p-button-danger p-button-sm"
+                onClick={() => dispatch(logout())}
+        />
       </div>
     );
   }

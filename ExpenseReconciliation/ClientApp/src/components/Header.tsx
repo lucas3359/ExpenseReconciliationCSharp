@@ -1,43 +1,23 @@
 import React from 'react';
 import AuthToolbar from '../auth/AuthToolbar';
-import { Link, useLocation } from 'react-router-dom';
+import {Menubar} from 'primereact/menubar';
+import {MenuItem} from 'primereact/menuitem';
 
-const Header = () => {
-  const location = useLocation();
-
-  const homeLink = (
-    <div className="flex-initial">
-      <Link to="/">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={'h-8 w-8 my-1 cursor-pointer'}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </Link>
-    </div>
-  );
+const Header = () => {  
+  const items: MenuItem[] = [{     
+      icon: 'pi pi-fw pi-home',
+      url: '/',
+    },
+    {
+      label: 'Expenses Reconciliation',
+      disabled: true,
+    }
+  ]
 
   return (
-    <header className="navbar bg-white bg-opacity-25">
-      {location.pathname === '/' ? (
-        <div className="flex-1"></div>
-      ) : (
-        homeLink
-      )}
-      <div className="flex-grow text-center leading-10 text-xl">
-        Expenses Reconciliation
-      </div>
-      <AuthToolbar />
-    </header>
+    <Menubar model={items} className="bg-white bg-opacity-25"
+             end={<AuthToolbar />}>
+    </Menubar>
   );
 };
 

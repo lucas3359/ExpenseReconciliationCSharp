@@ -2,25 +2,30 @@ import React from 'react';
 import Category from '../model/category';
 import UpdateCategoryModel from '../model/updateCategoryModel';
 import {useUpdateCategoryMutation} from '../api/transactionApi';
+import {Dropdown} from 'primereact/dropdown';
+import {useDispatch} from 'react-redux';
+import {errorToast} from '../toast/toastSlice';
 
 type DropDownProps = {
     transactionId: number;
     categories: Category[]|undefined;
-    showDropDown: boolean;
-    toggleDropDown: Function;
-    categorySelection: Function;
+    selectedCategory: number | undefined;
 };
 
 const CategoryDropDown = ({
     transactionId,
     categories,
-    categorySelection,
+    selectedCategory,
 }:DropDownProps)=>{
     const [updateCategory] = useUpdateCategoryMutation();
+    const dispatch = useDispatch();
     
     const onClickHandler = async (category: Category): Promise<void> => {
-        categorySelection(category.name);
-
+        if (!category) {
+            dispatch(errorToast(`Couldn't find category`));
+            return;
+        }
+        
         const body: UpdateCategoryModel = {
             transactionId: transactionId,
             category: category,
@@ -28,24 +33,20 @@ const CategoryDropDown = ({
         await updateCategory(body);
     };
     
+    const categorySelectItems = categories?.map((category: Category) => {
+        return {
+            label: category.name,
+            value: category.id,
+        };
+    });
+    
     return (
-        <>
-            {categories?.map(
-                (category: Category, index: number): JSX.Element => {
-                    return (
-                        <li
-                            key={index}
-                        >
-                            <a onClick={(): void => {
-                                onClickHandler(category);
-                            }}>
-                            {category.name}
-                            </a>
-                        </li>
-                    );
-                }
-            )}
-        </>
+      <Dropdown
+        className="w-full"
+        options={categorySelectItems}
+        value={selectedCategory}
+        onChange={(e) => onClickHandler(categories?.find((category) => category.id === e.value) as Category)}
+      />
     );
 }
 
