@@ -39,14 +39,20 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
     );
   }
   
+  const wrapCurrency = (value: number): ReactNode => {
+    const style = value < 0 ? {color: '#f26868'} : value > 0 ? {color: '#4cd07d'} : {};
+    return (
+      <span style={style}>{renderCurrency(value)}</span>
+    );
+  }
+  
   const getUserData = (timePeriod: TimePeriod) => {
     const userData = {};
     timePeriod.totals.map((total: Total) => {
-        userData[`user${total.userId}credit`] = renderCurrency(total.credit);
-        userData[`user${total.userId}debit`] = renderCurrency(total.debit);
-        userData[`user${total.userId}total`] = renderCurrency(total.credit + total.debit);
+        userData[`user${total.userId}credit`] = wrapCurrency(total.credit);
+        userData[`user${total.userId}debit`] = wrapCurrency(total.debit);
+        userData[`user${total.userId}total`] = wrapCurrency(total.credit + total.debit);
     });
-    console.log(userData);
     return userData;
   }
   
@@ -56,10 +62,9 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
       return {
         timeDescription: timePeriod.timeDescription,
         ...getUserData(timePeriod),
-        balance: renderCurrency(timePeriod.unassigned),
+        balance: wrapCurrency(timePeriod.unassigned),
       }
     });
-    console.log(data);
     return data;
   }
   
