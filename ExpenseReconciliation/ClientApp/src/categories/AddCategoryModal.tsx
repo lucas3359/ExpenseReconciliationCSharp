@@ -88,14 +88,14 @@ export default function AddCategoryModal(
               onHide={() => props.modalClosed()}
               header="Add new category">
         <div className="formgrid grid p-fluid w-30rem">
-          <div className="field col-12">
+          <div className="field col-12 mt-4">
             <span className="p-float-label">
-              <label className="p-float-label">Category Name</label>
               <InputText
                      className="input input-bordered rounded-box"
                      value={category.name}
                      onChange={(e) => setCategory({...category, name: e.target.value})}
               />
+              <label className="">Category Name</label>
             </span>
           </div>
 

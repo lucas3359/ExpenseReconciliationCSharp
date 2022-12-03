@@ -186,10 +186,11 @@ const TransactionSplit = ({
       <td className="p-2" colSpan={4}>
         Already split: {renderAlreadySplit(data)}
       </td>
-      <td>
-        <Button className="p-button-sm p-button-danger" onClick={() => onDeleteSplit(transaction.id)}>
-          Delete
-        </Button>
+      <td style={{ textAlign: 'right', paddingRight: '2rem' }}>
+        <Button icon="pi pi-trash"
+                className="p-button-sm p-button-danger p-button-rounded p-button-text"
+                onClick={() => onDeleteSplit(transaction.id)}
+        />
       </td>
     </>
   ) : (

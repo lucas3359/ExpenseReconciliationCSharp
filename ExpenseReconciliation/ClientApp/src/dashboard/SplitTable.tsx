@@ -39,94 +39,38 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
     );
   }
   
-  const userHeaders = () => {
-    return users.map((user) => {
-      return (
-        <th key={user.id} colSpan={3}>{user.userName}</th>
-      );
+  const getUserData = (timePeriod: TimePeriod) => {
+    const userData = {};
+    timePeriod.totals.map((total: Total) => {
+        userData[`user${total.userId}credit`] = renderCurrency(total.credit);
+        userData[`user${total.userId}debit`] = renderCurrency(total.debit);
+        userData[`user${total.userId}total`] = renderCurrency(total.credit + total.debit);
     });
-  }
-  
-  const headers = () => {
-    return (
-      <>
-        <tr className='text-center'>
-          <th>Month</th>
-          {userHeaders()}
-          <th>Balance</th>
-        </tr>
-        <tr>
-          <th></th>
-          <th>Credit</th>
-          <th>Debit</th>
-          <th>Total</th>
-          <th>Credit</th>
-          <th>Debit</th>
-          <th>Total</th>
-          <th></th>
-        </tr>
-      </>
-    );
-  }
-  
-  const getUserTotals = (totals: Total[], timeKey: string) => {
-    return users.map((user) => {
-      const total = totals.find((total) => total.userId === user.id);
-      if (!total) {
-        return <React.Fragment key={timeKey + user.id}>
-          <td></td><td></td><td className='bg-slate-50'></td>
-        </React.Fragment>
-      }
-      
-      const sum = total.credit + total.debit;
-      
-      return (
-        <React.Fragment key={timeKey + user.id}>
-          <td>{renderCurrency(total.credit)}</td>
-          <td>{renderCurrency(total.debit)}</td>
-          <td className={`${sum < 0 ? 'text-error' : 'text-success'} bg-slate-50`}>
-            {renderCurrency(sum)}
-          </td>
-        </React.Fragment>
-      )
-    });
-  }
-  
-  const getTimePeriods = (timePeriods: TimePeriod[]) => {
-    return timePeriods.map((total) => {
-      return (
-        <tr key={total.timeDescription}>
-          <td>{total.timeDescription}</td>
-          {getUserTotals(total.totals, total.timeDescription)}
-          <td className={`${total.unassigned < 0 ? 'text-error' : 'text-success'}`}>{renderCurrency(total.unassigned)}</td>
-        </tr>)
-    });
+    console.log(userData);
+    return userData;
   }
   
   const getData = () => {
     if (!splitSummaryData) return [];
-    return splitSummaryData.timePeriods.map((timePeriod) => {
+    const data = splitSummaryData.timePeriods.map((timePeriod) => {
       return {
         timeDescription: timePeriod.timeDescription,
-        user0credit: renderCurrency(timePeriod.totals[0]?.credit),
-        user0debit: renderCurrency(timePeriod.totals[0]?.debit),
-        user0total: renderCurrency(timePeriod.totals[0] ? timePeriod.totals[0].credit + timePeriod.totals[0].debit : 0),
-        user1credit: renderCurrency(timePeriod.totals[1]?.credit),
-        user1debit: renderCurrency(timePeriod.totals[1]?.debit),
-        user1total: renderCurrency(timePeriod.totals[1] ? timePeriod.totals[1].credit + timePeriod.totals[1].debit : 0),
+        ...getUserData(timePeriod),
         balance: renderCurrency(timePeriod.unassigned),
       }
     });
+    console.log(data);
+    return data;
   }
   
   const columns = [
     {field: 'timeDescription', header: 'Month'},
-    {field: 'user0credit', header: 'Credit'},
-    {field: 'user0debit', header: 'Debit'},
-    {field: 'user0total', header: 'Total'},
     {field: 'user1credit', header: 'Credit'},
     {field: 'user1debit', header: 'Debit'},
     {field: 'user1total', header: 'Total'},
+    {field: 'user2credit', header: 'Credit'},
+    {field: 'user2debit', header: 'Debit'},
+    {field: 'user2total', header: 'Total'},
     {field: 'balance', header: 'Balance'},
   ]
   
@@ -134,21 +78,29 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
       return <Column key={col.field} field={col.field} header={col.header} />;
     });
   
+  const userSubheaderGroup = (): ReactNode[] => {
+    const subheaders: string[] = users.flatMap((user) => {
+      return ['Credit', 'Debit', 'Total'];
+    });
+    
+    return subheaders.map((subheader) => <Column header={subheader} key={`user-subheader-${subheader}`} />);
+  }
+  
+  const userHeaderGroup = (): ReactNode[] => {
+    return users.map((user, i) => {
+      return (<Column header={user.userName} key={`user-group${user.id}`} colSpan={3} />);
+    });
+  };
+  
   const headerGroup = <ColumnGroup>
     <Row>
       <Column header="Month" />
-      <Column header="Lucas" colSpan={3} />
-      <Column header="Thomas" colSpan={3} />
+      {userHeaderGroup()}
       <Column header="Balance" />
     </Row>
     <Row>
       <Column />
-      <Column header="Credit" />
-      <Column header="Debit" />
-      <Column header="Total" />
-      <Column header="Credit" />
-      <Column header="Debit" />
-      <Column header="Total" />
+      {userSubheaderGroup()}
       <Column />
     </Row>
   </ColumnGroup>;
@@ -158,20 +110,6 @@ const SplitTable = ({users, monthsPrior}: { users: User[], monthsPrior: number }
       {dynamicColumns}
     </DataTable>
   )
-  
-  /*
-      <div>
-      <h1 className="text-4xl text-gray-700 my-4">Split Summary</h1>
-      <table className="table w-full">
-        <thead>
-          {headers()}
-        </thead>
-        <tbody>
-          {getTimePeriods(splitSummaryData?.timePeriods)}
-        </tbody>
-      </table>
-    </div>
-   */
 }
 
 export default SplitTable;

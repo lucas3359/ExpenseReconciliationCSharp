@@ -7,8 +7,12 @@ namespace ExpenseReconciliation.Repository
 {
     public class CategoryRepository : RepositoryBase, ICategoryRepository
     {
-        public CategoryRepository(AppDbContext appDbContext) : base(appDbContext)
+        private readonly ILogger _logger;
+        
+        public CategoryRepository(AppDbContext appDbContext,
+            ILogger<CategoryRepository> logger) : base(appDbContext)
         {
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Category>> ListAllAsync()
@@ -27,8 +31,9 @@ namespace ExpenseReconciliation.Repository
             var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {
-                if (!await IsCategoryParent(id))
+                if (await IsCategoryParent(id))
                 {
+                    _logger.LogInformation("Couldn't delete category with id {Id} because it has child categories", id);
                     throw new Exception("Can't delete category with children");
                 }
                 _context.Categories.Remove(category);
