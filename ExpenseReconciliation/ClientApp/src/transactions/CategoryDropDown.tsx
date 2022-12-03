@@ -33,17 +33,30 @@ const CategoryDropDown = ({
         await updateCategory(body);
     };
     
-    const categorySelectItems = categories?.map((category: Category) => {
-        return {
-            label: category.name,
-            value: category.id,
-        };
-    });
+    const mapCategories = categories?.filter((category) => !category.parentId)
+          .map((category) => {
+            return {
+                label: category.name,
+                value: category,
+                items: categories?.filter((subCategory) => subCategory.parentId === category.id)
+                  .map((subCategory) => {
+                    return {
+                        label: subCategory.name,
+                        value: subCategory,
+                    }
+                  }),
+            };
+        });
     
     return (
       <Dropdown
         className="w-full"
-        options={categorySelectItems}
+        options={mapCategories}
+        optionLabel='label'
+        optionGroupLabel='label'
+        optionGroupChildren='items'
+        filter
+        filterBy='label'
         value={selectedCategory}
         onChange={(e) => onClickHandler(categories?.find((category) => category.id === e.value) as Category)}
       />

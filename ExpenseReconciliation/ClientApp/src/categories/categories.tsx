@@ -6,6 +6,10 @@ import CategoryRow from './CategoryRow';
 import AddCategoryModal from './AddCategoryModal';
 import {errorToast} from '../toast/toastSlice';
 import {Button} from 'primereact/button';
+import {TreeTable} from 'primereact/treetable';
+import {Column} from 'primereact/column';
+import TreeNode from 'primereact/treenode';
+import Category from '../model/category';
 
 export default function Categories() {
   const loggedIn = useAppSelector(selectLoggedIn);
@@ -52,6 +56,35 @@ export default function Categories() {
     )
   });
   
+  const actionButtons = (node, column) => {
+    return (
+      <div>
+        <Button icon="pi pi-pencil" disabled className="p-button-rounded p-button-text p-button-warning" />
+        <Button icon="pi pi-trash" className="p-button-rounded p-button-text p-button-danger" onClick={() => deleteClicked(node.data.id)} />
+      </div>
+    )
+  }
+  
+  const mapCategoryToTreeNode = (category: Category, parentKey?: number | string): TreeNode => {
+    const key = parentKey ? `${parentKey}-${category.id}` : `${category.id}`
+    
+    return {
+      key,
+      data: {
+        ...category,
+        splitIncluded: category.splitIncluded ? 'Yes' : 'No',
+        defaultSplit: (category.defaultSplit !== null && category.defaultSplit !== undefined)
+          ? `${category.defaultSplit * 100}%` : '-',
+      },
+      children: categoriesData.filter((x) => x.parentId === category.id)
+                              .map((x) => mapCategoryToTreeNode(x, key)),
+    }
+  }
+  
+  const createCategoryTree = categoriesData
+       .filter((category) => !category.parentId && category.id)
+       .map((category) => mapCategoryToTreeNode(category));
+  
   return (
     <>
       <div className="grid">
@@ -62,23 +95,12 @@ export default function Categories() {
         </Button>
       </div>
       <br />
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Parent</th>
-              <th>Included<br/>in split?</th>
-              <th>Default<br/>split</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {categoryRows}
-          </tbody>
-        </table>
-      </div>
+      <TreeTable value={createCategoryTree}>
+        <Column field="name" header="Name" expander />
+        <Column field="splitIncluded" header="Included in totals?" />
+        <Column field="defaultSplit" header="Default Split" />
+        <Column body={actionButtons} style={{ textAlign: 'center', width: '10rem' }} />
+      </TreeTable>
       <AddCategoryModal isOpen={modalOpen} modalClosed={() => setModalOpen(false)} />
     </>
   );
