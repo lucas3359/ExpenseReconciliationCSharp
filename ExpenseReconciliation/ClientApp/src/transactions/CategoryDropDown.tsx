@@ -42,6 +42,7 @@ const CategoryDropDown = ({
     
     return (
       <Dropdown
+        className="w-full"
         options={categorySelectItems}
         value={selectedCategory}
         onChange={(e) => onClickHandler(categories?.find((category) => category.id === e.value) as Category)}

@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import TransactionRow from './TransactionRow';
-import {Paginate} from '../components/Paginate';
 import {useAppSelector} from '../hooks/hooks';
 import {selectLoggedIn} from '../auth/authSlice';
 import {useGetTransactionPageQuery} from '../api/transactionApi';
 import {useGetAllUsersQuery} from '../api/usersApi';
 import {useGetAllCategoriesQuery} from '../api/categoryApi';
+import {Paginator} from 'primereact/paginator';
 
 export default function List() {
   const loggedIn = useAppSelector(selectLoggedIn);
@@ -29,7 +29,8 @@ export default function List() {
   if (!transactionData || !userData) return <div>loading...</div>;
   
   const handlePageClick = (page: number) => {
-    setCurrentPage(page - 1);
+    console.log(`new page: ${page}`);
+    setCurrentPage(page);
   };
 
   function RenderedList({ currentItems }) {
@@ -63,11 +64,10 @@ export default function List() {
           <RenderedList currentItems={transactionData.payload} />
         </tbody>
       </table>
-      <Paginate
-        currentPage={currentPage + 1}
-        totalPages={transactionData.totalNoOfPages + 1}
-        onPageChange={handlePageClick}
-      />
+      <Paginator totalRecords={transactionData.totalNoOfItems}
+                 rows={pageSize}
+                 first={currentPage * pageSize}
+                 onPageChange={(e) => handlePageClick(e.page)} />
     </>
   );
 }
