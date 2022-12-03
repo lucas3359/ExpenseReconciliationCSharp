@@ -87,8 +87,8 @@ export default function AddCategoryModal(
       <Dialog visible={props.isOpen}
               onHide={() => props.modalClosed()}
               header="Add new category">
-        <div className="card p-fluid">
-          <div className="field mt-4">
+        <div className="formgrid grid p-fluid w-30rem">
+          <div className="field col-12">
             <span className="p-float-label">
               <label className="p-float-label">Category Name</label>
               <InputText
@@ -99,8 +99,8 @@ export default function AddCategoryModal(
             </span>
           </div>
 
-          <div className="field mt-4">
-            <span className="">
+          <div className="field formgroup-inline col-12 mt-2">
+            <span className="field-checkbox">
               <label>Included in Split?</label>
               <InputSwitch
                      checked={category.splitIncluded}
@@ -109,7 +109,7 @@ export default function AddCategoryModal(
             </span>
           </div>
 
-          <div className="field mt-6">
+          <div className="field col-12 mt-4">
             <span className="p-float-label">
               <Dropdown 
                       options={splitOptions}
@@ -121,7 +121,7 @@ export default function AddCategoryModal(
             </span>
           </div>
           
-          <div className="field mt-6">
+          <div className="field col-12 mt-4">
             <span className="p-float-label">
               <Dropdown options={categoriesOptions}
                       value={category.parentId}
@@ -132,7 +132,7 @@ export default function AddCategoryModal(
             </span>
           </div>
           
-          <div className="p-buttonset mt-4">
+          <div className="p-buttonset col-12">
             <Button className="p-button-danger" onClick={() => props.modalClosed()}>Cancel</Button>
             <Button className="p-button-success"
                     disabled={!category.name}

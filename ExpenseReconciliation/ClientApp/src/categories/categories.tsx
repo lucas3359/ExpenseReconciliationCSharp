@@ -55,8 +55,8 @@ export default function Categories() {
   return (
     <>
       <div className="grid">
-        <h1 className="text-4xl text-gray-700">Categories</h1>
-        <Button className="p-button-primary"
+        <h1 className="text-4xl text-gray-700 col-10">Categories</h1>
+        <Button className="col-2 p-button-primary p-button-sm"
           onClick={() => setModalOpen(!modalOpen)}>
           Add Category
         </Button>
