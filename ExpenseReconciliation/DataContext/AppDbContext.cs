@@ -1,5 +1,6 @@
 using ExpenseReconciliation.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ExpenseReconciliation.DataContext 
 {  
@@ -52,6 +53,10 @@ namespace ExpenseReconciliation.DataContext
             
             builder.Entity<Audit>().ToTable("audit");
             builder.Entity<Audit>().HasKey(p => p.Id);
+            builder
+                .Entity<Audit>()
+                .Property(d => d.Event)
+                .HasConversion(new EnumToStringConverter<AuditEvent>());
         }
     }  
 }
