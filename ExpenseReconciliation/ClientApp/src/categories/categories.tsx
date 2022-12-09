@@ -90,8 +90,10 @@ export default function Categories() {
       <div className="grid">
         <h1 className="text-4xl text-gray-700 col-10">Categories</h1>
         <Button className="col-2 p-button-primary p-button-sm"
-          onClick={() => setModalOpen(!modalOpen)}>
-          Add Category
+                icon="pi pi-plus"
+                iconPos="right"
+                label="Add Category"
+                onClick={() => setModalOpen(!modalOpen)}>
         </Button>
       </div>
       <br />

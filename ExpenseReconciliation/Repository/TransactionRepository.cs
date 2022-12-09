@@ -100,8 +100,8 @@ public class TransactionRepository : RepositoryBase, ITransactionRepository
 
     public async Task UpdateCategoryAsync(CategoryRequest categoryRequest)
     {
-        var t = _context.Transactions.Single(txn => txn.Id == categoryRequest.TransactionId);
-        t.CategoryId = categoryRequest.Category.Id;
+        var transaction = _context.Transactions.Single(t => t.Id == categoryRequest.TransactionId);
+        transaction.CategoryId = categoryRequest.Category.Id;
         await _context.SaveChangesAsync();
     }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import Category from '../model/category';
 import UpdateCategoryModel from '../model/updateCategoryModel';
 import {useUpdateCategoryMutation} from '../api/transactionApi';
-import {Dropdown} from 'primereact/dropdown';
+import {Dropdown, DropdownChangeParams} from 'primereact/dropdown';
 import {useDispatch} from 'react-redux';
 import {errorToast} from '../toast/toastSlice';
 
@@ -57,8 +57,8 @@ const CategoryDropDown = ({
         optionGroupChildren='items'
         filter
         filterBy='label'
-        value={selectedCategory}
-        onChange={(e) => onClickHandler(categories?.find((category) => category.id === e.value) as Category)}
+        value={categories?.find(c => c.id === selectedCategory)}
+        onChange={(e) => onClickHandler(e.value as Category)}
       />
     );
 }
