@@ -1,14 +1,18 @@
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
 
+public interface IAccountService
+{
+    Task<int> FindOrCreateId(string accountNumber);
+}
+
 public class AccountService: IAccountService
 {
-    private readonly AccountRepository _accountRepository;
+    private readonly IAccountRepository _accountRepository;
         
-    public AccountService(AccountRepository accountRepository )
+    public AccountService(IAccountRepository accountRepository )
     {
         _accountRepository = accountRepository;
     }

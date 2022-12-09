@@ -4,7 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseReconciliation.Repository;
 
-public class AccountRepository : RepositoryBase
+public interface IAccountRepository
+{
+    Task<Account> GetAsync(Account account);
+    Task<Account> AddAsync(Account account);
+}
+
+public class AccountRepository : RepositoryBase, IAccountRepository
 {
     public AccountRepository(AppDbContext appDbContext) : base(appDbContext)
     {

@@ -10,13 +10,23 @@ public class TransactionSplit
     public Split split { get; set; }
 }
 
-public class TransactionRepository : RepositoryBase
+public interface ITransactionRepository
 {
-    private readonly ILogger _logger;
+    Task<Paged<Transaction>> ListAsync(int page, int pageSize);
+    Task<Paged<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate, int page, int pageSize);
+    Task<IEnumerable<Transaction>> GetByDateAsync(DateTime startDate, DateTime endDate);
+    Task AddAsync(List<Transaction> transactionList);
+    Task<Transaction?> GetById(int id);
+    Task UpdateCategoryAsync(CategoryRequest categoryRequest);
+}
 
-    public TransactionRepository(AppDbContext appDbContext, ILogger<TransactionRepository> logger) : base(appDbContext)
+public class TransactionRepository : RepositoryBase, ITransactionRepository
+{
+    private readonly ILogger<ITransactionRepository> _logger;
+
+    public TransactionRepository(AppDbContext appDbContext,
+                                 ILogger<ITransactionRepository> logger) : base(appDbContext)
     {
-        Console.WriteLine(appDbContext.Model.ToDebugString());
         _logger = logger;
     }
 

@@ -9,9 +9,9 @@ namespace ExpenseReconciliation.Controllers
     [Route("/api/[controller]")]
     public class DashboardController : Controller
     {
-        private readonly DashboardService _dashboardService;
+        private readonly IDashboardService _dashboardService;
 
-        public DashboardController(DashboardService dashboardService)
+        public DashboardController(IDashboardService dashboardService)
         {
             this._dashboardService = dashboardService;
         }

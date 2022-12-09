@@ -8,14 +8,11 @@ namespace ExpenseReconciliation.DataContext
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        
         public DbSet<Split> Splits { get; set; }
-        
         public DbSet<Account> Accounts { get; set; }
-
         public DbSet<ImportRecord> ImportRecords { get; set; }
-
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Audit> Audits { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -52,6 +49,9 @@ namespace ExpenseReconciliation.DataContext
             builder.Entity<Transaction>().HasOne<Category>(transaction => transaction.Category)
                 .WithMany(category => category.Transactions)
                 .HasForeignKey(transaction => transaction.CategoryId);
+            
+            builder.Entity<Audit>().ToTable("audit");
+            builder.Entity<Audit>().HasKey(p => p.Id);
         }
     }  
 }

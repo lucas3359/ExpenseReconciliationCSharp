@@ -4,11 +4,16 @@ using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
 
-public class ImportRecordService
+public interface IImportRecordService
 {
-    private readonly ImportRecordRepository _importRecordRepository;
+    Task<int> CreateNewImport(BankTransactionRequest bankTransactionRequest, int accountId);
+}
 
-    public ImportRecordService(ImportRecordRepository importRecordRepository)
+public class ImportRecordService : IImportRecordService
+{
+    private readonly IImportRecordRepository _importRecordRepository;
+
+    public ImportRecordService(IImportRecordRepository importRecordRepository)
     {
         _importRecordRepository = importRecordRepository;
     }

@@ -9,12 +9,12 @@ namespace ExpenseReconciliation.Controllers
     [Route("/api/[controller]")]
     public class UserController : Controller
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        private readonly ILogger _logger;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(UserService userService,
-            ILogger<UserController> logger)
+        public UserController(IUserService userService,
+                              ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;

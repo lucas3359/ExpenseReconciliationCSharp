@@ -1,13 +1,10 @@
 using System.Text.Json.Serialization;
 using ExpenseReconciliation.DataContext;
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
-using ExpenseReconciliation.Domain.Services;
 using ExpenseReconciliation.Repository;
 using ExpenseReconciliation.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -91,19 +88,21 @@ namespace ExpenseReconciliation
                 });
             });
 
-            services.AddScoped<UserService>();
-            services.AddScoped<DashboardService>();
-            services.AddScoped<TransactionService>();
-            services.AddScoped<CategoryService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<ImportRecordService>();
+            services.AddScoped<IImportRecordService, ImportRecordService>();
+            services.AddScoped<IAuditService, AuditService>();
 
-            services.AddScoped<UserRepository>();
-            services.AddScoped<SplitRepository>();
-            services.AddScoped<TransactionRepository>();
-            services.AddScoped<AccountRepository>();
-            services.AddScoped<ImportRecordRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ISplitRepository, SplitRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IImportRecordRepository, ImportRecordRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IAuditRepository, AuditRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
