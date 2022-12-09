@@ -37,7 +37,8 @@ const Header = () => {
   ]
 
   return (
-    <Menubar model={items} className="bg-white bg-opacity-25"
+    <Menubar model={items}
+             style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
              end={<AuthToolbar />}>
     </Menubar>
   );

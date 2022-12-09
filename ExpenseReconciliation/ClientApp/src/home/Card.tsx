@@ -25,7 +25,8 @@ const Card = ({
   const renderChild = () => {
     return (
       <div
-        className={`rounded-xl px-2 py-3 mx-2 w-16rem h-10rem filter drop-shadow-md text-blue-400 bg-gray-50 bg-opacity-75 ${
+        style={{ backgroundColor: 'rgba(250, 250, 250, 0.75)' }}
+        className={`rounded-xl px-2 py-3 mx-2 w-16rem h-10rem filter drop-shadow-md text-blue-400 ${
           link ? 'cursor-pointer hover:bg-blue-400 hover:text-white' : ''
         }`}
       >
