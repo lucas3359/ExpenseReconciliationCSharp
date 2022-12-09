@@ -29,7 +29,6 @@ export default function List() {
   if (!transactionData || !userData) return <div>loading...</div>;
   
   const handlePageClick = (page: number) => {
-    console.log(`new page: ${page}`);
     setCurrentPage(page);
   };
 

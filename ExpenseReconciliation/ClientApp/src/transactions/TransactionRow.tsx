@@ -93,7 +93,7 @@ const TransactionRow = ({
           </td>
         <td
           className={`p-2 text-right font-semibold ${
-            Number(row.amount) < 0 ? 'text-gray-600' : 'text-green-400'
+            Number(row.amount) < 0 ? 'text-red-300' : 'text-green-400'
           }`}
         >
           {row.amount ? renderCurrency(row.amount) : ''}

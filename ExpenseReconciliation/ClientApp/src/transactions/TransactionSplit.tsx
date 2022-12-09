@@ -164,7 +164,9 @@ const TransactionSplit = ({
           <span className="font-normal">
             {users?.find((user) => user.id == split.userId)?.userName}:{' '}
           </span>
-          <em>{(split.amount / 100).toFixed(2)}</em>&nbsp;
+          <em className={`${split.amount < 0 ? 'text-red-400' : split.amount > 0 ? 'text-green-400' : '' }`}>
+            {(split.amount / 100).toFixed(2)}
+          </em>&nbsp;
         </span>
       );
     });
