@@ -4,7 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseReconciliation.Repository
 {
-    public class UserRepository : RepositoryBase
+    public interface IUserRepository
+    {
+        Task<IEnumerable<User>> ListAsync();
+        Task<User?> FindByEmail(string email);
+    }
+
+    public class UserRepository : RepositoryBase, IUserRepository
     {
         public UserRepository(AppDbContext appDbContext) : base(appDbContext)
         {

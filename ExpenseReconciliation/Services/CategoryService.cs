@@ -1,9 +1,17 @@
 using ExpenseReconciliation.Domain.Models;
-using ExpenseReconciliation.Domain.Repositories;
+using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services;
 
-public class CategoryService
+public interface ICategoryService
+{
+    Task<IEnumerable<Category>> GetAllCategoriesAsync();
+    Task<Category> GetCategoryAsync(int id);
+    Task<Category> AddCategoryAsync(Category category);
+    Task DeleteCategoryAsync(Category category);
+}
+
+public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository _categoryRepository;
     
@@ -16,14 +24,19 @@ public class CategoryService
     {
         return await _categoryRepository.ListAllAsync();
     }
-
-    public async Task AddCategoryAsync(Category category)
+    
+    public async Task<Category> GetCategoryAsync(int id)
     {
-        await _categoryRepository.AddAsync(category);
+        return await _categoryRepository.FindByIdAsync(id);
+    }
+
+    public async Task<Category> AddCategoryAsync(Category category)
+    {
+        return await _categoryRepository.AddAsync(category);
     }
     
-    public async Task DeleteCategoryAsync(int id)
+    public async Task DeleteCategoryAsync(Category category)
     {
-        await _categoryRepository.DeleteAsync(id);
+        await _categoryRepository.DeleteAsync(category);
     }
 }

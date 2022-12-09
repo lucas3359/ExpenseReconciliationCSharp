@@ -3,13 +3,19 @@ using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services
 {
-    public class UserService
+    public interface IUserService
     {
-        private readonly UserRepository _userRepository;
+        Task<IEnumerable<User>> ListAsync();
+        Task<User?> GetUserByEmail(string email);
+    }
 
-        public UserService(UserRepository userRepository)
+    public class UserService : IUserService
+    {
+        private readonly IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
         {
-            this._userRepository = userRepository;
+            _userRepository = userRepository;
         }
         
         public async Task<IEnumerable<User>> ListAsync()
@@ -19,6 +25,7 @@ namespace ExpenseReconciliation.Services
 
         public async Task<User?> GetUserByEmail(string email)
         {
+            if (string.IsNullOrEmpty(email)) return null;
             return await _userRepository.FindByEmail(email);
         }
     }

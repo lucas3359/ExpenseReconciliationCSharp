@@ -4,15 +4,22 @@ using ExpenseReconciliation.Repository;
 
 namespace ExpenseReconciliation.Services
 {
-    public class DashboardService
+    public interface IDashboardService
     {
-        private readonly SplitRepository _splitRepository;
-        private readonly TransactionRepository _transactionRepository;
+        Task<TimePeriod> AmountAsync();
+        Task<IEnumerable<Split>> ListAsync();
+        Task<SplitSummary> SplitSummary(DateTime startDate, DateTime endDate, TimeUnit timeUnit);
+    }
 
-        public DashboardService(SplitRepository splitRepository,
-            TransactionRepository transactionRepository)
+    public class DashboardService : IDashboardService
+    {
+        private readonly ISplitRepository _splitRepository;
+        private readonly ITransactionRepository _transactionRepository;
+
+        public DashboardService(ISplitRepository splitRepository,
+            ITransactionRepository transactionRepository)
         {
-            this._splitRepository = splitRepository;
+            _splitRepository = splitRepository;
             _transactionRepository = transactionRepository;
         }
 

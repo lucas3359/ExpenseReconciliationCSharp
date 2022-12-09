@@ -3,7 +3,12 @@ using ExpenseReconciliation.Domain.Models;
 
 namespace ExpenseReconciliation.Repository;
 
-public class ImportRecordRepository : RepositoryBase
+public interface IImportRecordRepository
+{
+    Task<ImportRecord> CreateNewImport(ImportRecord importRecord, int accountId);
+}
+
+public class ImportRecordRepository : RepositoryBase, IImportRecordRepository
 {
     private readonly ImportRecord _importRecord;
 

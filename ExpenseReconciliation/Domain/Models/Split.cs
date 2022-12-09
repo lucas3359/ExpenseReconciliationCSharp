@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace ExpenseReconciliation.Domain.Models;
@@ -14,6 +13,6 @@ public class Split
 
     public bool? reviewed { get; set; }
 
-    [JsonIgnore]
+    [Newtonsoft.Json.JsonIgnore]
     public virtual Transaction Transaction { get; set; }
 }
